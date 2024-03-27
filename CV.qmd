@@ -1,0 +1,86 @@
+---
+title: "Curriculum Vitae"
+about:
+  template: jolla
+---
+
+```{r setup, include=FALSE, message=F, warning=F}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+library(tidyverse)
+```
+
+## Shane A. Scaggs
+
+<p style="text-align: left;">
+
+Presidential Fellow<br> [Human Complexity Lab](https://u.osu.edu/hclab/)<br> Department of Anthropology<br> The Ohio State University<br> scaggs.32\@osu.edu
+
+</p>
+
+<br>
+
+### Research Interests
+
+Human Subsistence $\times$ Cooperation $\times$ Community and Landscape Ecology $\times$ Computational Social Science $\times$ Complex Systems $\times$ Network Science
+
+<br>
+
+### Education
+
+```{r,echo=F}
+edu <- read.csv(file = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/edu.csv")
+edu %>% kbl(align = 'l') %>% column_spec(1, width = '0.5in')
+```
+
+### Publications
+
+```{r,echo=F}
+pubs <- openxlsx::read.xlsx("C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/pubs.xlsx", sheet=1)
+colnames(pubs) <- c('Year','Citation','DOI','Type')
+
+pubs$Citation <- paste0(pubs$Citation, ' ', pubs$DOI)
+
+pubs[,1:2] %>% 
+  mutate(Citation = cell_spec(Citation, "html", link = pubs$DOI)) |> 
+  kable(align = 'l', "html", escape = F) %>%
+  column_spec(1, width = '0.5in')
+
+```
+
+## Contributions
+
+```{r, echo=F, message=F, warning=F, fig.width=8, fig.height=4, fig.cap="Contribution matrix.", fig.align='center'}
+cont <- openxlsx::read.xlsx("C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/pubs.xlsx", sheet=2)
+
+cont %>% 
+  gather(key=key, value=value, -Contribution) %>%
+  mutate(value = ifelse(is.na(value)==T, 'No', 'Yes')) %>%
+  ggplot() + geom_tile(aes(x=key, y=Contribution, fill=factor(value)), color='black',size=1) + 
+  scale_fill_manual(values = c('white','magenta')) +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 40, hjust = 1), 
+        axis.text = element_text(color='black'),
+        text = element_text(size=14, color='black')) + 
+  labs(x=NULL, y=NULL, fill='Contributed?')  
+```
+
+### Funding Support
+
+```{r,echo=F}
+funds <- read.csv(file = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/funds.csv")
+colnames(funds) <- c("Year","Title","Funding Agency","Amount")
+funds %>% kbl(align = 'l') %>% column_spec(1, width = '0.5in')
+```
+
+### Conference Proceedings
+
+```{r,echo=F}
+conf <- read.csv(file = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/conf.csv")
+colnames(conf) <- c("Year","Title","Meeting","Type")
+conf[,1:4] %>% 
+  arrange(desc( Year)) %>%
+  kbl(align = 'l') %>% 
+  column_spec(1, width = '0.5in')
+
+```

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Shane A. Scaggs">
+<meta name="dcterms.date" content="2023-02-10">
+
+<title>Shane A. Scaggs - Gaussian models, Part I</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Shane A. Scaggs</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV.html" rel="" target="">
+ <span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts.html" rel="" target="">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../gallery.html" rel="" target="">
+ <span class="menu-text">Data Visualization Gallery</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://twitter.com/shaneascaggs" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://github.com/sascaggs" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Gaussian models, Part I</h1>
+            <p class="subtitle lead">Using simulation to understand generalized linear models</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">modeling</div>
+                <div class="quarto-category">GLM</div>
+                <div class="quarto-category">simulation</div>
+                <div class="quarto-category">statistics</div>
+                <div class="quarto-category">beginner</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Shane A. Scaggs </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 10, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="prologue" class="level1">
+<h1>Prologue</h1>
+<p>Conventional statistics courses that I’ve taken in the past have been incredibly unsatisfying. The material was dry and technical and this made only a very small portion of the content seem all that practical.</p>
+<p>I believe the essential problem with most conventional statistics courses is that they tend to emphasize statistical theory over statistical <em>practice</em>. This makes doing statistics feel very static, despite the reality that data analysis is a dynamic, iterative process.</p>
+<p>Fast forward to 2023 and I’m having students and colleagues ask me modeling questions that they clearly didn’t have answered in their analytical training. They want to know which “test” to run and which buttons to click. Each conversation I have like this gives more motivation to help researchers shift from testing to <em>modeling</em>.</p>
+<p>The goal of this post is to start developing some primers for statistical models. Each post in this series will use simulation to understand a different model family in generalized linear modeling.</p>
+</section>
+<section id="background" class="level1">
+<h1>Background</h1>
+<p>Whether I’m working on Bayesian or frequentist models, the analytical workflow that I use today is based on the <a href="https://www.youtube.com/@rmcelreath">free lectures</a> provided by Richard McElreath based on his book <em>Statistical Rethinking</em>. They are fantastic and mind opening.</p>
+</section>
+<section id="getting-started" class="level1">
+<h1>Getting started</h1>
+<p>Let’s begin by just thinking about the mechanics of a linear model. First let’s look at the equation for such a model:</p>
+<p><span class="math display">\[Y_i = \beta_0 + \beta_1 X_i\]</span> This equation looks more formidable than it is. The placeholders <span class="math inline">\(X_i\)</span> and <span class="math inline">\(Y_i\)</span> represent variables. These are values that we will include in the model from our data. The little <span class="math inline">\(i\)</span> is an index; you can sort of think of it like row <span class="math inline">\(i\)</span>. When you are viewing an equation, you can look for these indices to determine which parameters of the equation are likely to vary.</p>
+<p>The greek letters are parameters that we estimate. In this case, <span class="math inline">\(\beta_0\)</span> is an intercept parameter – the expected mean value when <span class="math inline">\(X_i\)</span> is 0. You’ll also see this parameter symbolized with the greek letter <span class="math inline">\(\alpha\)</span>. The <span class="math inline">\(\beta_1\)</span> parameter is a slope, a scalar that influences the relationship between <span class="math inline">\(X_i\)</span> and <span class="math inline">\(Y_i\)</span>.</p>
+</section>
+<section id="simulating-variables" class="level1">
+<h1>Simulating variables</h1>
+<p>We won’t be working with data at the moment. Instead we will simulate. So let’s start with <span class="math inline">\(X\)</span>. Let’s imagine we have a variable with a mean value of 10 and a standard deviation of 2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">400</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Having generated this variable <code>x</code> using random numbers from a Gaussian distribution, we get something similar to a bell shaped curve.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>Now let’s do the same for <span class="math inline">\(Y\)</span>, using a mean of 7 and a standard deviation of 1.5.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">7</span>, <span class="at">sd=</span><span class="fl">1.5</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now what happens if we plot the association between these two variables?</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>Because both <code>x</code> and <code>y</code> were generated independent of each other, there is no discernible relationship between them. This implies that the estimated value of <span class="math inline">\(\beta_1\)</span> will be near 0. We can confirm this with a model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">data.frame</span>(x,y)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">=</span> <span class="fu">glm</span>( <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">data=</span>d, <span class="at">family =</span> gaussian ) </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = y ~ x, family = gaussian, data = d)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  6.60297    0.36661   18.01   &lt;2e-16 ***
+x            0.04311    0.03623    1.19    0.235    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for gaussian family taken to be 2.011392)
+
+    Null deviance: 803.38  on 399  degrees of freedom
+Residual deviance: 800.53  on 398  degrees of freedom
+AIC: 1418.7
+
+Number of Fisher Scoring iterations: 2</code></pre>
+</div>
+</div>
+<p>Indeed, the coefficient esimate for <code>x</code> – the slope – is just about 0. And because the relationship is pretty much non-existent, the intercept parameter <span class="math inline">\(\beta_0\)</span> is estimated to be approximately the mean value for <code>y</code>.</p>
+</section>
+<section id="form-a-relationship" class="level1">
+<h1>Form a relationship</h1>
+<p>So how would we go about linking <code>x</code> and <code>y</code>? Well we need to provide value for the slope parameter. I find this a bit easier to think about if we write a function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>linear <span class="ot">=</span> <span class="cf">function</span>( x, b0, b1 ) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">=</span> b0 <span class="sc">+</span> b1<span class="sc">*</span>x</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(x,y)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now suppose we want there to be a negative relationship between <code>x</code> and <code>y</code>. We need to provide a negative value for <code>b1</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span> )</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">linear</span>( <span class="at">x=</span>x, <span class="at">b0 =</span> <span class="dv">7</span>, <span class="at">b1 =</span> <span class="sc">-</span><span class="fl">1.5</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice that we dont actually provide a vector of Y values this time. This is because they are generated by the function, rather than by sampling from a Gaussian distribution.</p>
+<p>Let’s plot these results and see what we find.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>So we have enforced a perfect linear relationship between <code>x</code> and <code>y</code>. But wouldn’t we have expected a bit more variation rather than a perfect line? Indeed, in a sense we have lost the <code>sd = 1.5</code> that we originally included when we generated <code>y</code> the first time. To include it, we need a different equation.</p>
+<p><span class="math display">\[Y_i = \beta_0 + \beta_1 X_i + e_i\]</span> This term <span class="math inline">\(e_i\)</span> is an “error” term. It is the residual deviance that is left unexplained by the other parameters in the equation.</p>
+<p>Let’s think about this another way. The original mean and sd used in <code>y = rnorm(N, 7, 1.5)</code> has been moved to the <span class="math inline">\(\beta_0\)</span> and the <span class="math inline">\(e_i\)</span>. We no longer supply the mean, but instead we estimated it as <span class="math inline">\(\beta_0\)</span> with some residual error, <span class="math inline">\(e_i\)</span> left over.</p>
+<p>Let’s amend our function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>linear <span class="ot">=</span> <span class="cf">function</span>( x, b0, b1, e ) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">=</span> b0 <span class="sc">+</span> b1<span class="sc">*</span>x <span class="sc">+</span> e</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(x,y)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s supply a constant value for <code>e</code> in this function; how about 1.5 like we used before?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span> )</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">linear</span>( <span class="at">x=</span>x, <span class="at">b0 =</span> <span class="dv">7</span>, <span class="at">b1 =</span> <span class="sc">-</span><span class="fl">1.5</span>, <span class="at">e =</span> <span class="dv">2</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>That didn’t really work did it. Why not? Well if we look a bit closer, we see that all that has happened is the value 1.5, which we supplied for <code>e</code>, was just added on at the end. This is effectively like setting <code>b0</code> to 8.5 instead of 7. What we really need is a distribution of error, centered on 0 and deviating by 1.5.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span> )</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>e <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="fl">1.5</span> )</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">linear</span>( <span class="at">x=</span>x, <span class="at">b0 =</span> <span class="dv">7</span>, <span class="at">b1 =</span> <span class="sc">-</span><span class="fl">1.5</span>, <span class="at">e=</span>e )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>That looks a bit more like what we might expect. But if it really is true that we’re just adding some error onto the end, then we could get the same result if we don’t use <code>e</code> at all and instead supply our original <code>y</code> generated with <code>rnorm</code> in place of <code>b0</code>.</p>
+<p>Set <code>e</code> to 0 and supply a distribution of values for <code>b0</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span> )</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">=</span> <span class="fu">linear</span>( <span class="at">x=</span>x, <span class="at">b0 =</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">7</span>, <span class="at">sd=</span><span class="fl">1.5</span>), <span class="at">b1 =</span> <span class="sc">-</span><span class="fl">1.5</span>, <span class="at">e=</span><span class="dv">0</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>In future example, we might return to this approach as a way to created <em>random intercepts</em>. Right now, this just shows that the generative process will work the same with either approach. However, in practice, it will still be useful to use <code>e</code> to think about error.</p>
+</section>
+<section id="fit-the-model-again" class="level1">
+<h1>Fit the model again</h1>
+<p>Now that we have out generated data set, let’s try rerunning the <code>glm</code> from above.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">=</span> <span class="fu">glm</span>( <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">data=</span>sim1, <span class="at">family =</span> gaussian ) </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = y ~ x, family = gaussian, data = sim1)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  7.37888    0.41167   17.92   &lt;2e-16 ***
+x           -1.52464    0.03965  -38.46   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for gaussian family taken to be 2.223387)
+
+    Null deviance: 4172.91  on 399  degrees of freedom
+Residual deviance:  884.91  on 398  degrees of freedom
+AIC: 1458.8
+
+Number of Fisher Scoring iterations: 2</code></pre>
+</div>
+</div>
+<p>This time, we recover our slope parameter <span class="math inline">\(\beta_1\)</span> and we more accurately recover our intercept parameter <span class="math inline">\(\beta_0\)</span>.</p>
+</section>
+<section id="power" class="level1">
+<h1>Power</h1>
+<p>The power of this technique is in our ability to run multiple simulation with different values. Let’s try this with different values for <code>b1</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span> )</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>e <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="fl">1.5</span> )</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">=</span> <span class="fu">seq</span>( <span class="at">from=</span><span class="sc">-</span><span class="dv">3</span>, <span class="at">to=</span><span class="dv">3</span>, <span class="at">length=</span><span class="dv">12</span> )</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>L <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>( i <span class="cf">in</span> <span class="fu">seq_along</span>(b1) ) {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">=</span> <span class="fu">linear</span>( <span class="at">x=</span>x, <span class="at">b0 =</span> <span class="dv">7</span>, <span class="at">b1 =</span> b1[i], <span class="at">e=</span>e )</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    out<span class="sc">$</span>b1 <span class="ot">=</span> <span class="fu">round</span>(b1[i], <span class="dv">2</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    L[[i]] <span class="ot">=</span> out</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the code above, I’ve done many of the same things that I did above. The only difference is that I have create a vector of <code>b1</code> values ranging from -3 to +3, and I’ve looped over these values, plugging in each element of the vector <code>b1</code> into the linear equation.</p>
+<p>I stored all my results in a list. Each element of the list is a data frame containing the values of <code>x</code>, <code>y</code>, along with the value of <code>b1</code>. Let’s look at one of them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(L[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          x         y b1
+1  9.398208 -24.44265 -3
+2  8.971316 -20.72967 -3
+3 10.411001 -24.99041 -3
+4  6.384421 -12.79901 -3
+5  9.752267 -22.44014 -3
+6 10.367787 -24.17492 -3</code></pre>
+</div>
+</div>
+<p>Now if we used the <code>bind_rows</code> function from <code>{dplyr}</code>, we can change this list into a long form data frame where our results are grouped by the iteration. This will enable some fancy plotting.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ldf <span class="ot">=</span> <span class="fu">bind_rows</span>(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s look at every relationship. This time I’ll show the plotting code so you can see how it’s done.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>( <span class="at">data=</span>ldf, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y) ) <span class="sc">+</span> ptheme <span class="sc">+</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>( <span class="at">stroke=</span><span class="dv">2</span>, <span class="at">size=</span><span class="dv">1</span>, <span class="at">pch=</span><span class="dv">21</span>, <span class="at">color=</span><span class="st">'#ff110011'</span>) <span class="sc">+</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>b1, <span class="at">nrow =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>We can immediately see how change the values of <code>b1</code> has altered the relationship.</p>
+<p>Now let’s do one more version of this, but instead, we will loop through different values of <code>e</code>, creating more or less error, while holding <code>b1</code> constant.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">rnorm</span>( <span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">10</span>, <span class="at">sd=</span><span class="dv">2</span> )</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>e <span class="ot">=</span> <span class="fu">seq</span>( <span class="at">from=</span><span class="fl">0.1</span>, <span class="at">to=</span><span class="dv">5</span>, <span class="at">length=</span><span class="dv">12</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>L <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>( i <span class="cf">in</span> <span class="fu">seq_along</span>(e) ) {</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">=</span> <span class="fu">linear</span>( <span class="at">x=</span>x, <span class="at">b0 =</span> <span class="dv">7</span>, <span class="at">b1 =</span> <span class="dv">2</span>, <span class="at">e=</span> <span class="fu">rnorm</span>(<span class="at">n=</span>N, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd =</span> e[i]) )</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    out<span class="sc">$</span>e <span class="ot">=</span> <span class="fu">round</span>(e[i], <span class="dv">2</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    L[[i]] <span class="ot">=</span> out</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>ldf <span class="ot">=</span> <span class="fu">bind_rows</span>(L)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>( <span class="at">data=</span>ldf, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y) ) <span class="sc">+</span> ptheme <span class="sc">+</span> </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>( <span class="at">stroke=</span><span class="dv">2</span>, <span class="at">size=</span><span class="dv">1</span>, <span class="at">pch=</span><span class="dv">21</span>, <span class="at">color=</span><span class="st">'#ff110033'</span>) <span class="sc">+</span> </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>e, <span class="at">nrow =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>Now we see how changing the value <code>e</code> greatly increased the level of deviance for each of these simulated relationships.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">© Copyright 2024, Shane A. Scaggs</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Built with <a href="https://quarto.org/">Quarto</a></div>
+  </div>
+</footer>
+
+
+
+</body></html>
