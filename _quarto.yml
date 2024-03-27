@@ -3,7 +3,7 @@ project:
   output-dir: docs
   
 website:
-  title: "MY WEB SITE"
+  title: "Shane A. Scaggs"
   navbar:
     left:
       - href: index.qmd
@@ -11,17 +11,17 @@ website:
       - projects.qmd
     tools:
       - icon: twitter
-        href: https://twitter.com/
+        href: https://twitter.com/shaneascaggs
       - icon: github
-        href: https://github.com/YOURUSERNAME/YOURREPO
+        href: https://github.com/sascaggs
   page-footer:
     right: "Built with [Quarto](https://quarto.org/)"
-    left: "&copy; Copyright 2023, YOUR NAME"
+    left: "&copy; Copyright 2024, Shane A. Scaggs"
 
 format:
   html:
     theme: cerulean
-    toc: true
+    toc: false
 
 editor: source
 
