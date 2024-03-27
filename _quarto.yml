@@ -5,10 +5,16 @@ project:
 website:
   title: "Shane A. Scaggs"
   navbar:
+    search: true
+    background: '#000000'
+    foreground: '#ffffff'
     left:
       - href: index.qmd
-        text: Home
-      - projects.qmd
+        text: About
+      - href: CV.qmd
+        text: CV
+      - posts.qmd
+      - gallery.qmd
     tools:
       - icon: twitter
         href: https://twitter.com/shaneascaggs
@@ -20,7 +26,7 @@ website:
 
 format:
   html:
-    theme: cerulean
+    css: styles.css
     toc: false
 
 editor: source

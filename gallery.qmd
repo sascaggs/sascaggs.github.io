@@ -1,0 +1,5 @@
+---
+title: "Data Visualization Gallery"
+---
+
+![Three decades of Saguaro cactus surveys at Saguaro National Park. Top: a lollipop graph showing the research effort put into surveyed Saguaro. Bottom: annual growth in inches for all saguaro surveyed and the average growth trend from 1980 to 2010. Data from Orum, Ferguson, & Mihail (2016). "Saguaro (Carnegiea gigantea) Mortality and Population Regeneration in the Cactus Forest of Saguaro National Park: Seventy-Five Years and Counting". PLOS One. https://doi.org/10.1371/journal.pone.0160899](/img/3DecadesOfSaguaroGrowth.png){fig-align="center"}
