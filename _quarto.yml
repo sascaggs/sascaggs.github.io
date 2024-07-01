@@ -15,13 +15,13 @@ website:
         text: CV
       - posts.qmd
       - gallery.qmd
-    tools:
-      - icon: twitter
-        href: https://twitter.com/shaneascaggs
-      - icon: github
-        href: https://github.com/sascaggs
-      - text: {{< iconify ri:bluesky-fill >}}
-        href: https://bsky.app/profile/sascaggs.bsky.social
+    right:
+      - icon: "twitter"
+        href: "https://twitter.com/shaneascaggs"
+      - icon: "github"
+        href: "https://github.com/sascaggs"
+      - icon: "{{< iconify ri:bluesky-fill >}}"
+        href: "https://bsky.app/profile/sascaggs.bsky.social"
   page-footer:
     right: "Built with [Quarto](https://quarto.org/)"
     left: "&copy; Copyright 2024, Shane A. Scaggs"
