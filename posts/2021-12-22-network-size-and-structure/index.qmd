@@ -8,6 +8,7 @@ categories:
   - simulation
   - scale
 image: "apl.png"
+draft: true 
 ---
 
 *This post is also available on the [Social Ecological Networks Group](https://seng.netlify.app).*

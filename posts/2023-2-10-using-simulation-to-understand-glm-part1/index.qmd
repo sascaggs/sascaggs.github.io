@@ -9,6 +9,7 @@ categories:
   - simulation
   - statistics
   - beginner
+draft: true
 ---
 
 ```{r, echo=F, message=F, warning=F}
