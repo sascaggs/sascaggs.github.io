@@ -20,11 +20,13 @@ website:
         href: "https://twitter.com/shaneascaggs"
       - icon: "github"
         href: "https://github.com/sascaggs"
-      - icon: "{{< iconify ri:bluesky-fill >}}"
+      - text: "{{< iconify ri:bluesky-fill >}}"
         href: "https://bsky.app/profile/sascaggs.bsky.social"
+      - text: "{{< iconify academicons:google-scholar-square >}}"
+        href: "https://scholar.google.com/citations?user=CtWNkOkAAAAJ&hl=en&oi=ao"
   page-footer:
     right: "Built with [Quarto](https://quarto.org/)"
-    left: "&copy; Copyright 2024, Shane A. Scaggs"
+    left: "&copy; Copyright 2025, Shane A. Scaggs"
 
 format:
   html:
