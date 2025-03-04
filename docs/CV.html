@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Shane A. Scaggs - Curriculum Vitae</title>
+<title>Curriculum Vitae – Shane A. Scaggs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -44,7 +44,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -53,16 +59,42 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
-<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -71,41 +103,52 @@ ul.task-list li input[type="checkbox"] {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Shane A. Scaggs</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./CV.html" rel="" target="" aria-current="page">
- <span class="menu-text">CV</span></a>
+    <a class="nav-link active" href="./CV.html" aria-current="page"> 
+<span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./posts.html" rel="" target="">
- <span class="menu-text">Blog</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./gallery.html" rel="" target="">
- <span class="menu-text">Data Visualization Gallery</span></a>
+    <a class="nav-link" href="./gallery.html"> 
+<span class="menu-text">Data Visualization Gallery</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-    <a href="https://twitter.com/shaneascaggs" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
-    <a href="https://github.com/sascaggs" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
-</div>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/shaneascaggs"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/sascaggs"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://bsky.app/profile/sascaggs.bsky.social"> <i class="bi bi-{{< iconify ri:bluesky-fill >}}" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
           </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -131,43 +174,13 @@ ul.task-list li input[type="checkbox"] {
 <p><br></p>
 <section id="research-interests" class="level3">
 <h3 data-anchor-id="research-interests">Research Interests</h3>
-<p>Human Subsistence <span class="math inline">\(\times\)</span> Cooperation <span class="math inline">\(\times\)</span> Community and Landscape Ecology <span class="math inline">\(\times\)</span> Computational Social Science <span class="math inline">\(\times\)</span> Complex Systems <span class="math inline">\(\times\)</span> Network Science</p>
+<p>Cooperative Networks <span class="math inline">\(\times\)</span> Landscape Mosaics <span class="math inline">\(\times\)</span> Food Webs <span class="math inline">\(\times\)</span> Ecological Anthropology <span class="math inline">\(\times\)</span> Complex Systems <span class="math inline">\(\times\)</span> Community and Landscape Ecology <span class="math inline">\(\times\)</span> Computational Social Science <span class="math inline">\(\times\)</span> Network Science</p>
 <p><br></p>
 </section>
 <section id="education" class="level3">
 <h3 data-anchor-id="education">Education</h3>
 <div class="cell">
 <div class="cell-output-display">
-<table data-quarto-postprocess="true" class="table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Year</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Institution</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Program</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Degree</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2021</td>
-<td style="text-align: left;">Ohio State University</td>
-<td style="text-align: left;">Anthropology</td>
-<td style="text-align: left;">PhD candidate</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2018</td>
-<td style="text-align: left;">Oregon State University</td>
-<td style="text-align: left;">Applied Anthropology</td>
-<td style="text-align: left;">Master of Science</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2016</td>
-<td style="text-align: left;">Boise State University</td>
-<td style="text-align: left;">Anthropology</td>
-<td style="text-align: left;">Bachelor of Science</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </section>
@@ -175,126 +188,26 @@ ul.task-list li input[type="checkbox"] {
 <h3 data-anchor-id="publications">Publications</h3>
 <div class="cell">
 <div class="cell-output-display">
-<table data-quarto-postprocess="true" class="table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Year</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Citation</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2023</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1073/pnas.2220124120" style="     ">Ross, C. T., Hooper, P., Smith, J. E., [and 101 others, including Scaggs, S., A.] (2023) Reproductive Inequality in Humans and Other Mammals. Proceedings of the National Academy of Sciences, 120(22), e2220124120. https://doi.org/10.1073/pnas.2220124120</a></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2023</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1038/s43247-023-01089-6" style="     ">Downey, S. S., Walker, M., Moschler, J., Penados, F., Peterman, W., Rongjun, Q., Scaggs, S. A., Song, S. (2023). An intermediate level of disturbance with customary agricultural practices increases species diversity in Maya community forests in Belize. Nature Communications, Earth, and Environment. https://doi.org/10.1038/s43247-023-01089-6</a></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2022</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1002/ajhb.23821" style="     ">Piperata, B., Scaggs, S., Dufour, D., Adams, I. (2022) Measuring food security: An introduction to tools for human biologists and ecologists. American Journal of Human Biology. https://doi.org/10.1002/ajhb.23821</a></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2021</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1002/ajhb.23573" style="     ">Scaggs, S., Gerkey, D., McLaughlin, K. (2021). Linking subsistence harvest diversity and productivity to adaptive capacity in an Alaskan food sharing network. American Journal of Human Biology. Special Issue: Anthropological Insights on Adaptation and Climate Change, Vol. 33 (4): e23573. https://doi.org/10.1002/ajhb.23573</a></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2021</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1057/s41599-021-00871-1" style="     ">Kawa, N., Arceno, M. A., Goeckner, R., Hunter, C., Rhue, S., Scaggs, S., Biwer, M., Downey, S., Field, J., Gremillion, K., McCorriston, J., Willow, A., Newton, E., Moritz, M. (2021). Training Wicked Scientists for a World of Wicked Problems. Humanities &amp; Social Sciences Communications. Vol. 8 (189). https://doi.org/10.1057/s41599-021-00871-1</a></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2020</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1007/s10745-020-00169-x" style="     ">Downey, S., Gerkey, D., Scaggs, S. (2020). The Milpa Game: a field experiment investigating the social and ecological dynamics of Q'eqchi' Maya swidden agriculture. Human Ecology, Vol. 48: 423-438. https://doi.org/10.1007/s10745-020-00169-x</a></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2020</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1007/s10745-020-00141-9" style="     ">Moritz, M., Scaggs, S., Shapiro, C., Hinkelman, S. (2020). Comparative Study of Territoriality across Forager Societies. Human Ecology, Vol. 48: 225-234. https://doi.org/10.1007/s10745-020-00141-9</a></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2019</td>
-<td style="text-align: left;"><a href="https://doi.org/10.14434/josotl.v19i5.24230." style="     ">Snopkowski, K., Demps, K., Scaggs, S., Griffiths, R., Fulk, K., May, S., Neagle, K., Downs, K., Eugster, M., Amend, T., Heath, J. (2019). Small Group Learning is Associated with Reduced Salivary Cortisol and Testosterone in Undergraduate Students. Journal of the Scholarship of Teaching and Learning, Vol. 19 (5): 36-52. https://doi.org/10.14434/josotl.v19i5.24230.</a></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2017</td>
-<td style="text-align: left;"><a href="https://doi.org/10.1007/978-3-319-58993-0_10" style="     ">Scaggs, S. A., Fulk, K., Glass, D. J., Ziker, J. P. (2017) Framing charitable solicitation in a behavioral experiment: Cues derived from evolutionary theory of cooperation and anthropological economics. In Li, M., Tracer, D. P. (eds.) Interdisciplinary Perspectives on Fairness, Equity, and Justice, 153-178. Springer. https://doi.org/10.1007/978-3-319-58993-0_10</a></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
-<section id="contributions" class="level4">
-<h4 data-anchor-id="contributions">Contributions</h4>
+</section>
+</section>
+<section id="contributions" class="level2">
+<h2 data-anchor-id="contributions">Contributions</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="CV_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="768"></p>
-<figcaption class="figure-caption">Contribution matrix.</figcaption>
+<figcaption>Contribution matrix.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-</section>
-</section>
-<section id="funding-support" class="level3">
-<h3 data-anchor-id="funding-support">Funding Support</h3>
+<section id="awards-fellowships-and-funding-support" class="level3">
+<h3 data-anchor-id="awards-fellowships-and-funding-support">Awards, Fellowships, and Funding Support</h3>
 <div class="cell">
 <div class="cell-output-display">
-<table data-quarto-postprocess="true" class="table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Year</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Title</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Funding Agency</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Amount</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2024</td>
-<td style="text-align: left;">Presidential Fellowship</td>
-<td style="text-align: left;">The Ohio State University</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2021</td>
-<td style="text-align: left;">Doctoral Dissertation Research Improvement Grant (DDRIG)</td>
-<td style="text-align: left;">Cultural Anthropology Program, National Science Foundation</td>
-<td style="text-align: left;">$20,000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2019</td>
-<td style="text-align: left;">Daniel T. Hughes Memorial Fund</td>
-<td style="text-align: left;">Department of Anthropology, The Ohio State University</td>
-<td style="text-align: left;">$300</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2019</td>
-<td style="text-align: left;">Pre-Dissertation Field Research Grant</td>
-<td style="text-align: left;">Tinker Foundation, College of Latin American Studies, The Ohio State University</td>
-<td style="text-align: left;">$1,750</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2018</td>
-<td style="text-align: left;">Graduate Research Fellowship (GRF)</td>
-<td style="text-align: left;">Graduate Research Fellowship Program, National Science Foundation</td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2018</td>
-<td style="text-align: left;">Graduate Research and Writing Residency</td>
-<td style="text-align: left;">Spring Creek Project, Oregon State University</td>
-<td style="text-align: left;">$250</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2015</td>
-<td style="text-align: left;">Special Undergraduate Recognition Award</td>
-<td style="text-align: left;">Evolutionary Anthropology Society, American Anthropology Association</td>
-<td style="text-align: left;">$250</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </section>
@@ -302,102 +215,20 @@ ul.task-list li input[type="checkbox"] {
 <h3 data-anchor-id="conference-proceedings">Conference Proceedings</h3>
 <div class="cell">
 <div class="cell-output-display">
-<table data-quarto-postprocess="true" class="table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Year</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Title</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Meeting</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Type</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2024</td>
-<td style="text-align: left;">Intermediate-scale disturbance increases forest diversity in Maya community forests</td>
-<td style="text-align: left;">84th Society for Applied Anthropology</td>
-<td style="text-align: left;">Podium</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2023</td>
-<td style="text-align: left;">Human Influences on Central American Food Webs</td>
-<td style="text-align: left;">83rd Society for Applied Anthropology</td>
-<td style="text-align: left;">Podium</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2021</td>
-<td style="text-align: left;">The Importance of Humans in Neotropical Food Webs</td>
-<td style="text-align: left;">Fall Forum 2021, Translational Data Analytics Institute</td>
-<td style="text-align: left;">Poster</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2021</td>
-<td style="text-align: left;">Subsistence harvest diversity, social networks, and adaptive capacity to environmental change in Alaska.</td>
-<td style="text-align: left;">90th American Association of Physical Anthropologists</td>
-<td style="text-align: left;">Invited Symposium</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2019</td>
-<td style="text-align: left;">Playing 'The Milpa Game': Using field experiments to investigate common pool resource dilemmas in Toledo District, Belize</td>
-<td style="text-align: left;">118th American Anthropological Association</td>
-<td style="text-align: left;">Podium</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2018</td>
-<td style="text-align: left;">Subsistence harvest productivity and biodiversity in Alaskan social networks</td>
-<td style="text-align: left;">117th American Anthropological Association</td>
-<td style="text-align: left;">Podium</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2018</td>
-<td style="text-align: left;">Exponential random graph modeling of productivity, diversity, and reciprocity in Alaskan food sharing networks</td>
-<td style="text-align: left;">5th Northwest Evolution, Ecology, and Human Behavior Symposium</td>
-<td style="text-align: left;">Poster</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2017</td>
-<td style="text-align: left;">Dynamic Change, Social Networks, and Harvests: Levels of Resilience in Alaska</td>
-<td style="text-align: left;">29th Human Behavior and Evolution Society</td>
-<td style="text-align: left;">Poster</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2017</td>
-<td style="text-align: left;">Stress: The effects of social and solitary learning on salivary hormones</td>
-<td style="text-align: left;">29th Human Behavior and Evolution Society</td>
-<td style="text-align: left;">Poster</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2016</td>
-<td style="text-align: left;">The Solicitation of Charitable Donations: Experimental Evidence from Behavioral Economic Games</td>
-<td style="text-align: left;">Boise State University Undergraduate Research Conference</td>
-<td style="text-align: left;">Podium</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2016</td>
-<td style="text-align: left;">Understanding Charitable Donations</td>
-<td style="text-align: left;">Boise State University Advancement Team</td>
-<td style="text-align: left;">Invited Talk</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2016</td>
-<td style="text-align: left;">Endocrine stress response in college students to solitary and group learning</td>
-<td style="text-align: left;">4th Northwest Evolution, Ecology, and Human Behavior Symposium</td>
-<td style="text-align: left;">Poster</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; width: 0.5in;">2016</td>
-<td style="text-align: left;">Four Pathways to Generosity</td>
-<td style="text-align: left;">4th Northwest Evolution, Ecology, and Human Behavior Symposium</td>
-<td style="text-align: left;">Poster</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; width: 0.5in;">2015</td>
-<td style="text-align: left;">Four Pathways to Generosity: Evolutionary Mechanisms Differentially Affect Charitable Donations</td>
-<td style="text-align: left;">114th American Anthropological Association</td>
-<td style="text-align: left;">Podium</td>
-</tr>
-</tbody>
-</table>
+</div>
+</div>
+</section>
+<section id="teaching-experience" class="level3">
+<h3 data-anchor-id="teaching-experience">Teaching Experience</h3>
+<div class="cell">
+<div class="cell-output-display">
+</div>
+</div>
+</section>
+<section id="service-and-outreach" class="level3">
+<h3 data-anchor-id="service-and-outreach">Service and Outreach</h3>
+<div class="cell">
+<div class="cell-output-display">
 </div>
 </div>
 
@@ -435,18 +266,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -478,11 +298,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -492,8 +351,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -505,7 +373,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -549,6 +540,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -574,6 +566,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -636,13 +654,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">© Copyright 2024, Shane A. Scaggs</div>   
+    <div class="nav-footer-left">
+<p>© Copyright 2024, Shane A. Scaggs</p>
+</div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">Built with <a href="https://quarto.org/">Quarto</a></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
   </div>
 </footer>
+
 
 
 
