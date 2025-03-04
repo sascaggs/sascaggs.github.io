@@ -29,7 +29,7 @@ Cooperative Networks $\times$ Landscape Mosaics $\times$ Food Webs $\times$ Ecol
 ### Education
 
 ```{r,echo=F}
-edu <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/edu.csv")
+edu <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/edu.csv")
 kbl(edu, format = 'latex', align = 'l') %>% 
   row_spec(nrow(edu), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
@@ -52,7 +52,7 @@ bold_text <- function(text, to_bold) {
     fixed = TRUE
   )
 }
-pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/pubs.xlsx", sheet=3)
+pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=3)
 pubs$Citation = paste0(pubs$Authors, ' ', 
                        pubs$Title, ' ',
                        '\\textit{', paste0(pubs$Journal),'} ', 
@@ -79,24 +79,25 @@ kbl(pubs[,c('Year','Citation')], format = 'latex', align = 'l', linesep = "\\add
 ## Contributions
 
 ```{r, echo=F, message=F, warning=F, fig.width=8, fig.height=4, fig.cap="Contribution matrix.", fig.align='center'}
-cont <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/pubs.xlsx", sheet=2)
+cont <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=2)
 
 cont %>% 
   gather(key=key, value=value, -Contribution) %>%
   mutate(value = ifelse(is.na(value)==T, 'No', 'Yes')) %>%
-  ggplot() + geom_tile(aes(x=key, y=Contribution, fill=factor(value)), color='black',size=1) + 
-  scale_fill_manual(values = c('white','#0cc')) +
+  ggplot() + geom_tile(aes(x=key, y=Contribution, fill=factor(value),), color='white',size=1) + 
+  scale_fill_manual(values = c('white','#09c9c988')) +
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 40, hjust = 1), 
         axis.text = element_text(color='black'),
-        text = element_text(size=14, color='black')) + 
+        text = element_text(size=14, color='black'), 
+        panel.grid = element_blank()) + 
   labs(x=NULL, y=NULL, fill='Contributed?')  
 ```
 
 ### Awards, Fellowships, and Funding Support
 
 ```{r,echo=F}
-funds <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/funds.csv")
+funds <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/funds.csv")
 #colnames(funds) <- c('Year','Title','Agency','Amount')
 funds <- funds[, 1:2]
 
@@ -111,7 +112,7 @@ kbl(funds, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable 
 ### Conference Proceedings
 
 ```{r,echo=F}
-conf <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/conf.csv")
+conf <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/conf.csv")
 #colnames(conf) <- c('Year','Title','Conference','Type')
 conf <- conf %>% arrange(desc(Year))
 
@@ -127,7 +128,7 @@ kbl(conf[,1:2], format = 'latex', align = 'l', linesep = "\\addlinespace", longt
 ### Teaching Experience
 
 ```{r, echo=FALSE}
-teach <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/teach.csv")
+teach <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/teach.csv")
 teach$Term = paste0(teach$Term, ' ', teach$Year)
 teach <- teach[ , c(2,3,4,5)]
 
@@ -145,7 +146,7 @@ kbl(teach, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable 
 ### Service and Outreach
 
 ```{r, echo=F}
-serv <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/serv.csv")
+serv <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/serv.csv")
 serv <- serv %>% select(Year, Role)
 
 kbl(serv, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
