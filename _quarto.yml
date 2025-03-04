@@ -13,7 +13,7 @@ website:
         text: About
       - href: CV.qmd
         text: CV
-      - posts.qmd
+      #- posts.qmd
       - gallery.qmd
     right:
       - icon: "twitter"
