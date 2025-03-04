@@ -30,7 +30,7 @@ Cooperative Networks $\times$ Landscape Mosaics $\times$ Food Webs $\times$ Ecol
 
 ```{r,echo=F}
 edu <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/edu.csv")
-kbl(edu, format = 'latex', align = 'l') %>% 
+kbl(edu, format = 'html', align = 'l') %>% 
   row_spec(nrow(edu), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
   column_spec(1, width = '0.4in') %>%
@@ -66,7 +66,7 @@ pubs$Citation = gsub('Scaggs, S. A.', '\\\\textbf{Scaggs, S. A.}', pubs$Citation
 #pubs$Citation = gsub(']', '\\\\]', pubs$Citation)
 
 pubs = pubs |> arrange(desc(Year))
-kbl(pubs[,c('Year','Citation')], format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T, row.names = NA, escape=F) %>% 
+kbl(pubs[,c('Year','Citation')], format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T, row.names = NA, escape=F) %>% 
   kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
   row_spec(nrow(pubs), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
@@ -101,7 +101,7 @@ funds <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Profe
 #colnames(funds) <- c('Year','Title','Agency','Amount')
 funds <- funds[, 1:2]
 
-kbl(funds, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+kbl(funds, format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
   kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
   row_spec(nrow(funds), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
@@ -117,7 +117,7 @@ conf <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Profes
 conf <- conf %>% arrange(desc(Year))
 
 
-kbl(conf[,1:2], format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+kbl(conf[,1:2], format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
   kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
   row_spec(nrow(conf), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
@@ -133,7 +133,7 @@ teach$Term = paste0(teach$Term, ' ', teach$Year)
 teach <- teach[ , c(2,3,4,5)]
 
 
-kbl(teach, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+kable(teach, format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
   kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
   row_spec(nrow(teach), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
