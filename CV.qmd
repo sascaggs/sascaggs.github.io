@@ -22,42 +22,70 @@ Presidential Fellow<br> [Human Complexity Lab](https://u.osu.edu/hclab/)<br> Dep
 
 ### Research Interests
 
-Human Subsistence $\times$ Cooperation $\times$ Community and Landscape Ecology $\times$ Computational Social Science $\times$ Complex Systems $\times$ Network Science
+Cooperative Networks $\times$ Landscape Mosaics $\times$ Food Webs $\times$ Ecological Anthropology $\times$ Complex Systems $\times$ Community and Landscape Ecology $\times$ Computational Social Science $\times$ Network Science
 
 <br>
 
 ### Education
 
 ```{r,echo=F}
-edu <- read.csv(file = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/edu.csv")
-edu %>% kbl(align = 'l') %>% column_spec(1, width = '0.5in')
+edu <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/edu.csv")
+kbl(edu, format = 'latex', align = 'l') %>% 
+  row_spec(nrow(edu), extra_latex_after = "\\arrayrulecolor{white}") %>%
+  row_spec(0, bold = T) %>%
+  column_spec(1, width = '0.4in') %>%
+  column_spec(2, width = '2in') %>%
+  column_spec(3, width = '2in') %>%
+  column_spec(4, width = '1.5in')
 ```
 
 ### Publications
 
 ```{r,echo=F}
-pubs <- openxlsx::read.xlsx("C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/pubs.xlsx", sheet=1)
-colnames(pubs) <- c('Year','Citation','DOI','Type')
+library(kableExtra)
 
-pubs$Citation <- paste0(pubs$Citation, ' ', pubs$DOI)
+bold_text <- function(text, to_bold) {
+  gsub(
+    to_bold, 
+    paste0("\\\\textbf{", to_bold, "}"), 
+    text, 
+    fixed = TRUE
+  )
+}
+pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/pubs.xlsx", sheet=3)
+pubs$Citation = paste0(pubs$Authors, ' ', 
+                       pubs$Title, ' ',
+                       '\\textit{', paste0(pubs$Journal),'} ', 
+                       pubs$Volume, ' ', 
+                       pubs$DOI)
+pubs$Citation = gsub('_', '\\\\_', pubs$Citation)
+pubs$Citation = gsub('Scaggs, S. A.', '\\\\textbf{Scaggs, S. A.}', pubs$Citation)
 
-pubs[,1:2] %>% 
-  mutate(Citation = cell_spec(Citation, "html", link = pubs$DOI)) |> 
-  kable(align = 'l', "html", escape = F) %>%
-  column_spec(1, width = '0.5in')
+#pubs$Citation = gsub('/', '\\\\/', pubs$Citation)
+#pubs$Citation = gsub('[', '\\\\[', pubs$Citation)
+#pubs$Citation = gsub(']', '\\\\]', pubs$Citation)
+
+pubs = pubs |> arrange(desc(Year))
+kbl(pubs[,c('Year','Citation')], format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T, row.names = NA, escape=F) %>% 
+  kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
+  row_spec(nrow(pubs), extra_latex_after = "\\arrayrulecolor{white}") %>%
+  row_spec(0, bold = T) %>%
+  column_spec(1, width = '1in') %>%
+  column_spec(2, width = '5in')
+
 
 ```
 
 ## Contributions
 
 ```{r, echo=F, message=F, warning=F, fig.width=8, fig.height=4, fig.cap="Contribution matrix.", fig.align='center'}
-cont <- openxlsx::read.xlsx("C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/pubs.xlsx", sheet=2)
+cont <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/pubs.xlsx", sheet=2)
 
 cont %>% 
   gather(key=key, value=value, -Contribution) %>%
   mutate(value = ifelse(is.na(value)==T, 'No', 'Yes')) %>%
   ggplot() + geom_tile(aes(x=key, y=Contribution, fill=factor(value)), color='black',size=1) + 
-  scale_fill_manual(values = c('white','magenta')) +
+  scale_fill_manual(values = c('white','#0cc')) +
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 40, hjust = 1), 
         axis.text = element_text(color='black'),
@@ -65,22 +93,67 @@ cont %>%
   labs(x=NULL, y=NULL, fill='Contributed?')  
 ```
 
-### Funding Support
+### Awards, Fellowships, and Funding Support
 
 ```{r,echo=F}
-funds <- read.csv(file = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/funds.csv")
-colnames(funds) <- c("Year","Title","Funding Agency","Amount")
-funds %>% kbl(align = 'l') %>% column_spec(1, width = '0.5in')
+funds <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/funds.csv")
+#colnames(funds) <- c('Year','Title','Agency','Amount')
+funds <- funds[, 1:2]
+
+kbl(funds, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+  kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
+  row_spec(nrow(funds), extra_latex_after = "\\arrayrulecolor{white}") %>%
+  row_spec(0, bold = T) %>%
+  column_spec(1, width = '1in') %>%
+  column_spec(2, width = '5in')
 ```
 
 ### Conference Proceedings
 
 ```{r,echo=F}
-conf <- read.csv(file = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Profession Development/sascaggs.github.io/csv/conf.csv")
-colnames(conf) <- c("Year","Title","Meeting","Type")
-conf[,1:4] %>% 
-  arrange(desc( Year)) %>%
-  kbl(align = 'l') %>% 
-  column_spec(1, width = '0.5in')
+conf <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/conf.csv")
+#colnames(conf) <- c('Year','Title','Conference','Type')
+conf <- conf %>% arrange(desc(Year))
+
+
+kbl(conf[,1:2], format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+  kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
+  row_spec(nrow(conf), extra_latex_after = "\\arrayrulecolor{white}") %>%
+  row_spec(0, bold = T) %>%
+  column_spec(1, width = '1in') %>%
+  column_spec(2, width = '5in') 
+```
+
+### Teaching Experience
+
+```{r, echo=FALSE}
+teach <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/teach.csv")
+teach$Term = paste0(teach$Term, ' ', teach$Year)
+teach <- teach[ , c(2,3,4,5)]
+
+
+kbl(teach, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+  kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
+  row_spec(nrow(teach), extra_latex_after = "\\arrayrulecolor{white}") %>%
+  row_spec(0, bold = T) %>%
+  column_spec(1, width = '1in') %>%
+  column_spec(2, width = '2.25in') %>%
+  column_spec(3, width = '2.25in') %>%
+  column_spec(4, width = '0.5in') 
+```
+
+### Service and Outreach
+
+```{r, echo=F}
+serv <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Design/Professional/csv/serv.csv")
+serv <- serv %>% select(Year, Role)
+
+kbl(serv, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+  kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
+  row_spec(nrow(serv), extra_latex_after = "\\arrayrulecolor{white}") %>%
+  row_spec(0, bold = T) %>%
+  column_spec(1, width = '1.25in') %>%
+  column_spec(2, width = '4.75in')
 
 ```
+
