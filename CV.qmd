@@ -55,11 +55,11 @@ bold_text <- function(text, to_bold) {
 pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=3)
 pubs$Citation = paste0(pubs$Authors, ' ', 
                        pubs$Title, ' ',
-                       '\\textit{', paste0(pubs$Journal),'} ', 
+                       pubs$Journal, 
                        pubs$Volume, ' ', 
                        pubs$DOI)
-pubs$Citation = gsub('_', '\\\\_', pubs$Citation)
-pubs$Citation = gsub('Scaggs, S. A.', '\\\\textbf{Scaggs, S. A.}', pubs$Citation)
+#pubs$Citation = gsub('_', '\\\\_', pubs$Citation)
+#pubs$Citation = gsub('Scaggs, S. A.', '\\\\textbf{Scaggs, S. A.}', pubs$Citation)
 
 #pubs$Citation = gsub('/', '\\\\/', pubs$Citation)
 #pubs$Citation = gsub('[', '\\\\[', pubs$Citation)
@@ -149,7 +149,7 @@ kable(teach, format = 'html', align = 'l', linesep = "\\addlinespace", longtable
 serv <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/serv.csv")
 serv <- serv %>% select(Year, Role)
 
-kbl(serv, format = 'latex', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
+kbl(serv, format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
   kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
   row_spec(nrow(serv), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
