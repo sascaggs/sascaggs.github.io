@@ -14,32 +14,44 @@ library(tidyverse)
 
 <p style="text-align: left;">
 
-Presidential Fellow<br> [Human Complexity Lab](https://u.osu.edu/hclab/)<br> Department of Anthropology<br> The Ohio State University<br> scaggs.32\@osu.edu
+President's Postdoctoral Scholar<br> [Health and Environment Modeling Laboratory](https://healmod.osu.edu/)<br> Division of Biostatistics<br> The Ohio State University<br> scaggs.32\@osu.edu
 
 </p>
 
 <br>
 
-### Research Interests
+## Research Interests
 
-Cooperative Networks $\times$ Landscape Mosaics $\times$ Food Webs $\times$ Ecological Anthropology $\times$ Complex Systems $\times$ Community and Landscape Ecology $\times$ Computational Social Science $\times$ Network Science
+Ecological Anthropology $\times$ Cultural Anthropology $\times$ Evolutionary Anthropology $\times$ Complex Adaptive Systems $\times$ Network Science $\times$ Computational Social Science $\times$ Landscape Ecology $\times$ Community Ecology $\times$ Spatial Patterns $\times$ Hierarchical Bayesian Models
 
 <br>
 
-### Education
+## Professional Preparation
 
-```{r,echo=F}
-edu <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/edu.csv")
-kbl(edu, format = 'html', align = 'l') %>% 
-  row_spec(nrow(edu), extra_latex_after = "\\arrayrulecolor{white}") %>%
-  row_spec(0, bold = T) %>%
-  column_spec(1, width = '0.4in') %>%
-  column_spec(2, width = '2in') %>%
-  column_spec(3, width = '2in') %>%
-  column_spec(4, width = '1.5in')
-```
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2025    | **President's Postdoctoral Scholar\                                                                                                                       |
+|         | **Health and Environment Modeling Laboratory, Division of Biostatistics, The Ohio State University, Columbus, OH                                          |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+|         |                                                                                                                                                           |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2025    | **Ph.D. in Anthropology (advisor: Dr. Sean Downey)\                                                                                                       |
+|         | **Department of Anthropology, The Ohio State University, Columbus, OH\                                                                                    |
+|         | Dissertation: "Rethinking the Socio-Ecology of Swidden Agriculture using Ecological Anthropology, Landscape and Community Ecology, and Complexity Theory" |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+|         |                                                                                                                                                           |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2018    | **M.S. in Applied Anthropology (advisor: Dr. Drew Gerkey)\                                                                                                |
+|         | **School of Language, Culture, and Society, Oregon State University, Corvallis, OR\                                                                       |
+|         | Thesis: "Subsistence Harvest Diversity in Alaskan Food Sharing Networks"                                                                                  |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+|         |                                                                                                                                                           |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2016    | **B.S. in Anthropology (advisor: Dr. John Ziker)\                                                                                                         |
+|         | **Department of Anthropology, Boise State University, Boise, ID                                                                                           |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-### Publications
+
+## Publications
 
 ```{r,echo=F}
 library(kableExtra)
@@ -94,7 +106,7 @@ cont %>%
   labs(x=NULL, y=NULL, fill='Contributed?')  
 ```
 
-### Awards, Fellowships, and Funding Support
+## Awards, Fellowships, and Funding Support
 
 ```{r,echo=F}
 funds <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/funds.csv")
@@ -109,7 +121,7 @@ kbl(funds, format = 'html', align = 'l', linesep = "\\addlinespace", longtable =
   column_spec(2, width = '5in')
 ```
 
-### Conference Proceedings
+## Conference Proceedings
 
 ```{r,echo=F}
 conf <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/conf.csv")
@@ -125,7 +137,16 @@ kbl(conf[,1:2], format = 'html', align = 'l', linesep = "\\addlinespace", longta
   column_spec(2, width = '5in') 
 ```
 
-### Teaching Experience
+## Professional Development
+
++-----------+-------------------------------------+
+| 2024      | **Complex Systems Summer School\    |
+|           | **Santa Fe Institute – Santa Fe, NM |
++-----------+-------------------------------------+
+|           |                                     |
++-----------+-------------------------------------+
+
+## Teaching Experience
 
 ```{r, echo=FALSE}
 teach <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/teach.csv")
