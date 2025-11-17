@@ -36,3 +36,10 @@ format:
 
 editor: source
 
+collections: 
+  posts:
+    categories: true 
+    sort: "date desc"
+    index: 
+      title: "Blog"
+      description: "Posts and updates"
