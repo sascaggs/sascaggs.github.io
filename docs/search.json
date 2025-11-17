@@ -14,18 +14,18 @@
     "text": "Project 3"
   },
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "objectID": "posts/posts.html",
+    "href": "posts/posts.html",
+    "title": "Blog",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "No matching items"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "About",
     "section": "",
-    "text": "Hello. My name is Shane Scaggs. I am a Presidential Fellow in the Human Complexity Lab in the Department of Anthropology at The Ohio State University. My research combines approaches from anthropology, ecology, and data science to understand the how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions."
+    "text": "Hello. My name is Shane Scaggs. I am a Postdoctoral Scholar in the Health and Environment Modeling Laboratory. My research combines approaches from anthropology, ecology, and data science to understand the how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions."
   },
   {
     "objectID": "CV.html",
@@ -56,10 +56,10 @@
     "text": "Three decades of Saguaro cactus surveys at Saguaro National Park. Top: a lollipop graph showing the research effort put into surveyed Saguaro. Bottom: annual growth in inches for all saguaro surveyed and the average growth trend from 1980 to 2010. Data from Orum, Ferguson, & Mihail (2016). “Saguaro (Carnegiea gigantea) Mortality and Population Regeneration in the Cactus Forest of Saguaro National Park: Seventy-Five Years and Counting”. PLOS One. https://doi.org/10.1371/journal.pone.0160899"
   },
   {
-    "objectID": "posts.html",
-    "href": "posts.html",
-    "title": "Blog",
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
     "section": "",
-    "text": "No matching items"
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   }
 ]
