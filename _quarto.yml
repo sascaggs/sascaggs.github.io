@@ -5,12 +5,14 @@ project:
 website:
   title: "Shane A. Scaggs"
   navbar:
+    title: |
+     <img src="/img/Head.png" alt="Shane A. Scaggs" style="height: 68px;">
     search: true
     background: '#000000'
     foreground: '#ffffff'
     left:
-      - href: index.qmd
-        text: About
+      #- href: index.qmd
+      #  text: About
       - href: CV.qmd
         text: CV
       - href: posts/posts.qmd
@@ -26,14 +28,26 @@ website:
       - text: "{{< iconify academicons:google-scholar-square >}}"
         href: "https://scholar.google.com/citations?user=CtWNkOkAAAAJ&hl=en&oi=ao"
   page-footer:
-    right: "Built with [Quarto](https://quarto.org/)"
-    left: "&copy; Copyright 2025, Shane A. Scaggs"
-
+    left: |
+      <div style="display: flex; align-items: center; gap: 10px;">
+       <img src="/img/Head2.png" height="68" alt="Logo">
+        <span style="line-height: 1; position: relative; top: 5px;">
+         &copy; 2025, Shane A. Scaggs
+       </span>
+      </div>
+    right: |
+      <div style="display: flex; align-items: center; justify-content: flex-end;">
+        <span style="line-height: 1; position: relative; top: 5px;">
+          Built with <a href="https://quarto.org/" target="_blank">Quarto</a>
+        </span>
+      </div>
+ 
 format:
   html:
+    #include-after-body: footer-banner.html
     css: styles.css
     toc: false
-
+    
 editor: source
 
 collections: 

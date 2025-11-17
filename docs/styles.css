@@ -346,3 +346,27 @@ div.listing-date, .listing-author {
   padding: 0px !important;
 }
 
+.footer-banner {
+  margin-top: 2em;
+}
+
+.footer-banner img {
+  width: 100%;
+  display: block;
+  max-height: 120px;
+  object-fit: cover;
+}
+
+.nav-footer {
+  background-image: url("img/footer.png");   /* path to your banner */
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat-x;
+  padding-top: 1.5em;
+  padding-bottom: 1.5em;
+  color: white; /* optional for contrast */
+}
+
+.nav-footer a {
+  color: #ffffcc; /* optional: tweak link color over image background */
+}
