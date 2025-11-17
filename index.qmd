@@ -6,5 +6,5 @@ about:
   image: img/mustache.png
 ---
 
-Hello. My name is Shane Scaggs. I am a Presidential Fellow in the [Human Complexity Lab](https://u.osu.edu/hclab/) in the Department of Anthropology at The Ohio State University. My research combines approaches from anthropology, ecology, and data science to understand the how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions. 
+Hello. My name is Shane Scaggs. I am a Postdoctoral Scholar in the [Health and Environment Modeling Laboratory](https://healmod.osu.edu/). My research combines approaches from anthropology, ecology, and data science to understand the how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions. 
 
