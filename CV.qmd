@@ -65,11 +65,14 @@ bold_text <- function(text, to_bold) {
   )
 }
 pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=3)
+pubs$DOI_link <- paste0(
+  "<a href='", pubs$DOI, "' target='_blank'>", pubs$DOI, "</a>"
+)
 pubs$Citation = paste0(pubs$Authors, ' ', 
                        pubs$Title, ' ',
                        pubs$Journal, 
                        pubs$Volume, ' ', 
-                       pubs$DOI)
+                       pubs$DOI_link)
 #pubs$Citation = gsub('_', '\\\\_', pubs$Citation)
 #pubs$Citation = gsub('Scaggs, S. A.', '\\\\textbf{Scaggs, S. A.}', pubs$Citation)
 
@@ -78,7 +81,13 @@ pubs$Citation = paste0(pubs$Authors, ' ',
 #pubs$Citation = gsub(']', '\\\\]', pubs$Citation)
 
 pubs = pubs |> arrange(desc(Year))
-kbl(pubs[,c('Year','Citation')], format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T, row.names = NA, escape=F) %>% 
+kbl(pubs[,c('Year','Citation')], 
+    format = 'html', 
+    align = 'l', 
+    linesep = "\\addlinespace", 
+    longtable = T, 
+    row.names = NA, 
+    escape=F) %>% 
   kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
   row_spec(nrow(pubs), extra_latex_after = "\\arrayrulecolor{white}") %>%
   row_spec(0, bold = T) %>%
