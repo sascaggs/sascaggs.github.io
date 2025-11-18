@@ -340,7 +340,7 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">=</span> <span class="dv">2</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>sigma_v <span class="ot">=</span> <span class="dv">1</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>mu_phi <span class="ot">=</span> <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>sd_phi <span class="ot">=</span> <span class="fl">0.7</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>sd_phi <span class="ot">=</span> <span class="fl">0.5</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># generate varying base rates and detection probabilities </span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>alpha_k <span class="ot">=</span> <span class="fu">rnorm</span>(K, mu_alpha, sd_alpha); alpha_k</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -349,7 +349,7 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>phi_k <span class="ot">=</span> <span class="fu">inv_logit</span>(<span class="fu">rnorm</span>(K, mu_phi, sd_phi)); phi_k</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.3623663 0.2977350 0.4442963 0.2415212 0.2200671</code></pre>
+<pre><code>[1] 0.3341748 0.2893284 0.3904238 0.2491572 0.2333515</code></pre>
 </div>
 </div>
 <p>We then set up some containers for the simulation results.</p>
@@ -376,15 +376,16 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  A_true <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">ncol =</span> S, <span class="at">nrow =</span> S)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  A_obs <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">ncol =</span> S, <span class="at">nrow =</span> S)</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) {</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    p_ijk <span class="ot">=</span> <span class="fu">inv_logit</span>(alpha_k[k] <span class="sc">+</span> u_i[i] <span class="sc">+</span> v_j[j])</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    A_true[i,j] <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, p_ijk)</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    A_obs[i,j] <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, phi_k[k] <span class="sc">*</span> A_true[i,j])</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  A_true_list[[k]] <span class="ot">=</span> A_true</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  A_obs_list[[k]] <span class="ot">=</span> A_obs</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop </span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) {</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    p_ijk <span class="ot">=</span> <span class="fu">inv_logit</span>(alpha_k[k] <span class="sc">+</span> u_i[i] <span class="sc">+</span> v_j[j])</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    A_true[i,j] <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, p_ijk)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    A_obs[i,j] <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, phi_k[k] <span class="sc">*</span> p_ijk)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  A_true_list[[k]] <span class="ot">=</span> A_true</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  A_obs_list[[k]] <span class="ot">=</span> A_obs</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This yields the following summary.</p>
 <div class="cell">
@@ -397,11 +398,11 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>); dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  web true_links observed_links detection      alpha
-1   1        280            104 0.3623663 -1.5102138
-2   2        132             26 0.2977350 -2.3985414
-3   3        269            134 0.4442963 -1.4891637
-4   4         93             19 0.2415212 -2.3988121
-5   5        329             64 0.2200671 -0.3613139</code></pre>
+1   1        286             89 0.3341748 -1.5102138
+2   2        125             29 0.2893284 -2.3985414
+3   3        216             85 0.3904238 -1.4891637
+4   4        284             69 0.2491572 -2.3988121
+5   5        356             98 0.2333515 -0.3613139</code></pre>
 </div>
 </div>
 <p>If we examine the degree distributions across all of the webs, we can see how they differ after we adjust for the probability of detection.</p>
@@ -416,9 +417,6 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color=</span><span class="st">'white'</span>, <span class="at">fill=</span><span class="st">'black'</span>) <span class="sc">+</span> </span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>key) <span class="sc">+</span> </span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Outgoing links'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -428,6 +426,25 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 </div>
 </div>
 <p>We can see that the degree distribution of the observed links is more zero-inflated and that the tail of the distribution has contracted. Altering the values of <span class="math inline">\(\sigma_u\)</span> and <span class="math inline">\(\sigma_v\)</span> can change these properties to some extent, especially the heaviness of the tail.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>A_true <span class="ot">=</span> A_true_list[[<span class="dv">1</span>]]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>A_obs <span class="ot">=</span> A_obs_list[[<span class="dv">1</span>]]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>row_sums <span class="ot">=</span> <span class="fu">rowSums</span>(A_true)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>sort_order <span class="ot">=</span> <span class="fu">order</span>(row_sums)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(A_true[sort_order, ], <span class="at">col =</span> <span class="fu">c</span>(<span class="st">'black'</span>,<span class="st">'white'</span>), <span class="at">main =</span> <span class="st">'True'</span>, <span class="at">xaxt =</span> <span class="st">'n'</span>, <span class="at">yaxt =</span> <span class="st">'n'</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(A_obs[sort_order, ],  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">'black'</span>,<span class="st">'white'</span>), <span class="at">main =</span> <span class="st">'Observed'</span>, <span class="at">xaxt =</span> <span class="st">'n'</span>, <span class="at">yaxt =</span> <span class="st">'n'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>

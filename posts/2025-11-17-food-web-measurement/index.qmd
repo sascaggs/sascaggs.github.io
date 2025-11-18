@@ -182,7 +182,7 @@ sd_alpha = 1
 sigma_u = 2
 sigma_v = 1
 mu_phi = -1
-sd_phi = 0.7
+sd_phi = 0.5
 
 # generate varying base rates and detection probabilities 
 alpha_k = rnorm(K, mu_alpha, sd_alpha); alpha_k
@@ -255,3 +255,19 @@ data.frame(
 ```
 
 We can see that the degree distribution of the observed links is more zero-inflated and that the tail of the distribution has contracted. Altering the values of $\sigma_u$ and $\sigma_v$ can change these properties to some extent, especially the heaviness of the tail. 
+
+```{r}
+A_true = A_true_list[[1]]
+A_obs = A_obs_list[[1]]
+
+row_sums = rowSums(A_true)
+
+sort_order = order(row_sums)
+
+par(mfrow=c(1,2))
+image(A_true[sort_order, ], col = c('black','white'), main = 'True', xaxt = 'n', yaxt = 'n')
+image(A_obs[sort_order, ],  col = c('black','white'), main = 'Observed', xaxt = 'n', yaxt = 'n')
+```
+
+
+
