@@ -144,7 +144,9 @@ output {
   font-family: 'Courier Prime Sans', "Lucida Console", "Courier New", monospace;
 }
  
-
+a:visited {
+  color: #7777ff;
+}
 
 nav,
 .footer {
@@ -170,9 +172,11 @@ a.nav-link,a.navbar-brand {
     ),
     linear-gradient(
       to right,
-      rgba(255, 0, 0, 1),
-      rgba(255, 0, 180, 1),
-      rgba(0, 100, 200, 1)
+      rgba(10, 34, 50, 1),
+      rgba(0, 117, 108, 1),
+      rgba(72, 106, 24, 1),
+      rgba(174, 160, 55, 1), 
+      rgba(189, 40, 46, 1) 
   );
   background-size: 100% 3px, 0 3px;
   background-position: 100% 100%, 0 100%;
