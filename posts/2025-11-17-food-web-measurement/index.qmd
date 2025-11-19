@@ -1,12 +1,13 @@
 ---
 title: "Food Web Generation and Measurement"
 date: 2025-11-17
-categories: [blog, r]
+categories: [community ecology, food webs, networks]
 format:
   html:
     toc: true
 ---
 
+### Introduction
 
 Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The [Web of Life](https://www.web-of-life.es/) database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.  
 

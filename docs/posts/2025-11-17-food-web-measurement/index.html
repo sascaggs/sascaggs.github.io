@@ -200,8 +200,9 @@ window.Quarto = {
     <div class="quarto-title column-body">
       <h1 class="title">Food Web Generation and Measurement</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">blog</div>
-                <div class="quarto-category">r</div>
+                <div class="quarto-category">community ecology</div>
+                <div class="quarto-category">food webs</div>
+                <div class="quarto-category">networks</div>
               </div>
                   </div>
   </div>
@@ -229,7 +230,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#interaction-rates" id="toc-interaction-rates" class="nav-link active" data-scroll-target="#interaction-rates">Interaction rates</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#interaction-rates" id="toc-interaction-rates" class="nav-link" data-scroll-target="#interaction-rates">Interaction rates</a></li>
   <li><a href="#detection" id="toc-detection" class="nav-link" data-scroll-target="#detection">Detection</a></li>
   <li><a href="#consumer-and-resource-random-effects" id="toc-consumer-and-resource-random-effects" class="nav-link" data-scroll-target="#consumer-and-resource-random-effects">Consumer and resource random effects</a></li>
   <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation">Simulation</a></li>
@@ -243,6 +245,8 @@ window.Quarto = {
 
 
 
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
 <p>Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The <a href="https://www.web-of-life.es/">Web of Life</a> database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -291,6 +295,7 @@ A^{\text{obs}}_{ij,k} \sim \text{Bernoulli}(q_{ij,k})
 </ul>
 <p>Although false positives are also a possible source of bias, we leave this out of the model, for now.</p>
 <p>Finally, we need to declare hierarchical, non-centered priors for all parameters, beginning first with the interaction rates, then the detection probabilities, and finally the random effects. We assume a weakly informative <span class="math inline">\(\mathcal{N}(0,1)\)</span> prior on all latent deviations, and <span class="math inline">\(\text{Exponential}(1)\)</span> for all SD.</p>
+</section>
 <section id="interaction-rates" class="level3">
 <h3 class="anchored" data-anchor-id="interaction-rates">Interaction rates</h3>
 <p><span class="math display">\[

@@ -161,6 +161,7 @@ nav,
 }*/
 
 a.nav-link,a.navbar-brand {
+  color: white;
   background:
     linear-gradient(
       to right,
@@ -294,7 +295,7 @@ a.badge.badge-green {
 
 .quarto-title-meta {
   font-family: 'Atkinson Hyperlegible', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background-color: #3300ff33;
+  background-color: #00e0c933;
   color: black;
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px; 
@@ -357,10 +358,7 @@ div.quarto-about-trestles .about-entity .about-link:hover {
   font-size: 12pt;
 }
 
-.sidebar {
-    color: #3300ff;
-    font-size: 10pt;
-}
+
 
 div.listing-date, .listing-author {
     font-family: "Atkinson Hyperlegible";
@@ -400,4 +398,47 @@ div.listing-date, .listing-author {
 
 .nav-footer a {
   color: #ffffcc; /* optional: tweak link color over image background */
+}
+
+/* testing */
+/* TOC links – normal */
+.sidebar nav[role=doc-toc] ul>li>a,
+.sidebar nav[role=doc-toc] ul>li>ul>li>a {
+  color: black;                              /* normal text */
+  text-decoration: none;
+  border-left: 2px solid transparent;          /* will show on active */
+
+  /* same structure as navbar, but white base bar */
+  background:
+    linear-gradient(
+      to right,
+      white,
+      white
+    ),
+    linear-gradient(
+      to right,
+      rgba(10, 34, 50, 1),
+      rgba(0, 117, 108, 1),
+      rgba(72, 106, 24, 1),
+      rgba(174, 160, 55, 1), 
+      rgba(189, 40, 46, 1) 
+  );
+  background-size: 100% 3px, 0 3px;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 400ms;
+}
+
+/* TOC links – hover: show gradient bar + change text */
+.sidebar nav[role=doc-toc] ul>li>a:hover,
+.sidebar nav[role=doc-toc] ul>li>ul>li>a:hover {
+  background-size: 0 3px, 100% 3px;           /* flip: gradient visible */
+  color: #00E0C9 !important;
+}
+
+/* TOC links – active (THIS IS THE IMPORTANT PART) */
+.sidebar nav[role=doc-toc] .nav-link.active {
+  background-size: 0 3px, 100% 3px;  
+  color: #00E0C9 !important;
+  border-left-color: rgba(10, 34, 50, 1);
 }
