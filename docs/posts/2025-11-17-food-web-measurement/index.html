@@ -272,7 +272,7 @@ A^{\text{obs}}_{ij,k} \sim \text{Bernoulli}(p_{ij,k})
 \text{logit}(\phi_k) = \mu_p + \delta_{p,k}
 \end{equation}
 \]</span></p>
-<p>We assume that each web has its own detection probability <span class="math inline">\(\phi_k\)</span>. The parameter <span class="math inline">\(\mu_k\)</span> is the average detection probability across all food webs, and <span class="math inline">\(\delta_{p,k}\)</span> is a specific deviation of web <span class="math inline">\(k\)</span> from the global average, which we model as non-centered: <span class="math inline">\(\delta_{\phi,k} \sim \mathcal{N}(0,\sigma^2_{\phi})\)</span>.</p>
+<p>We assume that each web has its own rate of detection <span class="math inline">\(\phi_k\)</span>. The parameter <span class="math inline">\(\mu_k\)</span> is the average log-odds of detection across all food webs, and <span class="math inline">\(\delta_{p,k}\)</span> is a specific deviation of web <span class="math inline">\(k\)</span> from the global average, which we model as non-centered: <span class="math inline">\(\delta_{\phi,k} \sim \mathcal{N}(0,\sigma^2_{\phi})\)</span>.</p>
 <p>It follows that the probability of observing a link is</p>
 <p><span class="math display">\[
 \begin{equation}
@@ -418,9 +418,10 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>key) <span class="sc">+</span> </span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Outgoing links'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="576"></p>
+<figcaption>The out-degree distribution across all simulated webs.</figcaption>
 </figure>
 </div>
 </div>
@@ -438,9 +439,10 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(A_true[sort_order, ], <span class="at">col =</span> <span class="fu">c</span>(<span class="st">'black'</span>,<span class="st">'white'</span>), <span class="at">main =</span> <span class="st">'True'</span>, <span class="at">xaxt =</span> <span class="st">'n'</span>, <span class="at">yaxt =</span> <span class="st">'n'</span>)</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(A_obs[sort_order, ],  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">'black'</span>,<span class="st">'white'</span>), <span class="at">main =</span> <span class="st">'Observed'</span>, <span class="at">xaxt =</span> <span class="st">'n'</span>, <span class="at">yaxt =</span> <span class="st">'n'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="624"></p>
+<figcaption>Examples of true and observed adjacency matrices.</figcaption>
 </figure>
 </div>
 </div>

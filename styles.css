@@ -60,15 +60,19 @@ h6 {
   font-size: 0.8em;
 }
 
-a {
+/*a {
   color: #3300ff;
   text-decoration: none;
-  /*border-bottom: dotted 1px #A1A3A1;*/
-}
+}*/
 
-a:hover {
+/*a:hover {
   text-decoration: underline;
   color: #00E0C9
+}*/
+
+a:hover {
+  background-size: 0 3px, 100% 3px;
+  color: #00E0C9;
 }
 
 hr {
@@ -120,7 +124,7 @@ table td {
 
 ul {
   list-style: square;
-  color: red}
+  color: #00aa99}
 
 dd {
   margin-left: 2em;
@@ -148,14 +152,40 @@ nav,
   font-size: 100%;
 }
 
-a.nav-link,a.navbar-brand {
+/*a.nav-link,a.navbar-brand {
   border-bottom: 0;
   color: #ffefd5;
+}*/
+
+/*a.nav-link:hover,a.navbar-brand:hover {
+  color: #00E0C9;
+}*/
+
+a.nav-link,a.navbar-brand {
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 1),
+      rgba(0, 0, 0, 1)
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 0, 0, 1),
+      rgba(255, 0, 180, 1),
+      rgba(0, 100, 200, 1)
+  );
+  background-size: 100% 3px, 0 3px;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 400ms;
 }
 
 a.nav-link:hover,a.navbar-brand:hover {
+  background-size: 0 3px, 100% 3px;
   color: #00E0C9;
 }
+
+
 
 /* Badges */
 
@@ -229,7 +259,7 @@ a.badge.badge-green {
 
 .label-blue,
 .badge-blue {
-  background: #4673B8;
+  background: #00E0C9;
 }
 
 .label-red,

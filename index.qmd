@@ -6,5 +6,5 @@ about:
   image: img/Shane_Scaggs_Postdoc0846crop.png
 ---
 
-I am a Postdoctoral Scholar in the [Health and Environment Modeling Laboratory](https://healmod.osu.edu/). My research combines approaches from anthropology, ecology, and data science to understand the how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions. 
+I am a Postdoctoral Scholar in the [Health and Environment Modeling Laboratory](https://healmod.osu.edu/). My research combines approaches from anthropology, ecology, and data science to understand how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions. 
 

@@ -104,7 +104,7 @@ $$
 \end{equation}
 $$
 
-We assume that each web has its own detection probability $\phi_k$. The parameter $\mu_k$ is the average detection probability across all food webs, and $\delta_{p,k}$ is a specific deviation of web $k$ from the global average, which we model as non-centered: $\delta_{\phi,k} \sim \mathcal{N}(0,\sigma^2_{\phi})$. 
+We assume that each web has its own rate of detection $\phi_k$. The parameter $\mu_k$ is the average log-odds of detection across all food webs, and $\delta_{p,k}$ is a specific deviation of web $k$ from the global average, which we model as non-centered: $\delta_{\phi,k} \sim \mathcal{N}(0,\sigma^2_{\phi})$. 
 
 
 It follows that the probability of observing a link is 
@@ -241,7 +241,7 @@ dat = data.frame(
 
 If we examine the degree distributions across all of the webs, we can see how they differ after we adjust for the probability of detection. 
 
-```{r, fig.width=6, fig.height=4, message=F, warning=F}
+```{r, fig.width=6, fig.height=4, message=F, warning=F, fig.cap="The out-degree distribution across all simulated webs."}
 deg = function(A) rowSums(A)
 data.frame(
   True = unlist(lapply(A_true_list, deg)),
@@ -256,7 +256,7 @@ data.frame(
 
 We can see that the degree distribution of the observed links is more zero-inflated and that the tail of the distribution has contracted. Altering the values of $\sigma_u$ and $\sigma_v$ can change these properties to some extent, especially the heaviness of the tail. 
 
-```{r}
+```{r, fig.height=4, fig.width=6.5, fig.cap="Examples of true and observed adjacency matrices."}
 A_true = A_true_list[[1]]
 A_obs = A_obs_list[[1]]
 
