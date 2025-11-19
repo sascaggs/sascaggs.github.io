@@ -11,8 +11,6 @@ website:
     background: '#000000'
     foreground: '#ffffff'
     left:
-      #- href: index.qmd
-      #  text: About
       - href: CV.qmd
         text: CV
       - href: posts/posts.qmd
@@ -44,10 +42,31 @@ website:
  
 format:
   html:
-    #include-after-body: footer-banner.html
     css: styles.css
     toc: false
     
+    html-math-method: 
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@4.0.0-beta.4/tex-mml-chtml.js"
+    include-in-header: 
+      text: |
+                <style>
+                @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap')
+                @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap')
+                </style>
+                <script>
+                MathJax = {
+                    tex: {
+                        tags: 'ams'  // should be 'ams', 'none', or 'all'
+                    },
+                    output: {
+                        font: 'mathjax-stix2'
+                    }
+                };
+                </script>
+
+
+
 editor: source
 
 collections: 

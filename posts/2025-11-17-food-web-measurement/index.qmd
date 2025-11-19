@@ -13,7 +13,7 @@ bibliography: 2025-11-18.bib
 Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The [Web of Life](https://www.web-of-life.es/) database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.  
 
 
-```{r, echo=F, message=F, warning=F, fig.cap="An example food web originally published by @bascompte2005interaction."}
+```{r, echo=F, message=F, warning=F, fig.cap="An example food web originally published by @bascompte2005interaction.", dpi=333}
 library(tidyverse)
 library(tidygraph)
 library(ggraph)
@@ -31,13 +31,14 @@ g = graph_from_data_frame(el)
 
 as_tbl_graph(g) |> 
   ggraph(layout = 'focus', focus = 2) + 
-  draw_circle(col = 'black', 
+  draw_circle(col = '#3300ff', 
               use = 'focus', 
               max.circle = 4) + 
   geom_edge_link0(color = '#00000022') +
   geom_node_point(pch=21, fill='white') + 
   coord_equal() + 
-  theme_graph()
+  theme_graph() + 
+  theme(plot.margin = unit(c(0,0,0,0),'mm'))
 ```
 
 ```{r, echo=F, message=F, warning=F}
