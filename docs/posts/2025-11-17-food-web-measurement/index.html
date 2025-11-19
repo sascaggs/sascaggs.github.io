@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -250,9 +270,10 @@ window.Quarto = {
 <p>Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The <a href="https://www.web-of-life.es/">Web of Life</a> database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>An example food web originally published by <span class="citation" data-cites="bascompte2005interaction">Bascompte, Melián, and Sala (<a href="#ref-bascompte2005interaction" role="doc-biblioref">2005</a>)</span>.</figcaption>
 </figure>
 </div>
 </div>
@@ -454,9 +475,14 @@ v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k}, \qquad &amp;v^{(z)}_{j,k} \sim \mathcal{N
 </div>
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-bascompte2005interaction" class="csl-entry" role="listitem">
+Bascompte, Jordi, Carlos J Melián, and Enric Sala. 2005. <span>“Interaction Strength Combinations and the Overfishing of a Marine Food Web.”</span> <em>Proceedings of the National Academy of Sciences</em> 102 (15): 5443–47.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

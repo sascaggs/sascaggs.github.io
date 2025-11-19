@@ -124,10 +124,17 @@ table td {
 
 ul {
   list-style: square;
-  color: #00aa99}
+  color: #3300ff}
 
 dd {
   margin-left: 2em;
+}
+
+figcaption {
+  font-size: 11pt;
+  text-align: center;
+  font-style: italic;
+  color: rgba(30, 102, 150, .7);
 }
 
 
@@ -358,6 +365,34 @@ div.quarto-about-trestles .about-entity .about-link:hover {
   font-size: 12pt;
 }
 
+/* Base listing title link */
+div.quarto-post .body h3.listing-title > a {
+  font-weight: bold !important;
+  font-family: 'Poppins', sans-serif;
+  color: black;
+  text-decoration: none !important;
+
+  background:
+    linear-gradient(to right, white, white),
+    linear-gradient(
+      to right,
+      rgba(10, 34, 50, 1),
+      rgba(0, 117, 108, 1),
+      rgba(72, 106, 24, 1),
+      rgba(174, 160, 55, 1),
+      rgba(189, 40, 46, 1)
+    );
+  background-size: 100% 3px, 0 3px;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 400ms, color 400ms;
+}
+
+/* Hover: reveal gradient bar + accent color match navbar */
+div.quarto-post .body h3.listing-title > a:hover {
+  background-size: 0 3px, 100% 3px;
+  color: #00E0C9 !important;
+}
 
 
 div.listing-date, .listing-author {
@@ -442,3 +477,4 @@ div.listing-date, .listing-author {
   color: #00E0C9 !important;
   border-left-color: rgba(10, 34, 50, 1);
 }
+
