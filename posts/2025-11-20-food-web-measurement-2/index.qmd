@@ -103,7 +103,7 @@ When $\beta_M > 0$, the feeding links of larger species are detected more often.
 
 ### Size Ratio Model
 
-An second approach could be that it is the ratio of $M_i$ to $M_j$ that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect $\beta_R$.
+An second approach could hypothesize that it is the ratio of $M_i$ to $M_j$ that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect $\beta_R$.
 
 $$
 \begin{align}
