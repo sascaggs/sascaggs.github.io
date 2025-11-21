@@ -145,7 +145,7 @@ mass = exp(seq(log(0.01), log(1000), length.out = N))
 M = log10(mass)
 
 # Pairwise matrices 
-Bi = matrix(B, N, N)
+Bi = matrix(M, N, N)
 Bj = t(Bi)
 
 # Covariates 

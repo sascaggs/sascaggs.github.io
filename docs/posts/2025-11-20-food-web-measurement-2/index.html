@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2025-11-20">
 
-<title>Food Web Generation and Measurement – Shane A. Scaggs</title>
+<title>Food Web Generation and Measurement II – Shane A. Scaggs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -177,7 +212,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Food Web Generation and Measurement</h1>
+      <h1 class="title">Food Web Generation and Measurement II</h1>
             <p class="subtitle lead">Non-Random Detection</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">community ecology</div>
@@ -213,6 +248,9 @@ window.Quarto = {
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
   <ul class="collapse">
   <li><a href="#detection-model" id="toc-detection-model" class="nav-link" data-scroll-target="#detection-model">Detection Model</a></li>
+  <li><a href="#consumer-size-model" id="toc-consumer-size-model" class="nav-link" data-scroll-target="#consumer-size-model">Consumer Size Model</a></li>
+  <li><a href="#size-ratio-model" id="toc-size-ratio-model" class="nav-link" data-scroll-target="#size-ratio-model">Size Ratio Model</a></li>
+  <li><a href="#size-mismatch-model" id="toc-size-mismatch-model" class="nav-link" data-scroll-target="#size-mismatch-model">Size Mismatch Model</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -296,7 +334,117 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 </tr>
 </tbody>
 </table>
-<p>Though this is an important advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect. In reality, detection is probably non-random: some species with particular traits may be more likely to observed. The most intuitive of these is body size. Larger species may be easier to detect.</p>
+<p>Though this is an important advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect that accounts for <em>false negatives</em>. However, it reasonable to assume that detection could be non-random: some species with particular traits may be more likely to observed. For example, the diets of larger species may be easier to detect. To incorporate this, we make an adjustment to Equation 3. We have a few options here. First, let <span class="math inline">\(M_i\)</span> and <span class="math inline">\(M_j\)</span> be the log body masses of consumer <span class="math inline">\(i\)</span> and resource <span class="math inline">\(j\)</span>.</p>
+</section>
+<section id="consumer-size-model" class="level3">
+<h3 class="anchored" data-anchor-id="consumer-size-model">Consumer Size Model</h3>
+<p>We define a parameter <span class="math inline">\(\beta_M\)</span> which controls the effect of consumer body mass on detection.</p>
+<p><span class="math display">\[
+\begin{align}
+\text{logit}(p_{i,k}) = \mu_p + \beta_M M_i + \sigma_p p^{(z)}_{i,k}
+\end{align}
+\]</span></p>
+<p>When <span class="math inline">\(\beta_M &gt; 0\)</span>, the feeding links of larger species are detected more often.</p>
+</section>
+<section id="size-ratio-model" class="level3">
+<h3 class="anchored" data-anchor-id="size-ratio-model">Size Ratio Model</h3>
+<p>An second approach could be that it is the ratio of <span class="math inline">\(M_i\)</span> to <span class="math inline">\(M_j\)</span> that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect <span class="math inline">\(\beta_R\)</span>.</p>
+<p><span class="math display">\[
+\begin{align}
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \beta_R (M_i - M_j) + \sigma_p p^{(z)}_{ij,k}
+\end{align}
+\]</span></p>
+</section>
+<section id="size-mismatch-model" class="level3">
+<h3 class="anchored" data-anchor-id="size-mismatch-model">Size Mismatch Model</h3>
+<p>A third option would be to focus on the absolute difference between the species body sizes. This means something quite difference biologically.</p>
+<p><span class="math display">\[
+\begin{align}
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \beta_A |M_i - M_j| + \sigma_p p^{(z)}_{ij,k}
+\end{align}
+\]</span></p>
+<p>Each of the detection mechanisms contain very different assumptions about how detection scales body size.</p>
+<ol type="1">
+<li><strong>Consumer Size Model</strong>: This individual-level mechanism suggests that probability scales with the body size of the consumer, regardless of the size of the prey. Large predators are easier to observe and thus their feeding links are easier to detect.</li>
+<li><strong>Size Ratio Model</strong>: This edge-level mechanisms suggests that the probability of observing a feeding link depends on the ratio of consumer to resource body size. Observing large predators feeding on smaller prey are more likely, whereas a predator which is much smaller than it prey are ecological unusual and difficult to detect. The detection probability of such unusual events is proportionally lower.</li>
+<li><strong>Size Mismatch Model</strong>: This edge-level mechanism assumes that detection probability depends on the absolute difference between predators and prey. This mechanism does not imply that size mismatches are uncommon, only that such interactions leave evidence that is more difficult to detect.</li>
+</ol>
+<p>To further investigate these mechanisms, we can simulate their effect on detection probability.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">666</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">exp</span>(x) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(x))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">50</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>mu_p <span class="ot">=</span> <span class="sc">-</span><span class="dv">2</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sigma_p <span class="ot">=</span> <span class="fl">0.25</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>bM <span class="ot">=</span> bR <span class="ot">=</span> bA <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Body mass </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>mass <span class="ot">=</span> <span class="fu">exp</span>(<span class="fu">seq</span>(<span class="fu">log</span>(<span class="fl">0.01</span>), <span class="fu">log</span>(<span class="dv">1000</span>), <span class="at">length.out =</span> N))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">log10</span>(mass)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Pairwise matrices </span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>Bi <span class="ot">=</span> <span class="fu">matrix</span>(M, N, N)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>Bj <span class="ot">=</span> <span class="fu">t</span>(Bi)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Covariates </span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>ratio <span class="ot">=</span> Bi <span class="sc">-</span> Bj</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>mismatch <span class="ot">=</span> <span class="fu">abs</span>(Bi <span class="sc">-</span> Bj)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Noise </span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>eps <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(N<span class="sc">*</span>N, <span class="dv">0</span>, sigma_p), N, N)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># (1) Consumer Size Model </span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>pM <span class="ot">=</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> bM <span class="sc">*</span> M <span class="sc">+</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, sigma_p))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>pM_mat <span class="ot">=</span> <span class="fu">matrix</span>(pM, N, N, <span class="at">byrow =</span> T)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pM_mat) <span class="ot">=</span> <span class="cn">NA</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># (2) Size Ratio Model </span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>pR_mat <span class="ot">=</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> bR <span class="sc">*</span> ratio <span class="sc">+</span> eps)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pR_mat) <span class="ot">=</span> <span class="cn">NA</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># (3) Size Mismatch Model </span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>pA_mat <span class="ot">=</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> bA <span class="sc">*</span> mismatch <span class="sc">+</span> eps)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pA_mat) <span class="ot">=</span> <span class="cn">NA</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Data for plotting </span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">consumer_mass =</span> <span class="fu">as.vector</span>(Bi), </span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">resource_mass =</span> <span class="fu">as.vector</span>(Bj), </span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_ratio    =</span> <span class="fu">as.vector</span>(ratio), </span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_mismatch =</span> <span class="fu">as.vector</span>(mismatch), </span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_consumer    =</span> <span class="fu">as.vector</span>(pM_mat), </span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_ratio       =</span> <span class="fu">as.vector</span>(pR_mat),</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_mismatch    =</span> <span class="fu">as.vector</span>(pA_mat)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First, we can consider the matrices produced by these models. Each cell contains the probability of detecting an interaction between the two species.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>order_idx <span class="ot">=</span> <span class="fu">order</span>(M)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(pM_mat[order_idx, order_idx], </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">'Consumer Size Model'</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">'Consumer'</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">axes=</span>F)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(pR_mat[order_idx, order_idx], </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">'Size Ratio Model'</span>, </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">'Consumer'</span>, </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">axes=</span>F)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(pA_mat[order_idx, order_idx], </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">'Size Mismatch Model'</span>, </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">'Consumer'</span>, </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">axes=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>
