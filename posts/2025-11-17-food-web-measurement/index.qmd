@@ -180,12 +180,12 @@ mu_alpha = -2
 sd_alpha = 1
 sigma_u = 2
 sigma_v = 1
-mu_phi = -1
-sd_phi = 0.5
+mu_pi = -1
+sd_pi = 0.5
 
 # generate varying base rates and detection probabilities 
 alpha_k = rnorm(K, mu_alpha, sd_alpha); alpha_k
-phi_k = inv_logit(rnorm(K, mu_phi, sd_phi)); phi_k
+pi_k = inv_logit(rnorm(K, mu_pi, sd_pi)); pi_k
 ```
 
 We then set up some containers for the simulation results.
@@ -218,7 +218,7 @@ for(k in 1:K) {
   for(i in 1:S) for(j in 1:S) {
     p_ijk = inv_logit(alpha_k[k] + u_i[i] + v_j[j])
     A_true[i,j] = rbinom(1, 1, p_ijk)
-    A_obs[i,j] = rbinom(1, 1, phi_k[k] * p_ijk)
+    A_obs[i,j] = rbinom(1, 1, pi_k[k] * p_ijk)
     
   }
   A_true_list[[k]] = A_true
@@ -233,7 +233,7 @@ dat = data.frame(
   web = 1:K, 
   true_links = sapply(A_true_list, function(A) sum(A)), 
   observed_links = sapply(A_obs_list, function(A) sum(A)), 
-  detection = phi_k, 
+  detection = pi_k, 
   alpha = alpha_k
 ); dat
 ```
