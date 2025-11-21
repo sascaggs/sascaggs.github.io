@@ -271,9 +271,9 @@ window.Quarto = {
 <p><span class="math display">\[
 \begin{align}
 A_{ij,k} &amp;\sim \text{Bernoulli}(q_{ij,k}) \\
-q_{ij,k} &amp;= p_k \phi_{ij,k} \\
+q_{ij,k} &amp;= p_k \pi_{ij,k} \\
 p_k &amp;= \text{logit}^{-1}(\mu_{p} + \delta_{p,k}) \\
-\phi_{ij,k} &amp;= \text{logit}^{-1}(\alpha_k + u_{i,k} + v_{j,k}) \\
+\pi_{ij,k} &amp;= \text{logit}^{-1}(\alpha_k + u_{i,k} + v_{j,k}) \\
 \alpha_k &amp;= \mu_{\alpha} + \sigma_{\alpha} \alpha^{(z)}_k \\
 u_{i,k} &amp;= \sigma_u u^{(z)}_{i,k} \\
 v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k} \\
@@ -289,7 +289,7 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="math inline">\(\phi_{ij,k}\)</span></td>
+<td><span class="math inline">\(\pi_{ij,k}\)</span></td>
 <td>true ecological interaction probability</td>
 </tr>
 <tr class="even">
@@ -348,7 +348,7 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 </section>
 <section id="size-ratio-model" class="level3">
 <h3 class="anchored" data-anchor-id="size-ratio-model">Size Ratio Model</h3>
-<p>An second approach could be that it is the ratio of <span class="math inline">\(M_i\)</span> to <span class="math inline">\(M_j\)</span> that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect <span class="math inline">\(\beta_R\)</span>.</p>
+<p>An second approach could hypothesize that it is the ratio of <span class="math inline">\(M_i\)</span> to <span class="math inline">\(M_j\)</span> that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect <span class="math inline">\(\beta_R\)</span>.</p>
 <p><span class="math display">\[
 \begin{align}
 \text{logit}(p_{ij,k}) &amp;= \mu_p + \beta_R (M_i - M_j) + \sigma_p p^{(z)}_{ij,k}
@@ -424,18 +424,18 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>order_idx <span class="ot">=</span> <span class="fu">order</span>(M)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), <span class="at">mar=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">1</span>))</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(pM_mat[order_idx, order_idx], </span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">'Consumer Size Model'</span>, </span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">'Consumer'</span>, </span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">axes=</span>F)</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(pR_mat[order_idx, order_idx], </span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">'Size Ratio Model'</span>, </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">'Consumer'</span>, </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">''</span>, </span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">axes=</span>F)</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(pA_mat[order_idx, order_idx], </span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">'Size Mismatch Model'</span>, </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">'Consumer'</span>, </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">xlab=</span><span class="st">'Resource'</span>, <span class="at">ylab=</span><span class="st">''</span>, </span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">axes=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
