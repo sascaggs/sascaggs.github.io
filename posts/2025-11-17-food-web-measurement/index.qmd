@@ -1,7 +1,8 @@
 ---
-title: "Food Web Generation and Measurement"
+title: "Food Web Generation and Measurement I"
+subtitle: "Links and Detection"
 date: 2025-11-17
-categories: [community ecology, food webs, networks]
+categories: [community ecology, food webs, hierarchical modeling]
 format:
   html:
     toc: true
