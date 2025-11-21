@@ -63,9 +63,9 @@ As a reminder, our existing model treats the probability of an observed link in 
 $$
 \begin{align}
 A_{ij,k} &\sim \text{Bernoulli}(q_{ij,k}) \\
-q_{ij,k} &= p_k \phi_{ij,k} \\
+q_{ij,k} &= p_k \pi_{ij,k} \\
 p_k &= \text{logit}^{-1}(\mu_{p} + \delta_{p,k}) \\
-\phi_{ij,k} &= \text{logit}^{-1}(\alpha_k + u_{i,k} + v_{j,k}) \\
+\pi_{ij,k} &= \text{logit}^{-1}(\alpha_k + u_{i,k} + v_{j,k}) \\
 \alpha_k &= \mu_{\alpha} + \sigma_{\alpha} \alpha^{(z)}_k \\ 
 u_{i,k} &= \sigma_u u^{(z)}_{i,k} \\ 
 v_{j,k} &= \sigma_v v^{(z)}_{j,k} \\ 
@@ -75,7 +75,7 @@ $$
 
 | Notation          | Meaning                                      |
 |-------------------|----------------------------------------------|
-| $\phi_{ij,k}$     | true ecological interaction probability      |
+| $\pi_{ij,k}$      | true ecological interaction probability      |
 | $p_k$             | detection probability for web $k$            |
 | $q_{ij,k}$        | probability of observing interaction         |
 | $\alpha_k$        | baseline interaction rate in web $k$         |
@@ -185,17 +185,17 @@ First, we can consider the matrices produced by these models. Each cell contains
 ```{r, fig.width=7, fig.height=3, dpi=300}
 order_idx = order(M)
 
-par(mfrow=c(1,3))
+par(mfrow=c(1,3), mar=c(3,1,3,1))
 image(pM_mat[order_idx, order_idx], 
       main='Consumer Size Model', 
       xlab='Resource', ylab='Consumer', 
       axes=F)
 image(pR_mat[order_idx, order_idx], 
       main='Size Ratio Model', 
-      xlab='Resource', ylab='Consumer', 
+      xlab='Resource', ylab='', 
       axes=F)
 image(pA_mat[order_idx, order_idx], 
       main='Size Mismatch Model', 
-      xlab='Resource', ylab='Consumer', 
+      xlab='Resource', ylab='', 
       axes=F)
 ```

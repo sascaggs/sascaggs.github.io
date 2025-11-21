@@ -11,8 +11,7 @@ bibliography: 2025-11-18.bib
 
 ### Introduction
 
-Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The [Web of Life](https://www.web-of-life.es/) database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.  
-
+Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The [Web of Life](https://www.web-of-life.es/) database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.
 
 ```{r, echo=F, message=F, warning=F, fig.cap="An example food web originally published by @bascompte2005interaction.", dpi=333}
 library(tidyverse)
@@ -80,10 +79,9 @@ graph_theme = theme(
 theme_set(graph_theme)
 ```
 
+A particular challenge when collecting food web data is knowing whether sampling effort is sufficient. Consider the implications of missing some feeding links. If an interaction involving even a single rare species goes unobserved, it can impact the overall network structure. Since many theories of food webs focus directly on explaining the structure of food webs, measurement models are needed that can help us infer whether the observed structure results from fundamental processes of community assembly or from partial sampling. In this blog post, we explore this measurement problem and develop some preliminary simulations and validations.
 
-A particular challenge when collecting food web data is knowing whether sampling effort is sufficient. This is particular relevant when studying networks because if even a single rare species goes unobserved, it can impact the overall network structure. Since many theories of food webs focus directly on explaining the structure of food webs, measurement models are needed that can help us infer whether the observed structure results from fundamental processes of community assembly or from partial sampling. In this blog post, we explore this measurement problem and develop some preliminary simulations and validations. 
-
-To begin, let's lay out a basic model. Let's assume that we want to infer species interactions using a hierarchical model (multiple food webs). This let's us pool information from across multiple webs to understand our ability to detect trophic links. 
+To begin, let's lay out a basic model. Let's assume that we want to infer species interactions using a hierarchical model (multiple food webs). This let's us pool information from across multiple webs to understand our ability to detect trophic links.
 
 For each food web $k = 1,...,K$, we observe pairs of species interactions $A^{\text{obs}}_{ij,k} \in \{0,1\}$. A value of $1$ indicates the presence of a link between $i \rightarrow j$. Given this, we model the probability of a link $p_{ij,k}$ as
 
@@ -93,32 +91,29 @@ $$
 \end{equation}
 $$
 
-where $\alpha_k$ is a baseline interaction rate for web $k$, and $u_{i,k}$ and $v_{j,k}$ are consumer- and resource-specific random effects. We could then say that the "true" set of interactions is Bernoulli distributed 
+where $\alpha_k$ is a baseline interaction rate for web $k$, and $u_{i,k}$ and $v_{j,k}$ are consumer- and resource-specific random effects. We could then say that the "true" set of interactions is Bernoulli distributed
 
 $$
 \begin{equation}
 A^{\text{obs}}_{ij,k} \sim \text{Bernoulli}(p_{ij,k})
 \end{equation}
-$$
-In other words, there is a probability $p_{ij,k}$ that we observe a link between $ij$ in food web $k$. Such a probability could be directly computed from $A$. But if sampling is biased, then this probability will inherit this bias. For this reason, we also need a detection model. 
+$$ In other words, there is a probability $p_{ij,k}$ that we observe a link between $ij$ in food web $k$. Such a probability could be directly computed from $A$. But if sampling is biased, then this probability will inherit this bias. For this reason, we also need a detection model.
 
 $$
 \begin{equation}
-\text{logit}(\phi_k) = \mu_p + \delta_{p,k}
+\text{logit}(\pi_k) = \mu_p + \delta_{p,k}
 \end{equation}
 $$
 
-We assume that each web has its own rate of detection $\phi_k$. The parameter $\mu_k$ is the average log-odds of detection across all food webs, and $\delta_{p,k}$ is a specific deviation of web $k$ from the global average, which we model as non-centered: $\delta_{\phi,k} \sim \mathcal{N}(0,\sigma^2_{\phi})$. 
+We assume that each web has its own rate of detection $\pi_k$. The parameter $\mu_k$ is the average log-odds of detection across all food webs, and $\delta_{p,k}$ is a specific deviation of web $k$ from the global average, which we model as non-centered: $\delta_{\pi,k} \sim \mathcal{N}(0,\sigma^2_{\pi})$.
 
-
-It follows that the probability of observing a link is 
+It follows that the probability of observing a link is
 
 $$
 \begin{equation}
-q_{ij,k} = \phi_k \cdot p_{ij,k}
+q_{ij,k} = \pi_k \cdot p_{ij,k}
 \end{equation}
-$$
-We use this to amend our original likelihood to
+$$ We use this to amend our original likelihood to
 
 $$
 \begin{equation}
@@ -128,12 +123,12 @@ $$
 
 In essence, this model assumes that
 
-- If $A^{\text{true}}_{ij,k} = 0$, then $A^{\text{obs}}_{ij,k} = 0$. 
-- If $A^{\text{true}}_{ij,k} = 1$, then we observe $A^{\text{obs}}_{ij,k} = 1$ with probability $\phi_{ij,k}$. 
+-   If $A^{\text{true}}_{ij,k} = 0$, then $A^{\text{obs}}_{ij,k} = 0$.
+-   If $A^{\text{true}}_{ij,k} = 1$, then we observe $A^{\text{obs}}_{ij,k} = 1$ with probability $\pi_{ij,k}$.
 
-Although false positives are also a possible source of bias, we leave this out of the model, for now. 
+Although false positives are also a possible source of bias, we leave this out of the model, for now.
 
-Finally, we need to declare hierarchical, non-centered priors for all parameters, beginning first with the interaction rates, then the detection probabilities, and finally the random effects. We assume a weakly informative $\mathcal{N}(0,1)$ prior on all latent deviations, and $\text{Exponential}(1)$ for all SD. 
+Finally, we need to declare hierarchical, non-centered priors for all parameters, beginning first with the interaction rates, then the detection probabilities, and finally the random effects. We assume a weakly informative $\mathcal{N}(0,1)$ prior on all latent deviations, and $\text{Exponential}(1)$ for all SD.
 
 ### Interaction rates
 
@@ -146,18 +141,18 @@ $$
 \end{align}
 $$
 
-### Detection 
+### Detection
 
 $$
 \begin{align}
-\delta_{\phi,k} &= \mu_{\phi} + \sigma_{\phi} \delta^{(z)}_{\phi,k} \qquad &\text{non-centered} \\ 
+\delta_{\pi,k} &= \mu_{\pi} + \sigma_{\pi} \delta^{(z)}_{\pi,k} \qquad &\text{non-centered} \\ 
 \delta^{(z)} &\sim \mathcal{N}(0,1) \qquad &\text{latent deviation} \\ 
-\mu_{\phi} &\sim \mathcal{N}(0,1) \qquad &\text{global mean detection rate} \\ 
-\sigma_{\phi} &\sim \text{Exponential}(1) \qquad &\text{global detection SD}
+\mu_{\pi} &\sim \mathcal{N}(0,1) \qquad &\text{global mean detection rate} \\ 
+\sigma_{\pi} &\sim \text{Exponential}(1) \qquad &\text{global detection SD}
 \end{align}
 $$
 
-### Consumer and resource random effects 
+### Consumer and resource random effects
 
 $$
 \begin{align}
@@ -167,11 +162,11 @@ v_{j,k} &= \sigma_v v^{(z)}_{j,k}, \qquad &v^{(z)}_{j,k} \sim \mathcal{N}(0,1) \
 \end{align}
 $$
 
-## Simulation 
+## Simulation
 
-To test this model, we need to simulate food webs to serve as the "true" sets of interactions, and "observe" our food webs probabilistically from them. 
+To test this model, we need to simulate food webs to serve as the "true" sets of interactions, and "observe" our food webs probabilistically from them.
 
-We begin by setting up our parameters. 
+We begin by setting up our parameters.
 
 ```{r}
 # ---- Setup ----
@@ -193,7 +188,7 @@ alpha_k = rnorm(K, mu_alpha, sd_alpha); alpha_k
 phi_k = inv_logit(rnorm(K, mu_phi, sd_phi)); phi_k
 ```
 
-We then set up some containers for the simulation results. 
+We then set up some containers for the simulation results.
 
 ```{r}
 # ---- Outputs ----
@@ -201,12 +196,12 @@ A_true_list = list()
 A_obs_list  = list()
 ```
 
-The basic procedure is the following: 
+The basic procedure is the following:
 
-- Generate $u_{i,k}$ and $v_{j,k}$.
-- Create $S \times S$ matrices for the "true" and "observed" webs.
-- Generate $p_{ij,k}$ based on $\alpha_k$ + random effects.
-- Adjust observed links based on $\phi_k \cdot p_{ij,k}$. 
+-   Generate $u_{i,k}$ and $v_{j,k}$.
+-   Create $S \times S$ matrices for the "true" and "observed" webs.
+-   Generate $p_{ij,k}$ based on $\alpha_k$ + random effects.
+-   Adjust observed links based on $\pi_k \cdot p_{ij,k}$.
 
 ```{r}
 for(k in 1:K) {
@@ -231,7 +226,7 @@ for(k in 1:K) {
 }
 ```
 
-This yields the following summary. 
+This yields the following summary.
 
 ```{r}
 dat = data.frame(
@@ -243,7 +238,7 @@ dat = data.frame(
 ); dat
 ```
 
-If we examine the degree distributions across all of the webs, we can see how they differ after we adjust for the probability of detection. 
+If we examine the degree distributions across all of the webs, we can see how they differ after we adjust for the probability of detection.
 
 ```{r, fig.width=6, fig.height=4, message=F, warning=F, fig.cap="The out-degree distribution across all simulated webs."}
 deg = function(A) rowSums(A)
@@ -258,7 +253,7 @@ data.frame(
   labs(x = 'Outgoing links', y = 'Count')
 ```
 
-We can see that the degree distribution of the observed links is more zero-inflated and that the tail of the distribution has contracted. Altering the values of $\sigma_u$ and $\sigma_v$ can change these properties to some extent, especially the heaviness of the tail. 
+We can see that the degree distribution of the observed links is more zero-inflated and that the tail of the distribution has contracted. Altering the values of $\sigma_u$ and $\sigma_v$ can change these properties to some extent, especially the heaviness of the tail.
 
 ```{r, fig.height=4, fig.width=6.5, fig.cap="Examples of true and observed adjacency matrices."}
 A_true = A_true_list[[1]]
@@ -272,6 +267,3 @@ par(mfrow=c(1,2))
 image(A_true[sort_order, ], col = c('black','white'), main = 'True', xaxt = 'n', yaxt = 'n')
 image(A_obs[sort_order, ],  col = c('black','white'), main = 'Observed', xaxt = 'n', yaxt = 'n')
 ```
-
-
-
