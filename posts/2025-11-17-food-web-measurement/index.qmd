@@ -13,12 +13,13 @@ bibliography: 2025-11-18.bib
 
 Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The [Web of Life](https://www.web-of-life.es/) database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.
 
-```{r, echo=F, message=F, warning=F, fig.cap="An example food web originally published by @bascompte2005interaction.", dpi=333}
+```{r, echo=F, message=F, warning=F, fig.cap="An example food web originally published by @bascompte2005interaction.", fig.height=4, fig.width=4, dpi=300}
 library(tidyverse)
 library(tidygraph)
 library(ggraph)
 library(graphlayouts)
 library(igraph)
+library(patchwork)
 
 web = read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/FW_008.csv")
 
@@ -264,6 +265,154 @@ row_sums = rowSums(A_true)
 sort_order = order(row_sums)
 
 par(mfrow=c(1,2))
-image(A_true[sort_order, ], col = c('black','white'), main = 'True', xaxt = 'n', yaxt = 'n')
-image(A_obs[sort_order, ],  col = c('black','white'), main = 'Observed', xaxt = 'n', yaxt = 'n')
+image(A_true[sort_order, sort_order], col = c('black','tomato'), main = 'True', xaxt = 'n', yaxt = 'n')
+image(A_obs[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed', xaxt = 'n', yaxt = 'n')
 ```
+
+## Non-Random Links
+
+Now that we have a basic model and simulation skeleton, we should consider which traits might lead to a species having more or less feeding links. For example, we could expect that larger species may have broader diets. This idea has be presented many times, with notable examples coming from @petchey2008size and @allesina2011predicting. Here we can make a simplistic assumption that the mass of a consumer $M_i$ can have a linear, additive effect on the probability of a link.[^1]
+
+[^1]: @allesina2011predicting explore additional possibilities, such as the *Ratio* model, that we discuss in more detail in the next post.
+
+$$
+\begin{equation}
+\text{logit}(p_{ij,k}) = \alpha_k + (u_{i,k} + \beta_M M_i) + v_{j,k}
+\end{equation}
+$$
+
+We can now compare our original simulations to a second pair where we adjust the probability based on body size. 
+
+```{r}
+# ---- Setup ----
+set.seed(777)
+inv_logit = function(x) exp(x) / (1 + exp(x))
+
+# ---- Parameters ----
+K = 5   
+S = 30
+mu_alpha = -2
+sd_alpha = 1
+sigma_u = 2
+bM = 1.2
+mass = exp(rnorm(S,0,3))
+M = log(mass)
+sigma_v = 1
+mu_pi = -1
+sd_pi = 0.5
+
+# generate varying base rates and detection probabilities 
+alpha_k = rnorm(K, mu_alpha, sd_alpha)
+pi_k = inv_logit(rnorm(K, mu_pi, sd_pi))
+
+# ---- Outputs ----
+A_true_list = list()
+A_obs_list  = list()
+A_Mtrue_list = list()
+A_Mobs_list = list()
+
+
+for(k in 1:K) {
+  
+  # Random effects
+  u_i = rnorm(S, mean = 0, sd = sigma_u)
+  v_j = rnorm(S, mean = 0, sd = sigma_v)
+  
+  # Matrices 
+  A_true = matrix(0, ncol = S, nrow = S)
+  A_obs = matrix(0, ncol = S, nrow = S)
+  A_Mtrue = matrix(0, ncol = S, nrow = S)
+  A_Mobs = matrix(0, ncol = S, nrow = S)
+  
+  # Loop 
+  for(i in 1:S) for(j in 1:S) {
+    p_ijk = inv_logit(alpha_k[k] + u_i[i] + v_j[j])
+    A_true[i,j] = rbinom(1, 1, p_ijk)
+    A_obs[i,j] = rbinom(1, 1, pi_k[k] * p_ijk)
+    
+    # body mass model 
+    .p_ijk = inv_logit(alpha_k[k] + (u_i[i] + bM * M[i]) + v_j[j])
+    A_Mtrue[i,j] = rbinom(1, 1, .p_ijk)
+    A_Mobs[i,j] = rbinom(1, 1, pi_k[k] * .p_ijk)
+    
+  }
+  A_true_list[[k]] = A_true
+  A_obs_list[[k]] = A_obs
+  A_Mtrue_list[[k]] = A_Mtrue
+  A_Mobs_list[[k]] = A_Mobs
+}
+```
+
+Clearly the choice of the distribution of body masses will have an influence over this simulation. Here I assume that body masses are heavy-tailed and that we model them on a log-scale. For example, the code above gives the following: 
+
+```{r, fig.height=3.75, fig.width=6.5, dpi-300}
+library(latex2exp)
+
+data.frame(mass) |>  
+  ggplot(aes(x=mass)) +  
+  stat_density(adjust = 0.5) + 
+  labs(x=expression(M[i])) + 
+  ggtitle('Raw mass') + 
+  ylim(c(0,0.16)) + 
+  
+data.frame(M) |>  
+  ggplot(aes(x=M)) +  
+  stat_density(adjust = 0.5) + 
+  labs(x=expression(log(M[i]))) + 
+  ggtitle('Log transformed') + 
+  ylim(c(0,0.16))
+
+```
+
+
+```{r, fig.width=4, fig.height=5}
+A_true = A_true_list[[1]]
+A_obs = A_obs_list[[1]]
+A_Mtrue = A_Mtrue_list[[1]]
+A_Mobs = A_Mobs_list[[1]]
+
+row_sums = rowSums(A_true)
+sort_order = order(row_sums)
+
+par(mfrow=c(2,2), mar=c(3,1,3,1))
+image(A_true[sort_order, sort_order], col = c('black','tomato'), main = 'True', xaxt = 'n', yaxt = 'n')
+image(A_obs[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed', xaxt = 'n', yaxt = 'n')
+
+row_sums = rowSums(A_Mtrue)
+sort_order = order(row_sums)
+
+image(A_Mtrue[sort_order, sort_order], col = c('black','tomato'), main = 'True (Allometric)', xaxt = 'n', yaxt = 'n')
+image(A_Mobs[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed (Allometric)', xaxt = 'n', yaxt = 'n')
+```
+
+The effect of body mass concentrates the true links toward the largest species. It is also gravitational: energy, in the form of biomass, flows toward these largest species. The effect of this on the observed links is very subtle but not entirely absent. 
+
+```{r, fig.width=6.5, fig.height=6, dpi=300}
+lo = layout_as_tree(graph_from_adjacency_matrix(A_Mobs_list[[1]]))
+par(mfrow=c(2,2), mar=c(3,1,3,1))
+plot(graph_from_adjacency_matrix(A_true_list[[1]]),  
+     edge.arrow.size=0.2, 
+     vertex.color = 'white', 
+     vertex.label = NA, 
+     layout = lo, 
+     main = 'True')
+plot(graph_from_adjacency_matrix(A_obs_list[[1]]),   
+     edge.arrow.size=0.2, 
+     vertex.color = 'white', 
+     vertex.label = NA, 
+     layout = lo, 
+     main = 'Observed')
+plot(graph_from_adjacency_matrix(A_Mtrue_list[[1]]), 
+     edge.arrow.size=0.2, 
+     vertex.color = 'white', 
+     vertex.label = NA, 
+     layout = lo, 
+     main = 'True (Allometric)')
+plot(graph_from_adjacency_matrix(A_Mobs_list[[1]]),  
+     edge.arrow.size=0.2, 
+     vertex.color = 'white', 
+     vertex.label = NA, 
+     layout = lo, 
+     main = 'Observed (Allometric)')
+```
+
