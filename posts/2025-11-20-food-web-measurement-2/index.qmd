@@ -191,21 +191,22 @@ First, we can consider the matrices produced by these models. Each cell contains
 
 ```{r, fig.width=7, fig.height=7, dpi=300}
 # Function to create a raster plot
+library(latex2exp)
 plot_raster <- function(df, zvar, title) {
   ggplot(df, aes(x = resource_mass_log10, y = consumer_mass_log10, fill = .data[[zvar]])) +
     geom_tile() +
     scale_fill_viridis_c(na.value = "white", name = zvar, option = 'A') +
     coord_fixed() +
     labs(
-      x = "Resource log10 mass",
-      y = "Consumer log10 mass",
+      x = TeX("Resource ${log}_{10}$ mass"),
+      y = TeX("Consumer ${log}_{10}$ mass"),
       title = title
     ) +
     theme(legend.position = 'none')
 }
 
 # Plot each model
-p1 = plot_raster(dat, "p_random", "Random Reference Model")
+p1 = plot_raster(dat, "p_random", "Random Model")
 p2 = plot_raster(dat, "p_consumer", "Consumer Size Model")
 p3 = plot_raster(dat, "p_ratio", "Size Ratio Model")
 p4 = plot_raster(dat, "p_mismatch", "Size Mismatch Model")
