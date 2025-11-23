@@ -132,70 +132,84 @@ To further investigate these mechanisms, we can simulate their effect on detecti
 ```{r}
 # Setup
 set.seed(666)
+
 inv_logit <- function(x) exp(x) / (1 + exp(x))
 
-# Parameters 
-N = 50
-mu_p = -2
-sigma_p = 0.25
-bM = bR = bA = 0.5
+# Parameters
+N <- 50
+mu_p <- -2
+sigma_p <- 0.25
+bM <- bR <- bA <- 0.5
 
-# Body mass 
-mass = exp(seq(log(0.01), log(1000), length.out = N))
-M = log10(mass)
+# Body mass
+mass <- exp(seq(log(0.01), log(1000), length.out = N))  # mass on raw scale
+M <- log10(mass)  # log10 body mass
 
-# Pairwise matrices 
-Bi = matrix(M, N, N)
-Bj = t(Bi)
+# Pairwise matrices
+Bi <- matrix(M, N, N)  # consumer
+Bj <- t(Bi)            # resource
 
-# Covariates 
-ratio = Bi - Bj
-mismatch = abs(Bi - Bj)
+# Covariates
+ratio <- Bi - Bj
+mismatch <- abs(Bi - Bj)
 
-# Noise 
-eps = matrix(rnorm(N*N, 0, sigma_p), N, N)
+# Noise
+eps <- matrix(rnorm(N*N, 0, sigma_p), N, N)
 
-# (1) Consumer Size Model 
-pM = inv_logit(mu_p + bM * M + rnorm(N, 0, sigma_p))
-pM_mat = matrix(pM, N, N, byrow = T)
-diag(pM_mat) = NA
+# (1) Consumer Size Model
+pM <- inv_logit(mu_p + bM * M + rnorm(N, 0, sigma_p))
+pM_mat <- matrix(pM, N, N, byrow = TRUE)
+diag(pM_mat) <- NA
 
-# (2) Size Ratio Model 
-pR_mat = inv_logit(mu_p + bR * ratio + eps)
-diag(pR_mat) = NA
+# (2) Size Ratio Model
+pR_mat <- inv_logit(mu_p + bR * ratio + eps)
+diag(pR_mat) <- NA
 
-# (3) Size Mismatch Model 
-pA_mat = inv_logit(mu_p + bA * mismatch + eps)
-diag(pA_mat) = NA
+# (3) Size Mismatch Model
+pA_mat <- inv_logit(mu_p + bA * mismatch + eps)
+diag(pA_mat) <- NA
 
-# Data for plotting 
-dat = data.frame(
-  consumer_mass = as.vector(Bi), 
-  resource_mass = as.vector(Bj), 
-  size_ratio    = as.vector(ratio), 
-  size_mismatch = as.vector(mismatch), 
-  p_consumer    = as.vector(pM_mat), 
-  p_ratio       = as.vector(pR_mat),
-  p_mismatch    = as.vector(pA_mat)
+# (4) Random Model - uniform random probabilities
+p_rand_mat <- matrix(runif(N * N, min = 0, max = 1), N, N)
+diag(p_rand_mat) <- NA
+
+
+# Data for plotting
+dat <- data.frame(
+  consumer_mass_log10 = as.vector(Bi),
+  resource_mass_log10 = as.vector(Bj),
+  size_ratio = as.vector(ratio),
+  size_mismatch = as.vector(mismatch),
+  p_consumer = as.vector(pM_mat),
+  p_ratio = as.vector(pR_mat),
+  p_mismatch = as.vector(pA_mat), 
+  p_random = as.vector(p_rand_mat)
 )
 ```
 
 First, we can consider the matrices produced by these models. Each cell contains the probability of detecting an interaction between the two species.
 
-```{r, fig.width=7, fig.height=3, dpi=300}
-order_idx = order(M)
+```{r, fig.width=7, fig.height=7, dpi=300}
+# Function to create a raster plot
+plot_raster <- function(df, zvar, title) {
+  ggplot(df, aes(x = resource_mass_log10, y = consumer_mass_log10, fill = .data[[zvar]])) +
+    geom_tile() +
+    scale_fill_viridis_c(na.value = "white", name = zvar, option = 'A') +
+    coord_fixed() +
+    labs(
+      x = "Resource log10 mass",
+      y = "Consumer log10 mass",
+      title = title
+    ) +
+    theme(legend.position = 'none')
+}
 
-par(mfrow=c(1,3), mar=c(3,1,3,1))
-image(pM_mat[order_idx, order_idx], 
-      main='Consumer Size Model', 
-      xlab='Resource', ylab='Consumer', 
-      axes=F)
-image(pR_mat[order_idx, order_idx], 
-      main='Size Ratio Model', 
-      xlab='Resource', ylab='', 
-      axes=F)
-image(pA_mat[order_idx, order_idx], 
-      main='Size Mismatch Model', 
-      xlab='Resource', ylab='', 
-      axes=F)
+# Plot each model
+p1 = plot_raster(dat, "p_random", "Random Reference Model")
+p2 = plot_raster(dat, "p_consumer", "Consumer Size Model")
+p3 = plot_raster(dat, "p_ratio", "Size Ratio Model")
+p4 = plot_raster(dat, "p_mismatch", "Size Mismatch Model")
+
+
+(p1 + p2) / (p3 + p4)
 ```
