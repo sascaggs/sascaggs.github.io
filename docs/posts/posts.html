@@ -80,9 +80,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -144,10 +144,12 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="posts/custom-poss.css">
 <link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../posts/custom-posts.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -223,7 +225,8 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Y2F1c2FsJTIwaW5mZXJlbmNl">causal inference <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y29tbXVuaXR5JTIwZWNvbG9neQ==">community ecology <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Zm9vZCUyMHdlYnM=">food webs <span class="quarto-category-count">(2)</span></div><div class="category" data-category="aGllcmFyY2hpY2FsJTIwbW9kZWxpbmc=">hierarchical modeling <span class="quarto-category-count">(2)</span></div><div class="category" data-category="c3BhdGlhbCUyMGF1dG9jb3JyZWxhdGlvbg==">spatial autocorrelation <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -237,7 +240,7 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Y29tbXVuaXR5JTIwZWNvbG9neSUyQ2Zvb2QlMjB3ZWJzJTJDaGllcmFyY2hpY2FsJTIwbW9kZWxpbmc=" data-listing-date-sort="1763355600000" data-listing-file-modified-sort="1763737842505" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1340">
+<div class="quarto-post image-right" data-index="0" data-categories="Y29tbXVuaXR5JTIwZWNvbG9neSUyQ2Zvb2QlMjB3ZWJzJTJDaGllcmFyY2hpY2FsJTIwbW9kZWxpbmc=" data-listing-date-sort="1763355600000" data-listing-file-modified-sort="1763748185624" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2098">
 <div class="thumbnail"><a href="../posts/2025-11-17-food-web-measurement/index.html" class="no-external">
 
 <p class="card-img-top"><img src="2025-11-17-food-web-measurement\index_files\figure-html\unnamed-chunk-1-1.png"  class="thumbnail-image card-img"/></p>
@@ -249,6 +252,15 @@ window.Quarto = {
 </h3>
 <div class="listing-subtitle">
 <a href="../posts/2025-11-17-food-web-measurement/index.html" class="no-external">Links and Detection</a>
+</div>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y29tbXVuaXR5JTIwZWNvbG9neQ=='); return false;">community ecology</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Zm9vZCUyMHdlYnM='); return false;">food webs</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('aGllcmFyY2hpY2FsJTIwbW9kZWxpbmc='); return false;">hierarchical modeling</div>
+
 </div>
 <div class="delink listing-description"><a href="../posts/2025-11-17-food-web-measurement/index.html" class="no-external">
 Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions…
@@ -262,7 +274,7 @@ Nov 17, 2025
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="Y29tbXVuaXR5JTIwZWNvbG9neSUyQ2Zvb2QlMjB3ZWJzJTJDaGllcmFyY2hpY2FsJTIwbW9kZWxpbmc=" data-listing-date-sort="1763614800000" data-listing-file-modified-sort="1763738011444" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1277">
+<div class="quarto-post image-right" data-index="1" data-categories="Y29tbXVuaXR5JTIwZWNvbG9neSUyQ2Zvb2QlMjB3ZWJzJTJDaGllcmFyY2hpY2FsJTIwbW9kZWxpbmc=" data-listing-date-sort="1763614800000" data-listing-file-modified-sort="1763748457377" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1281">
 <div class="thumbnail"><a href="../posts/2025-11-20-food-web-measurement-2/index.html" class="no-external">
 
 <p class="card-img-top"><img src="2025-11-20-food-web-measurement-2\index_files\figure-html\unnamed-chunk-3-1.png"  class="thumbnail-image card-img"/></p>
@@ -275,6 +287,15 @@ Nov 17, 2025
 <div class="listing-subtitle">
 <a href="../posts/2025-11-20-food-web-measurement-2/index.html" class="no-external">Non-Random Detection</a>
 </div>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y29tbXVuaXR5JTIwZWNvbG9neQ=='); return false;">community ecology</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Zm9vZCUyMHdlYnM='); return false;">food webs</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('aGllcmFyY2hpY2FsJTIwbW9kZWxpbmc='); return false;">hierarchical modeling</div>
+
+</div>
 <div class="delink listing-description"><a href="../posts/2025-11-20-food-web-measurement-2/index.html" class="no-external">
 In the previous post, we discussed how the probability of a feeding link between two species depends in part on the probability of detecting the link during the sampling…
 </a></div>
@@ -283,6 +304,38 @@ In the previous post, we discussed how the probability of a feeding link between
 <a href="../posts/2025-11-20-food-web-measurement-2/index.html" class="no-external">
 <div class="listing-date">
 Nov 20, 2025
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="Y2F1c2FsJTIwaW5mZXJlbmNlJTJDc3BhdGlhbCUyMGF1dG9jb3JyZWxhdGlvbg==" data-listing-date-sort="1763701200000" data-listing-file-modified-sort="1763864934567" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="843">
+<div class="thumbnail"><a href="../posts/2025-11-21-primary-or-secondary/index.html" class="no-external">
+
+<p class="card-img-top"><img src="2025-11-21-primary-or-secondary\index_files\figure-html\unnamed-chunk-1-1.png"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../posts/2025-11-21-primary-or-secondary/index.html" class="no-external">Primary or Secondary?</a>
+</h3>
+<div class="listing-subtitle">
+<a href="../posts/2025-11-21-primary-or-secondary/index.html" class="no-external">A Question of Ulimate Common Cause</a>
+</div>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwaW5mZXJlbmNl'); return false;">causal inference</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('c3BhdGlhbCUyMGF1dG9jb3JyZWxhdGlvbg=='); return false;">spatial autocorrelation</div>
+
+</div>
+<div class="delink listing-description"><a href="../posts/2025-11-21-primary-or-secondary/index.html" class="no-external">
+Let’s suppose we are interested in the relationship between disturbance (D) and vegetation diversity (V). We assert that disturbance has a causal effect on diversity such…<span class="math inline"></span>
+</a></div>
+</div>
+<div class="metadata">
+<a href="../posts/2025-11-21-primary-or-secondary/index.html" class="no-external">
+<div class="listing-date">
+Nov 21, 2025
 </div>
 </a>
 </div>

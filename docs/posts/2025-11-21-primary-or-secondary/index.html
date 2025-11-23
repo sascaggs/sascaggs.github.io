@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2025-11-21">
 
-<title>Primary or Secondary? A Questions of Ulimate Cause – Shane A. Scaggs</title>
+<title>Primary or Secondary? – Shane A. Scaggs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -69,7 +104,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-</head><body class="nav-fixed quarto-light">\usepackage{tikz}
 <style>
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap')
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap')
@@ -85,11 +119,41 @@ MathJax = {
 };
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0-beta.4/tex-mml-chtml.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="posts/custom-poss.css">
 <link rel="stylesheet" href="../../styles.css">
+</head>
 
-
-
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -149,7 +213,8 @@ MathJax = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Primary or Secondary? A Questions of Ulimate Cause</h1>
+      <h1 class="title">Primary or Secondary?</h1>
+            <p class="subtitle lead">A Question of Ulimate Common Cause</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">causal inference</div>
                 <div class="quarto-category">spatial autocorrelation</div>
@@ -175,8 +240,16 @@ MathJax = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#a-joint-spatial-process" id="toc-a-joint-spatial-process" class="nav-link active" data-scroll-target="#a-joint-spatial-process">A Joint Spatial Process</a></li>
+  <li><a href="#independent-spatial-processes" id="toc-independent-spatial-processes" class="nav-link" data-scroll-target="#independent-spatial-processes">Independent Spatial Processes</a></li>
+  <li><a href="#primary-and-secondary-structure" id="toc-primary-and-secondary-structure" class="nav-link" data-scroll-target="#primary-and-secondary-structure">Primary and Secondary Structure</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -185,8 +258,119 @@ MathJax = {
 
 
 
+<p>Let’s suppose we are interested in the relationship between disturbance (D) and vegetation diversity (V). We assert that disturbance has a causal effect on diversity such that <span class="math inline">\(D \rightarrow V\)</span>.</p>
+<p>Both disturbance and vegetation diversity arise from spatial processes, and the data we use to study them are collected in space. This makes it natural to assume that there may be some spatial autocorrelation in these measures. We might think it is simply a question of how to control for this autocorrelation so that we can get a precise estimate of the effect of D on V. For example, we might use a conditional autoregressive model, treating D and V as emissions from a random field.</p>
+<p>However, I argue that rather than assuming we must control for autocorrelation, we need o first determine whether we need to adjust for autocorrelation by looking at the problem from a causal inference perspective.</p>
+<section id="a-joint-spatial-process" class="level3">
+<h3 class="anchored" data-anchor-id="a-joint-spatial-process">A Joint Spatial Process</h3>
+<p>For example, let’s suppose that D and V arise jointly from a spatial process S.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">=</span> <span class="fu">dagify</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  V <span class="sc">~</span> D, </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  D <span class="sc">~</span> S, </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  V <span class="sc">~</span> S,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="st">'D'</span>, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome  =</span> <span class="st">'V'</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(dag2, <span class="at">layout =</span> <span class="st">'circle'</span>) <span class="sc">+</span> <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This DAG says that both of our measures, D and V, are caused by the same spatial process. Put differently, the effect of D on V is confounded by spatial autocorrelation in these variables. This implies that we must include S in a model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_adjustment_set</span>(dag2) <span class="sc">+</span> <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Simple enough. But is this actually plausible? If true, then disturbance and vegetation diversity must both occur at a similar scale. This is a strong assumption considering that measures of vegetation diversity occur at the organism or stand level, whereas disturbance is typically a patch level phenomenon. If there is spatial structure to these measures, they would occur at distinct scales.</p>
+<p>Moreover, the processes that underlie this spatial structure are probably distinct. Disturbances, for example, can be due to tree-falls, hurricanes, landslides, anthropogenic land changes, diseases or pest outbreaks, and so on. These are quite different from the processes that shape vegetation diversity like local competition, facilitation, and mutualism; dispersal and recruitment; or nutrient availability.</p>
+</section>
+<section id="independent-spatial-processes" class="level3">
+<h3 class="anchored" data-anchor-id="independent-spatial-processes">Independent Spatial Processes</h3>
+<p>It seems more likely that D and V have their own spatial patterns arises from distinct processes. This implies a DAG like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dag3 <span class="ot">=</span> <span class="fu">dagify</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  V <span class="sc">~</span> D, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  D <span class="sc">~</span> S_D, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  V <span class="sc">~</span> S_V,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="st">'D'</span>, </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome  =</span> <span class="st">'V'</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(dag3, <span class="at">layout =</span> <span class="st">'tree'</span>) <span class="sc">+</span> <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If this is our generating process, then we need to be much more careful about including S_D and S_V in a model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_adjustment_set</span>(dag3) <span class="sc">+</span> <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The current structure contains no backdoor paths. If we include S_D, for example, then we will filter our any effect of D that is correlated with S_D. One could then ask: “Why not condition directly on S_D and leave our D, altogether?” This <em>could</em> work but only if we know that the variation in S_D is due solely to the disturbance. S_V does not have these same issues We could include S_V as a covariate that might improve the precision of our estimate of D on V.</p>
+</section>
+<section id="primary-and-secondary-structure" class="level3">
+<h3 class="anchored" data-anchor-id="primary-and-secondary-structure">Primary and Secondary Structure</h3>
+<p>Now here is where this gets interesting. S_D and S_V are what some might call “secondary spatial structure”. They are patterns of vegetation and disturbance that are overlaid on the landscape with all its topography and geomorphology – the primary spatial structure. One could very reasonably assume that this primary structure influences the secondary structure. Indeed, many have debated this tension in the literature. A DAG representing this might look like the following:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dag4 <span class="ot">=</span> <span class="fu">dagify</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  V <span class="sc">~</span> D, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  D <span class="sc">~</span> S_D, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  V <span class="sc">~</span> S_V,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  S_D <span class="sc">~</span> P, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  S_V <span class="sc">~</span> P,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure =</span> <span class="st">'D'</span>, </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome  =</span> <span class="st">'V'</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag</span>(dag4, <span class="at">layout =</span> <span class="st">'tree'</span>) <span class="sc">+</span> <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now we again have a backdoor between D and V through the influence of P on S_D and S_V. This means that in order to estimate the relationship between D and V, we must adust for P, assuming that we have a measure of it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_adjustment_set</span>(dag4) <span class="sc">+</span> <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Further, one can break the backdoor path by adjusting for any of the parents of D and V. However, we must be careful here about what we actually mean by P. For all we know, P could represent physical laws. If that is the case, then pretty much any DAG we ever draw would be confounded! What began as a relatively simple modeling problem has taken us to a deeply philosophical place where we question whether we can ever <em>really</em> know the causal effect of anything…</p>
+<p>Okay, that was a little unserious. Of course we can know causal effects. And P in the graph cannot be the fundamental laws of physics. Even if they were, they would be constants and so they would do little to shape any variation in these variables.</p>
+<p>The more prudent question is whether there is an <em>ultimate</em> common cause of spatial structure.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

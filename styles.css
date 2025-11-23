@@ -373,11 +373,11 @@ div.quarto-post .body h3.listing-title > a {
   text-decoration: none !important;
 
   background:
-    linear-gradient(to right, white, white),
+    linear-gradient(to right, transparent, transparent),
     linear-gradient(
       to right,
       rgba(10, 34, 50, 1),
-      rgba(0, 117, 108, 1),
+      rgba(0, 170, 135, 1),
       rgba(72, 106, 24, 1),
       rgba(174, 160, 55, 1),
       rgba(189, 40, 46, 1)
@@ -388,16 +388,35 @@ div.quarto-post .body h3.listing-title > a {
   transition: background-size 400ms, color 400ms;
 }
 
+div.quarto-post .body {
+  padding-top: 0rem;  
+  padding-bottom: 0rem;
+}
+
+div.delink.listing-description {
+  display: none !important;
+}
+ 
+div.quarto-post .metadata {
+  font-size: 1rem;
+  padding-right: 0rem;
+}
+ 
 /* Hover: reveal gradient bar + accent color match navbar */
 div.quarto-post .body h3.listing-title > a:hover {
   background-size: 0 3px, 100% 3px;
-  color: #00E0C9 !important;
+  color: black !important;
+}
+
+div.quarto-post .body .listing-subtitle {
+  font-size: 1.2rem;
 }
 
 
 div.listing-date, .listing-author {
     font-family: "Atkinson Hyperlegible";
 }
+
 
 .quarto-category, .listing-category, .listing-actions-group, .about-link-text {
   font-family: "Courier Prime Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;

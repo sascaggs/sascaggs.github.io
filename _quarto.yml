@@ -42,7 +42,9 @@ website:
  
 format:
   html:
-    css: styles.css
+    css:
+    - posts/custom-poss.css
+    - styles.css
     toc: false
     
     html-math-method: 
@@ -71,8 +73,7 @@ editor: source
 
 collections: 
   posts:
-    categories: true 
-    sort: "date desc"
+    sort: "date desc" 
     index: 
       title: "Blog"
       description: "Posts and updates"

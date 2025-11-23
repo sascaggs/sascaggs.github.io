@@ -1,4 +1,10 @@
 ---
 title: "Blog"
-listing: true
+listing: 
+  contents: .
+  type: default
+  categories: numbered
+format: 
+  html: 
+    css: /posts/custom-posts.css
 ---
