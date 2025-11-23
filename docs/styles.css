@@ -218,6 +218,8 @@ a.badge.badge-green {
   font-family: 'Atkinson Hyperlegible', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+
+
 .badge {
   font-family: 'Atkinson Hyperlegible', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -359,7 +361,7 @@ div.quarto-about-trestles .about-entity .about-link:hover {
 }
 
 .quarto-category:hover, .listing-category:hover {
-  background-color: #0000ff;
+  background-color: rgba(189, 40, 46, 1);
   color: white !important;
   opacity: 1;
   font-size: 12pt;
