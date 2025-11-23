@@ -22,7 +22,7 @@ President's Postdoctoral Scholar<br> [Health and Environment Modeling Laboratory
 
 ## Research Interests
 
-Ecological Anthropology $\times$ Cultural Anthropology $\times$ Evolutionary Anthropology $\times$ Complex Adaptive Systems $\times$ Network Science $\times$ Computational Social Science $\times$ Landscape Ecology $\times$ Community Ecology $\times$ Spatial Patterns $\times$ Hierarchical Bayesian Models
+Ecological, Evolutionary, & Cultural Anthropology $\times$ Complex Adaptive Systems $\times$ Landscape, Community, & Theoretical Ecology $\times$ Computational Social Science $\times$ Bayesian Hierarchical Modeling
 
 <br>
 
@@ -49,7 +49,6 @@ Ecological Anthropology $\times$ Cultural Anthropology $\times$ Evolutionary Ant
 | 2016    | **B.S. in Anthropology (advisor: Dr. John Ziker)\                                                                                                         |
 |         | **Department of Anthropology, Boise State University, Boise, ID                                                                                           |
 +---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-
 
 ## Publications
 
@@ -187,4 +186,3 @@ kbl(serv, format = 'html', align = 'l', linesep = "\\addlinespace", longtable = 
   column_spec(2, width = '4.75in')
 
 ```
-

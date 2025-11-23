@@ -87,7 +87,7 @@ $$
 | $\sigma_{\alpha}$ | between-web variation in interaction rate    |
 | $*^{(z)}$         | standardized, non-centered latent deviations |
 
-Though this is an important advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect that accounts for *false negatives*. However, it reasonable to assume that detection could be non-random: some species with particular traits may be more likely to observed. For example, the diets of larger species may be easier to detect. To incorporate this, we make an adjustment to Equation 3. We have a few options here. First, let $M_i$ and $M_j$ be the log body masses of consumer $i$ and resource $j$.
+Though this is an important advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect that accounts for *false negatives*. However, it might be reasonable to assume that detection is non-random: species with particular traits may be more readily observed. For example, if larger species are easier to sample, then we would detect their diets more often. To incorporate this, we make an adjustment to Equation 3. We have a few options here. First, let $M_i$ and $M_j$ be the log body masses of consumer $i$ and resource $j$.
 
 ### Consumer Size Model
 

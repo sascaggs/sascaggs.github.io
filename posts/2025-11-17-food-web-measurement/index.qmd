@@ -346,8 +346,6 @@ for(k in 1:K) {
 Clearly the choice of the distribution of body masses will have an influence over this simulation. Here I assume that body masses are heavy-tailed and that we model them on a log-scale. For example, the code above gives the following: 
 
 ```{r, fig.height=3.75, fig.width=6.5, dpi-300}
-library(latex2exp)
-
 data.frame(mass) |>  
   ggplot(aes(x=mass)) +  
   stat_density(adjust = 0.5) + 
