@@ -1,6 +1,6 @@
 ---
 title: "Primary or Secondary?"
-subtitle: "A Question of Ulimate Common Cause"
+subtitle: "A Question of Ultimate Common Cause"
 date: 2025-11-21
 categories: [causal inference, spatial autocorrelation]
 format:
