@@ -137,6 +137,10 @@ figcaption {
   color: rgba(30, 102, 150, .7);
 }
 
+div.listing-date {
+  font-family: "Atkinson Hyperlegible", "Roboto", "Helvetica Neue", sans-serif;
+  color: rgba(0, 117, 108, 1);
+}
 
 /* =Code
 -----------------------------------------------------------------------------*/
