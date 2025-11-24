@@ -102,3 +102,7 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+.category:hover {
+  color: #00E0C9;
+}

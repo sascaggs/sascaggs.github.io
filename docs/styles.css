@@ -181,6 +181,7 @@ a.nav-link,a.navbar-brand {
     ),
     linear-gradient(
       to right,
+      rgba(0,0,0,0),
       rgba(10, 34, 50, 1),
       rgba(0, 117, 108, 1),
       rgba(72, 106, 24, 1),
@@ -382,6 +383,7 @@ div.quarto-post .body h3.listing-title > a {
     linear-gradient(to right, transparent, transparent),
     linear-gradient(
       to right,
+      rgba(0,0,0,0),
       rgba(10, 34, 50, 1),
       rgba(0, 170, 135, 1),
       rgba(72, 106, 24, 1),
@@ -477,6 +479,7 @@ div.listing-date, .listing-author {
     ),
     linear-gradient(
       to right,
+      rgba(0,0,0,0),
       rgba(10, 34, 50, 1),
       rgba(0, 117, 108, 1),
       rgba(72, 106, 24, 1),
