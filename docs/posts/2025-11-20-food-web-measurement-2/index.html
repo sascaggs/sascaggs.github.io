@@ -66,7 +66,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../..//img/Head.png" rel="icon" type="image/png">
+<link href="../..//img/Head2.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -274,12 +274,13 @@ window.Quarto = {
 \begin{align}
 A_{ij,k} &amp;\sim \text{Bernoulli}(q_{ij,k}) \\
 q_{ij,k} &amp;= p_k \pi_{ij,k} \\
-p_k &amp;= \text{logit}^{-1}(\mu_{p} + \delta_{p,k}) \\
+p_k &amp;= \text{logit}^{-1}(\mu_{p} + \sigma_p p^{(z)}_k) \\
 \pi_{ij,k} &amp;= \text{logit}^{-1}(\alpha_k + u_{i,k} + v_{j,k}) \\
 \alpha_k &amp;= \mu_{\alpha} + \sigma_{\alpha} \alpha^{(z)}_k \\
 u_{i,k} &amp;= \sigma_u u^{(z)}_{i,k} \\
 v_{j,k} &amp;= \sigma_v v^{(z)}_{j,k} \\
-p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1)
+p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1) \\
+\sigma_p,\sigma_{\alpha},\sigma_u, \sigma_v &amp;\sim \text{Exponential}(1)
 \end{align}
 \]</span></p>
 <table class="caption-top table">
@@ -432,27 +433,31 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 <p>First, we can consider the matrices produced by these models. Each cell contains the probability of detecting an interaction between the two species.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create a raster plot</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>plot_raster <span class="ot">&lt;-</span> <span class="cf">function</span>(df, zvar, title) {</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> resource_mass_log10, <span class="at">y =</span> consumer_mass_log10, <span class="at">fill =</span> .data[[zvar]])) <span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"white"</span>, <span class="at">name =</span> zvar, <span class="at">option =</span> <span class="st">'A'</span>) <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"Resource log10 mass"</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"Consumer log10 mass"</span>,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot each model</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_random"</span>, <span class="st">"Random Reference Model"</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_consumer"</span>, <span class="st">"Consumer Size Model"</span>)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_ratio"</span>, <span class="st">"Size Ratio Model"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_mismatch"</span>, <span class="st">"Size Mismatch Model"</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">+</span> p2) <span class="sc">/</span> (p3 <span class="sc">+</span> p4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'latex2exp' was built under R version 4.3.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_raster <span class="ot">&lt;-</span> <span class="cf">function</span>(df, zvar, title) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> resource_mass_log10, <span class="at">y =</span> consumer_mass_log10, <span class="at">fill =</span> .data[[zvar]])) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"white"</span>, <span class="at">name =</span> zvar, <span class="at">option =</span> <span class="st">'A'</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">TeX</span>(<span class="st">"Resource ${log}_{10}$ mass"</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="fu">TeX</span>(<span class="st">"Consumer ${log}_{10}$ mass"</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot each model</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_random"</span>, <span class="st">"Random Model"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_consumer"</span>, <span class="st">"Consumer Size Model"</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_ratio"</span>, <span class="st">"Size Ratio Model"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_mismatch"</span>, <span class="st">"Size Mismatch Model"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">+</span> p2) <span class="sc">/</span> (p3 <span class="sc">+</span> p4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

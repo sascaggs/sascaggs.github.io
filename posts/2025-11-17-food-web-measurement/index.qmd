@@ -13,13 +13,14 @@ bibliography: 2025-11-18.bib
 
 Food webs are often represented as network graphs, where nodes represent species and links represent observed feeding interactions, or potential feeding interactions inferred from species traits. The [Web of Life](https://www.web-of-life.es/) database houses many such graphs, showcasing their interesting structural patterns and the tremendous efforts ecologists have gone to in order to collect these challenging data.
 
-```{r, echo=F, message=F, warning=F, fig.cap="An example food web originally published by @bascompte2005interaction.", fig.height=4, fig.width=4, dpi=300}
+```{r, echo=F, message=F, warning=F, fig.cap="An example food web originally published by @bascompte2005interaction.", fig.height=2, fig.width=2, dpi=300}
 library(tidyverse)
 library(tidygraph)
 library(ggraph)
 library(graphlayouts)
 library(igraph)
 library(patchwork)
+library(latex2exp)
 
 web = read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/FW_008.csv")
 
@@ -29,17 +30,6 @@ el = web |>
   filter(link > 0)
 
 g = graph_from_data_frame(el)
-
-as_tbl_graph(g) |> 
-  ggraph(layout = 'focus', focus = 2) + 
-  draw_circle(col = '#3300ff', 
-              use = 'focus', 
-              max.circle = 4) + 
-  geom_edge_link0(color = '#00000022') +
-  geom_node_point(pch=21, fill='white') + 
-  coord_equal() + 
-  theme_graph() + 
-  theme(plot.margin = unit(c(0,0,0,0),'mm'))
 ```
 
 ```{r, echo=F, message=F, warning=F}
@@ -80,15 +70,28 @@ graph_theme = theme(
 theme_set(graph_theme)
 ```
 
+```{r, include=F}
+as_tbl_graph(g) |> 
+  ggraph(layout = 'focus', focus = 2) + 
+  draw_circle(col = '#3300ff', 
+              use = 'focus', 
+              max.circle = 4) + 
+  geom_edge_link0(color = '#00000022') +
+  geom_node_point(pch=21, fill='white') + 
+  coord_equal() + 
+  theme_graph() + 
+  theme(plot.margin = unit(c(0,0,0,0),'mm'))
+```
+
 A particular challenge when collecting food web data is knowing whether sampling effort is sufficient. Consider the implications of missing some feeding links. If an interaction involving even a single rare species goes unobserved, it can impact the overall network structure. Since many theories of food webs focus directly on explaining the structure of food webs, measurement models are needed that can help us infer whether the observed structure results from fundamental processes of community assembly or from partial sampling. In this blog post, we explore this measurement problem and develop some preliminary simulations and validations.
 
 To begin, let's lay out a basic model. Let's assume that we want to infer species interactions using a hierarchical model (multiple food webs). This let's us pool information from across multiple webs to understand our ability to detect trophic links.
 
-For each food web $k = 1,...,K$, we observe pairs of species interactions $A^{\text{obs}}_{ij,k} \in \{0,1\}$. A value of $1$ indicates the presence of a link between $i \rightarrow j$. Given this, we model the probability of a link $p_{ij,k}$ as
+For each food web $k = 1,...,K$, we observe pairs of species interactions $A^{\text{obs}}_{ij,k} \in \{0,1\}$. A value of $1$ indicates the presence of a link between $i \rightarrow j$. Given this, we model the probability of a link $\pi_{ij,k}$ as
 
 $$
 \begin{equation}
-\text{logit}(p_{ij,k}) = \alpha_k + u_{i,k} + v_{j,k}
+\text{logit}(\pi_{ij,k}) = \alpha_k + u_{i,k} + v_{j,k}
 \end{equation}
 $$
 
@@ -96,23 +99,23 @@ where $\alpha_k$ is a baseline interaction rate for web $k$, and $u_{i,k}$ and $
 
 $$
 \begin{equation}
-A^{\text{obs}}_{ij,k} \sim \text{Bernoulli}(p_{ij,k})
+A^{\text{obs}}_{ij,k} \sim \text{Bernoulli}(\pi_{ij,k})
 \end{equation}
-$$ In other words, there is a probability $p_{ij,k}$ that we observe a link between $ij$ in food web $k$. Such a probability could be directly computed from $A$. But if sampling is biased, then this probability will inherit this bias. For this reason, we also need a detection model.
+$$ In other words, there is a probability $\pi_{ij,k}$ that we observe a link between $ij$ in food web $k$. Such a probability could be directly computed from $A$. But if sampling is biased, then this probability will inherit this bias. For this reason, we also need a detection model.
 
 $$
 \begin{equation}
-\text{logit}(\pi_k) = \mu_p + \delta_{p,k}
+\text{logit}(p_k) = \mu_p + \sigma_p p^{(z)}_k
 \end{equation}
 $$
 
-We assume that each web has its own rate of detection $\pi_k$. The parameter $\mu_k$ is the average log-odds of detection across all food webs, and $\delta_{p,k}$ is a specific deviation of web $k$ from the global average, which we model as non-centered: $\delta_{\pi,k} \sim \mathcal{N}(0,\sigma^2_{\pi})$.
+We assume that each web has its own rate of detection $p_k$. The parameter $\mu_p$ is the average log-odds of detection across all food webs with a specific deviation of web $k$ from the global average, which we model as non-centered: $\sigma_p p^{(z)}_k$.
 
 It follows that the probability of observing a link is
 
 $$
 \begin{equation}
-q_{ij,k} = \pi_k \cdot p_{ij,k}
+q_{ij,k} = p_k \cdot \pi_{ij,k}
 \end{equation}
 $$ We use this to amend our original likelihood to
 
@@ -135,6 +138,7 @@ Finally, we need to declare hierarchical, non-centered priors for all parameters
 
 $$
 \begin{align}
+\pi_{ij,k} &= \text{logit}^{-1}(\alpha_k + u_{i,k} + v_{j,k}) \qquad &\text{true link probability} \\
 \alpha_k &= \mu_{\alpha} + \sigma_{\alpha} \alpha^{(z)}_k \qquad &\text{non-centered} \\
 \alpha^{(z)} &\sim \mathcal{N}(0,1) \qquad &\text{latent deviation} \\ 
 \mu_{\alpha} &\sim \mathcal{N}(0,1) \qquad &\text{global mean interaction rate} \\ 
@@ -146,10 +150,10 @@ $$
 
 $$
 \begin{align}
-\delta_{\pi,k} &= \mu_{\pi} + \sigma_{\pi} \delta^{(z)}_{\pi,k} \qquad &\text{non-centered} \\ 
-\delta^{(z)} &\sim \mathcal{N}(0,1) \qquad &\text{latent deviation} \\ 
-\mu_{\pi} &\sim \mathcal{N}(0,1) \qquad &\text{global mean detection rate} \\ 
-\sigma_{\pi} &\sim \text{Exponential}(1) \qquad &\text{global detection SD}
+p_k &= \text{logit}^{-1}(\mu_{p} + \sigma_{p} p^{(z)}_{k}) \qquad &\text{non-centered} \\ 
+p^{(z)}_k &\sim \mathcal{N}(0,1) \qquad &\text{latent deviation} \\ 
+\mu_{p} &\sim \mathcal{N}(0,1) \qquad &\text{global mean detection rate} \\ 
+\sigma_{p} &\sim \text{Exponential}(1) \qquad &\text{global detection SD}
 \end{align}
 $$
 
@@ -165,7 +169,17 @@ $$
 
 ## Simulation
 
-To test this model, we need to simulate food webs to serve as the "true" sets of interactions, and "observe" our food webs probabilistically from them.
+To test this model, we need to simulate food webs to serve as the "true" sets of interactions, and "observe" our food webs probabilistically from them. Here are the packages used in this workflow.
+
+```{r, eval=F}
+library(tidyverse)
+library(tidygraph)
+library(ggraph)
+library(graphlayouts)
+library(igraph)
+library(patchwork)
+library(latex2exp)
+```
 
 We begin by setting up our parameters.
 
@@ -175,34 +189,34 @@ set.seed(777)
 inv_logit = function(x) exp(x) / (1 + exp(x))
 
 # ---- Parameters ----
-K = 5   
+K = 3   
 S = 30
 mu_alpha = -2
-sd_alpha = 1
+sigma_alpha = 1
 sigma_u = 2
 sigma_v = 1
-mu_pi = -1
-sd_pi = 0.5
+mu_p = -1
+sigma_p = 0.5
 
 # generate varying base rates and detection probabilities 
-alpha_k = rnorm(K, mu_alpha, sd_alpha); alpha_k
-pi_k = inv_logit(rnorm(K, mu_pi, sd_pi)); pi_k
+alpha_k = rnorm(K, mu_alpha, sigma_alpha); alpha_k
+p_k = inv_logit(rnorm(K, mu_p, sigma_p)); p_k
 ```
 
 We then set up some containers for the simulation results.
 
 ```{r}
 # ---- Outputs ----
-A_true_list = list()
-A_obs_list  = list()
+A_true = array(0, dim = c(S,S,K))
+A_obs  = array(0, dim = c(S,S,K))
 ```
 
 The basic procedure is the following:
 
 -   Generate $u_{i,k}$ and $v_{j,k}$.
 -   Create $S \times S$ matrices for the "true" and "observed" webs.
--   Generate $p_{ij,k}$ based on $\alpha_k$ + random effects.
--   Adjust observed links based on $\pi_k \cdot p_{ij,k}$.
+-   Generate $\pi_{ij,k}$ based on $\alpha_k$ + random effects.
+-   Adjust observed links based on $p_k \cdot \pi_{ij,k}$.
 
 ```{r}
 for(k in 1:K) {
@@ -211,19 +225,14 @@ for(k in 1:K) {
   u_i = rnorm(S, mean = 0, sd = sigma_u)
   v_j = rnorm(S, mean = 0, sd = sigma_v)
   
-  # Matrices 
-  A_true = matrix(0, ncol = S, nrow = S)
-  A_obs = matrix(0, ncol = S, nrow = S)
-  
   # Loop 
   for(i in 1:S) for(j in 1:S) {
-    p_ijk = inv_logit(alpha_k[k] + u_i[i] + v_j[j])
-    A_true[i,j] = rbinom(1, 1, p_ijk)
-    A_obs[i,j] = rbinom(1, 1, pi_k[k] * p_ijk)
     
+    pi_ijk = inv_logit(alpha_k[k] + u_i[i] + v_j[j])
+    
+    A_true[i,j,k] = rbinom(1, 1, pi_ijk)
+    A_obs[i,j,k] = rbinom(1, 1, p_k[k] * pi_ijk)
   }
-  A_true_list[[k]] = A_true
-  A_obs_list[[k]] = A_obs
 }
 ```
 
@@ -231,21 +240,22 @@ This yields the following summary.
 
 ```{r}
 dat = data.frame(
-  web = 1:K, 
-  true_links = sapply(A_true_list, function(A) sum(A)), 
-  observed_links = sapply(A_obs_list, function(A) sum(A)), 
-  detection = pi_k, 
-  alpha = alpha_k
+  web            = 1:K, 
+  true_links     = apply(A_true, 3, sum), 
+  observed_links = apply(A_obs,  3, sum), 
+  detection      = p_k, 
+  alpha          = alpha_k
 ); dat
 ```
 
 If we examine the degree distributions across all of the webs, we can see how they differ after we adjust for the probability of detection.
 
 ```{r, fig.width=6, fig.height=4, message=F, warning=F, fig.cap="The out-degree distribution across all simulated webs."}
-deg = function(A) rowSums(A)
+deg = function(A) apply(A, 3, function(mat) rowSums(mat)) |>  as.vector()
+
 data.frame(
-  True = unlist(lapply(A_true_list, deg)),
-  Observed  = unlist(lapply(A_obs_list,  deg))
+  True      = deg(A_true),
+  Observed  = deg(A_obs)
 ) |> 
   gather(key = key, value = degree) |> 
   ggplot(aes(degree)) + 
@@ -257,31 +267,280 @@ data.frame(
 We can see that the degree distribution of the observed links is more zero-inflated and that the tail of the distribution has contracted. Altering the values of $\sigma_u$ and $\sigma_v$ can change these properties to some extent, especially the heaviness of the tail.
 
 ```{r, fig.height=4, fig.width=6.5, fig.cap="Examples of true and observed adjacency matrices."}
-A_true = A_true_list[[1]]
-A_obs = A_obs_list[[1]]
+A_true1 = A_true[,,1]
+A_obs1  = A_obs[,,1]
 
-row_sums = rowSums(A_true)
-
+row_sums = rowSums(A_true1)
 sort_order = order(row_sums)
 
 par(mfrow=c(1,2))
-image(A_true[sort_order, sort_order], col = c('black','tomato'), main = 'True', xaxt = 'n', yaxt = 'n')
-image(A_obs[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed', xaxt = 'n', yaxt = 'n')
+image(A_true1[sort_order, sort_order], 
+      col = c('black','tomato'), 
+      main = 'True', 
+      xaxt = 'n', yaxt = 'n')
+image(A_obs1[sort_order, sort_order],  
+      col = c('black','tomato'), 
+      main = 'Observed', 
+      xaxt = 'n', yaxt = 'n')
 ```
+
+### Model Validation
+
+The next step is to develop the hierarchical model in Stan and validate it using the true and observed interaction matrices. First, we define the model block to mirror our simulation and the model notation. This block include the priors for all parameters and hyperparameters.
+
+``` stan
+model {
+  // priors for latent z-parameters 
+  p_z ~ normal(0,1); 
+  alpha_z ~ normal(0,1);
+  to_vector(u_z) ~ normal(0,1); 
+  to_vector(v_z) ~ normal(0,1); 
+  
+  //priors for hyperparameters 
+  mu_p ~ normal(0,1);
+  sigma_p ~ exponential(1);
+  mu_alpha ~ normal(0,1);
+  sigma_alpha ~ exponential(1); 
+  sigma_u ~ exponential(1);
+  sigma_v ~ exponential(1);
+  
+  // likelihood 
+  for(k in 1:K) {
+    // detection random effect
+    real p_k = inv_logit(mu_p + sigma_p * p_z[k]);
+    
+    // link random effect
+    real alpha_k = mu_alpha + sigma_alpha + alpha_z[k]; 
+    
+    for(i in 1:N_cons) {
+      // consumer random effects 
+      real u_ik = sigma_u * u_z[i,k];
+      
+      for(j in 1:N_res) {
+        // resource random effect 
+        real v_jk = sigma_v * v_z[j,k];
+        
+        // link probability 
+        real pi_ijk = inv_logit(alpha_k + u_ik + v_jk);
+        
+        // detection adjusted probability 
+        real q_ijk = p_k * pi_ijk;
+        
+        // likelihood
+        A[i,j,k] ~ bernoulli(q_ijk);
+      }
+    }
+  }
+}
+```
+
+For all parameters that have priors, we declare them in the parameters block.
+
+``` stan
+parameters {
+  vector[K] p_z;
+  vector[K] alpha_z;
+  matrix[N_cons, K] u_z;
+  matrix[N_res, K] v_z;
+  
+  real mu_p; 
+  real<lower=0> sigma_p; 
+  real mu_alpha; 
+  real<lower=0> sigma_alpha; 
+  real<lower=0> sigma_u; 
+  real<lower=0> sigma_v;
+}
+```
+
+Finally, we set up the data needed for the model.
+
+```{r}
+data_list = list(
+  N_cons = S, 
+  N_res  = S, 
+  K      = K, 
+  A      = A_obs
+)
+```
+
+This corresponds to
+
+``` stan
+data {
+  int<lower=1> N_cons;
+  int<lower=1> N_res;
+  int<lower=1> K;
+  // observed adjacency
+  array[N_cons, N_res, K] int<lower=0, upper=1> A; 
+}
+```
+
+View the full stan model.
+
+``` stan
+
+data {
+  int<lower=1> N_cons;
+  int<lower=1> N_res;
+  int<lower=1> K;
+  // observed adjacency
+  array[N_cons, N_res, K] int<lower=0, upper=1> A; 
+}
+
+
+parameters {
+  // non-centered latent effects
+  vector[K] p_z;
+  vector[K] alpha_z;
+  matrix[N_cons, K] u_z;
+  matrix[N_res, K] v_z;
+  
+  // hyperparameters
+  real mu_p; 
+  real<lower=0> sigma_p; 
+  real mu_alpha; 
+  real<lower=0> sigma_alpha; 
+  real<lower=0> sigma_u; 
+  real<lower=0> sigma_v;
+}
+
+model {
+  // priors for latent z-parameters 
+  p_z ~ normal(0,1); 
+  alpha_z ~ normal(0,1);
+  to_vector(u_z) ~ normal(0,1); 
+  to_vector(v_z) ~ normal(0,1); 
+  
+  //priors for hyperparameters 
+  mu_p ~ normal(0,1);
+  sigma_p ~ exponential(1);
+  mu_alpha ~ normal(0,1);
+  sigma_alpha ~ exponential(1); 
+  sigma_u ~ exponential(1);
+  sigma_v ~ exponential(1);
+  
+  // likelihood 
+  for(k in 1:K) {
+    // detection random effect
+    real p_k = inv_logit(mu_p + sigma_p * p_z[k]);
+    
+    // link random effect
+    real alpha_k = mu_alpha + sigma_alpha + alpha_z[k]; 
+    
+    for(i in 1:N_cons) {
+      // consumer random effects 
+      real u_ik = sigma_u * u_z[i,k];
+      
+      for(j in 1:N_res) {
+        // resource random effect 
+        real v_jk = sigma_v * v_z[j,k];
+        
+        // link probability 
+        real pi_ijk = inv_logit(alpha_k + u_ik + v_jk);
+        
+        // detection adjusted probability 
+        real q_ijk = p_k * pi_ijk;
+        
+        // likelihood
+        A[i,j,k] ~ bernoulli(q_ijk);
+      }
+    }
+  }
+}
+```
+
+After saving this model, we fit it using `cmdstanr` like so. This model samples in under a minute with 4 parallel chains when `S = 30` and `K = 3`.
+
+```{r, eval=F}
+library(cmdstanr)
+mod <- cmdstan_model("detection_model.stan")
+
+fit1 <- mod$sample(
+  data = data_list,
+  seed = 123,
+  chains = 4,
+  parallel_chains = 4,
+  adapt_delta = 0.95
+)
+
+fit$save_output_files()
+```
+
+```{r, echo=F, eval=T, message=F, warning=F}
+library(cmdstanr)
+mod <- cmdstan_model("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/detection_model.stan")
+
+fit1 = readRDS('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/fits/detection_model1.RDS')
+
+```
+
+Our primary task is to determine whether the model can recover the parameters that we used within the simulation. Two focal parameters are the baseline interaction probability $\alpha_k$ and the detection probability $p_k$. As a reminder, we generated these values by setting a $\mu*$ and $\sigma*$ for each and then drawing them `K` times.
+
+```{r}
+focal_pars = data.frame(k = factor(1:k), alpha_k, p_k)
+focal_pars
+```
+
+Since we modeled these as non-centered parameters, we need to reconstruct them from the draws. We will do this using the `tidybayes` package for handling Bayesian models in R.[^1] Let's start with $\alpha_k$. We will generate a predicted $\hat{\alpha}_k$ by pulling out `alpha_z[k]`, `mu_alpha`, and `sigma_alpha` and the computing `alpha_k_hat`.
+
+[^1]: Details of how to use `tidybayes` can be found [here](https://mjskay.github.io/tidybayes/articles/tidybayes.html).
+
+```{r, warning=F, message=F}
+library(tidybayes)
+
+alpha_k_draws = fit1 |> 
+  spread_draws(mu_alpha, sigma_alpha, alpha_z[k]) |>
+  group_by(k) |> 
+  mutate(alpha_k_hat = mu_alpha + sigma_alpha * alpha_z) 
+```
+
+We can summarize the posterior distribution in many ways. Here I will plot this distribution and overlay the original values.
+
+```{r, fig.width=4.25, fig.height=4}
+#| fig.cap: "Comparison of predicted $\\hat{\\alpha}_k$ to the input values of $\\alpha_k$ (magenta $*$). Points are posterior means, and bars are 67\\% and 90\\% highest density posterior intervals."
+
+alpha_k_draws |> 
+  ggplot(aes(x=alpha_k_hat, y=factor(k))) + 
+  stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
+  labs(x = TeX("$\\hat{\\alpha}_k$"), y = 'k') + 
+  geom_point(data=focal_pars, 
+             aes(x = alpha_k, y=k), 
+             color = 'magenta', pch=8, size=2, stroke=2)
+```
+
+$\hat{\alpha}_k$ falls within the density intervals in all cases, and comes extremely close to the mean for webs 1 and 3. We can now do this same to compute $\hat{p}_k$, though in this case we need to transform the model parameters from the log-odds scale to a probability scale.
+
+```{r, fig.width=4.25, fig.height=4}
+#| fig.cap: "Comparison of predicted $\\hat{p}_k$ to the input values of $p_k$ (cyan $*$). Points are posterior means, and bars are 67\\% and 90\\% highest density posterior intervals."}
+p_k_draws = fit1 |> 
+  spread_draws(p_z[k], sigma_p, mu_p) |> 
+  group_by(k) |> 
+  mutate(p_k_hat = inv_logit(mu_p + sigma_p*p_z))
+
+p_k_draws |> 
+  ggplot(aes(x=p_k_hat, y=factor(k))) + 
+  stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
+  labs(x = TeX("$\\hat{p}_k$"), y = 'k') + 
+  geom_point(data=focal_pars, 
+             aes(x = p_k, y=k), 
+             color = 'cyan3', pch=8, size=2, stroke=2)
+```
+
+Again we come very close to recovering the true parameters, with the biggest difference being in web 2. Although we can certainly be more precise, this is still a good sign that the model could, in principle, estimate the latent detection probability $p_k$.
 
 ## Non-Random Links
 
-Now that we have a basic model and simulation skeleton, we should consider which traits might lead to a species having more or less feeding links. For example, we could expect that larger species may have broader diets. This idea has be presented many times, with notable examples coming from @petchey2008size and @allesina2011predicting. Here we can make a simplistic assumption that the mass of a consumer $M_i$ can have a linear, additive effect on the probability of a link.[^1]
+Now that we have a basic model and simulation skeleton, we should consider which traits might lead to a species having more or less feeding links. For example, we could expect that larger species may have broader diets. This idea has be presented many times, with notable examples coming from @petchey2008size and @allesina2011predicting. Here we can make a simplistic assumption that the mass of a consumer $M_i$ can have a linear, additive effect on the probability of a link.[^2]
 
-[^1]: @allesina2011predicting explore additional possibilities, such as the *Ratio* model, that we discuss in more detail in the next post.
+[^2]: @allesina2011predicting explore additional possibilities, such as the *Ratio* model, that we discuss in more detail in the next post.
 
 $$
 \begin{equation}
-\text{logit}(p_{ij,k}) = \alpha_k + (u_{i,k} + \beta_M M_i) + v_{j,k}
+\text{logit}(\pi_{ij,k}) = \alpha_k + (u_{i,k} + \beta_M M_i) + v_{j,k}
 \end{equation}
 $$
 
-We can now compare our original simulations to a second pair where we adjust the probability based on body size. 
+We can now compare our original simulations to a second pair where we adjust the probability based on body size.
 
 ```{r}
 # ---- Setup ----
@@ -292,18 +551,18 @@ inv_logit = function(x) exp(x) / (1 + exp(x))
 K = 5   
 S = 30
 mu_alpha = -2
-sd_alpha = 1
+sigma_alpha = 1
 sigma_u = 2
 bM = 1.2
 mass = exp(rnorm(S,0,3))
 M = log(mass)
 sigma_v = 1
-mu_pi = -1
-sd_pi = 0.5
+mu_p = -1
+sigma_p = 0.5
 
 # generate varying base rates and detection probabilities 
-alpha_k = rnorm(K, mu_alpha, sd_alpha)
-pi_k = inv_logit(rnorm(K, mu_pi, sd_pi))
+alpha_k = rnorm(K, mu_alpha, sigma_alpha)
+p_k = inv_logit(rnorm(K, mu_p, sigma_p))
 
 # ---- Outputs ----
 A_true_list = list()
@@ -326,14 +585,14 @@ for(k in 1:K) {
   
   # Loop 
   for(i in 1:S) for(j in 1:S) {
-    p_ijk = inv_logit(alpha_k[k] + u_i[i] + v_j[j])
-    A_true[i,j] = rbinom(1, 1, p_ijk)
-    A_obs[i,j] = rbinom(1, 1, pi_k[k] * p_ijk)
+    pi_ijk = inv_logit(alpha_k[k] + u_i[i] + v_j[j])
+    A_true[i,j] = rbinom(1, 1, pi_ijk)
+    A_obs[i,j] = rbinom(1, 1, p_k[k] * pi_ijk)
     
     # body mass model 
-    .p_ijk = inv_logit(alpha_k[k] + (u_i[i] + bM * M[i]) + v_j[j])
-    A_Mtrue[i,j] = rbinom(1, 1, .p_ijk)
-    A_Mobs[i,j] = rbinom(1, 1, pi_k[k] * .p_ijk)
+    .pi_ijk = inv_logit(alpha_k[k] + (u_i[i] + bM * M[i]) + v_j[j])
+    A_Mtrue[i,j] = rbinom(1, 1, .pi_ijk)
+    A_Mobs[i,j] = rbinom(1, 1, p_k[k] * .pi_ijk)
     
   }
   A_true_list[[k]] = A_true
@@ -343,7 +602,7 @@ for(k in 1:K) {
 }
 ```
 
-Clearly the choice of the distribution of body masses will have an influence over this simulation. Here I assume that body masses are heavy-tailed and that we model them on a log-scale. For example, the code above gives the following: 
+Clearly the choice of the distribution of body masses will have an influence over this simulation. Here I assume that body masses are heavy-tailed and that we model them on a log-scale. For example, the code above gives the following:
 
 ```{r, fig.height=3.75, fig.width=6.5, dpi-300}
 data.frame(mass) |>  
@@ -361,7 +620,6 @@ data.frame(M) |>
   ylim(c(0,0.16))
 
 ```
-
 
 ```{r, fig.width=4, fig.height=5}
 A_true = A_true_list[[1]]
@@ -383,7 +641,7 @@ image(A_Mtrue[sort_order, sort_order], col = c('black','tomato'), main = 'True (
 image(A_Mobs[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed (Allometric)', xaxt = 'n', yaxt = 'n')
 ```
 
-The effect of body mass concentrates the true links toward the largest species. It is also gravitational: energy, in the form of biomass, flows toward these largest species. The effect of this on the observed links is very subtle but not entirely absent. 
+The effect of body mass concentrates the true links toward the largest species. It is also gravitational: energy, in the form of biomass, flows toward these largest species. The effect of this on the observed links is very subtle but not entirely absent.
 
 ```{r, fig.width=6.5, fig.height=6, dpi=300}
 lo = layout_as_tree(graph_from_adjacency_matrix(A_Mobs_list[[1]]))
@@ -413,4 +671,3 @@ plot(graph_from_adjacency_matrix(A_Mobs_list[[1]]),
      layout = lo, 
      main = 'Observed (Allometric)')
 ```
-

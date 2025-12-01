@@ -1,7 +1,7 @@
 project:
   type: website
   output-dir: docs
-  
+
 website:
   title: "Shane A. Scaggs"
   favicon: "/img/Head2.png"
