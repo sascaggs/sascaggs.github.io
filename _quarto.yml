@@ -4,6 +4,7 @@ project:
   
 website:
   title: "Shane A. Scaggs"
+  favicon: "/img/Head2.png"
   navbar:
     title: |
      <img src="/img/Head.png" alt="Shane A. Scaggs" style="height: 68px;">
