@@ -36,8 +36,8 @@ model {
   sigma_p ~ exponential(1);
   mu_alpha ~ normal(0,1);
   sigma_alpha ~ exponential(1); 
-  sigma_u ~ normal(0,2);
-  sigma_v ~ normal(0,2);
+  sigma_u ~ exponential(1);
+  sigma_v ~ exponential(1);
   
   // likelihood 
   for(k in 1:K) {
@@ -45,7 +45,7 @@ model {
     real p_k = inv_logit(mu_p + sigma_p * p_z[k]);
     
     // link random effect
-    real alpha_k = mu_alpha + sigma_alpha + alpha_z[k]; 
+    real alpha_k = mu_alpha + sigma_alpha * alpha_z[k]; 
     
     for(i in 1:N_cons) {
       // consumer random effects 

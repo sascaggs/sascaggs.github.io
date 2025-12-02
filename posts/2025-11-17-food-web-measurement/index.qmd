@@ -310,7 +310,7 @@ model {
     real p_k = inv_logit(mu_p + sigma_p * p_z[k]);
     
     // link random effect
-    real alpha_k = mu_alpha + sigma_alpha + alpha_z[k]; 
+    real alpha_k = mu_alpha + sigma_alpha * alpha_z[k]; 
     
     for(i in 1:N_cons) {
       // consumer random effects 
@@ -425,7 +425,7 @@ model {
     real p_k = inv_logit(mu_p + sigma_p * p_z[k]);
     
     // link random effect
-    real alpha_k = mu_alpha + sigma_alpha + alpha_z[k]; 
+    real alpha_k = mu_alpha + sigma_alpha * alpha_z[k]; 
     
     for(i in 1:N_cons) {
       // consumer random effects 
@@ -468,9 +468,9 @@ fit$save_output_files()
 
 ```{r, echo=F, eval=T, message=F, warning=F}
 library(cmdstanr)
-mod <- cmdstan_model("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/detection_model.stan")
+#mod <- cmdstan_model("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/detection_model.stan")
 
-fit1 = readRDS('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/fits/detection_model1.RDS')
+fit1 = readRDS('fits/detection_model1.RDS')
 
 ```
 
@@ -496,13 +496,16 @@ alpha_k_draws = fit1 |>
 
 We can summarize the posterior distribution in many ways. Here I will plot this distribution and overlay the original values.
 
-```{r, fig.width=4.25, fig.height=4}
+```{r, fig.width=4.25, fig.height=4, echo=F}
 #| fig.cap: "Comparison of predicted $\\hat{\\alpha}_k$ to the input values of $\\alpha_k$ (magenta $*$). Points are posterior means, and bars are 67\\% and 90\\% highest density posterior intervals."
 
 alpha_k_draws |> 
   ggplot(aes(x=alpha_k_hat, y=factor(k))) + 
   stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
   labs(x = TeX("$\\hat{\\alpha}_k$"), y = 'k') + 
+  geom_point(data=focal_pars, 
+             aes(x = alpha_k, y=k), 
+             color = '#ffffff', pch=8, size=3, stroke=3) +
   geom_point(data=focal_pars, 
              aes(x = alpha_k, y=k), 
              color = 'magenta', pch=8, size=2, stroke=2)
@@ -523,6 +526,9 @@ p_k_draws |>
   labs(x = TeX("$\\hat{p}_k$"), y = 'k') + 
   geom_point(data=focal_pars, 
              aes(x = p_k, y=k), 
+             color = 'white', pch=8, size=4, stroke=2) +
+  geom_point(data=focal_pars, 
+             aes(x = p_k, y=k), 
              color = 'cyan3', pch=8, size=2, stroke=2)
 ```
 
@@ -536,11 +542,23 @@ Now that we have a basic model and simulation skeleton, we should consider which
 
 $$
 \begin{equation}
-\text{logit}(\pi_{ij,k}) = \alpha_k + (u_{i,k} + \beta_M M_i) + v_{j,k}
+\text{logit}(\pi_{ij,k}) = \alpha_k + (u_{i,k} + b M_i) + v_{j,k}
 \end{equation}
 $$
 
-We can now compare our original simulations to a second pair where we adjust the probability based on body size.
+Rather than having a single parameter $b$ for all webs, it is more likely that we have distinct allometric relationships per web, because each simulated web could represent a distinct ecological community. This implies a random slopes model:
+
+$$
+\begin{align}
+\text{logit}(\pi_{ij,k}) &= \alpha_k + (u_{i,k} + b_k M_{i,k}) + v_{j,k} \\
+b_k &= \mu_b + \sigma_b b^{(z)}_k \\ 
+\mu_b &\sim \mathcal{N}(0,1) \\
+b^{(z)}_k &\sim \mathcal{N}(0,1) \\
+\sigma_b &\sim \text{Exponential}(1) \\ 
+\end{align}
+$$
+
+where $i \in \{1,...,S\}$ and $k \in \{1,...,K\}$. This means that $i$ in web $k = 1$ is not the same as $i$ in web $k = 2$.
 
 ```{r}
 # ---- Setup ----
@@ -548,126 +566,304 @@ set.seed(777)
 inv_logit = function(x) exp(x) / (1 + exp(x))
 
 # ---- Parameters ----
-K = 5   
+K = 3   
 S = 30
 mu_alpha = -2
 sigma_alpha = 1
 sigma_u = 2
-bM = 1.2
-mass = exp(rnorm(S,0,3))
-M = log(mass)
 sigma_v = 1
 mu_p = -1
 sigma_p = 0.5
+mu_b = 1
+sigma_b = 0.3
 
-# generate varying base rates and detection probabilities 
+# consumer mass 
+M = matrix(NA_real_, nrow = S, ncol = K)
+
+# generate varying base rates and detection probabilities, and body mass effects 
 alpha_k = rnorm(K, mu_alpha, sigma_alpha)
 p_k = inv_logit(rnorm(K, mu_p, sigma_p))
+b_k = rnorm(K, mu_b, sigma_b)
 
 # ---- Outputs ----
-A_true_list = list()
-A_obs_list  = list()
-A_Mtrue_list = list()
-A_Mobs_list = list()
+A_true = array(0, dim = c(S,S,K))
+A_obs  = array(0, dim = c(S,S,K))
+A_Mtrue = array(0, dim = c(S,S,K))
+A_Mobs  = array(0, dim = c(S,S,K))
 
 
 for(k in 1:K) {
-  
   # Random effects
   u_i = rnorm(S, mean = 0, sd = sigma_u)
   v_j = rnorm(S, mean = 0, sd = sigma_v)
   
-  # Matrices 
-  A_true = matrix(0, ncol = S, nrow = S)
-  A_obs = matrix(0, ncol = S, nrow = S)
-  A_Mtrue = matrix(0, ncol = S, nrow = S)
-  A_Mobs = matrix(0, ncol = S, nrow = S)
+  
+    # Mass 
+    mass_k = exp(rnorm(S, mu_b, sigma_b))
+    M[,k] = log(mass_k)
   
   # Loop 
   for(i in 1:S) for(j in 1:S) {
+    
     pi_ijk = inv_logit(alpha_k[k] + u_i[i] + v_j[j])
-    A_true[i,j] = rbinom(1, 1, pi_ijk)
-    A_obs[i,j] = rbinom(1, 1, p_k[k] * pi_ijk)
+    A_true[i,j,k] = rbinom(1, 1, pi_ijk)
+    A_obs[i,j,k] = rbinom(1, 1, p_k[k] * pi_ijk)
     
     # body mass model 
-    .pi_ijk = inv_logit(alpha_k[k] + (u_i[i] + bM * M[i]) + v_j[j])
-    A_Mtrue[i,j] = rbinom(1, 1, .pi_ijk)
-    A_Mobs[i,j] = rbinom(1, 1, p_k[k] * .pi_ijk)
+    .pi_ijk = inv_logit(alpha_k[k] + (u_i[i] + b_k[k] * M[i,k]) + v_j[j])
+    A_Mtrue[i,j,k] = rbinom(1, 1, .pi_ijk)
+    A_Mobs[i,j,k] = rbinom(1, 1, p_k[k] * .pi_ijk)
     
   }
-  A_true_list[[k]] = A_true
-  A_obs_list[[k]] = A_obs
-  A_Mtrue_list[[k]] = A_Mtrue
-  A_Mobs_list[[k]] = A_Mobs
 }
 ```
 
 Clearly the choice of the distribution of body masses will have an influence over this simulation. Here I assume that body masses are heavy-tailed and that we model them on a log-scale. For example, the code above gives the following:
 
 ```{r, fig.height=3.75, fig.width=6.5, dpi-300}
-data.frame(mass) |>  
-  ggplot(aes(x=mass)) +  
+data.frame(mass_k) |>  
+  ggplot(aes(x=mass_k)) +  
   stat_density(adjust = 0.5) + 
   labs(x=expression(M[i])) + 
   ggtitle('Raw mass') + 
-  ylim(c(0,0.16)) + 
-  
-data.frame(M) |>  
+
+data.frame(M=M[,1]) |>  
   ggplot(aes(x=M)) +  
   stat_density(adjust = 0.5) + 
   labs(x=expression(log(M[i]))) + 
-  ggtitle('Log transformed') + 
-  ylim(c(0,0.16))
-
+  ggtitle('Log transformed') 
 ```
 
 ```{r, fig.width=4, fig.height=5}
-A_true = A_true_list[[1]]
-A_obs = A_obs_list[[1]]
-A_Mtrue = A_Mtrue_list[[1]]
-A_Mobs = A_Mobs_list[[1]]
+A_true1  = A_true[,,1]
+A_obs1   = A_obs[,,1]
+A_Mtrue1 = A_Mtrue[,,1]
+A_Mobs1  = A_Mobs[,,1]
 
-row_sums = rowSums(A_true)
+row_sums = rowSums(A_true1)
 sort_order = order(row_sums)
 
 par(mfrow=c(2,2), mar=c(3,1,3,1))
-image(A_true[sort_order, sort_order], col = c('black','tomato'), main = 'True', xaxt = 'n', yaxt = 'n')
-image(A_obs[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed', xaxt = 'n', yaxt = 'n')
+image(A_true1[sort_order, sort_order], col = c('black','tomato'), main = 'True', xaxt = 'n', yaxt = 'n')
+image(A_obs1[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed', xaxt = 'n', yaxt = 'n')
 
-row_sums = rowSums(A_Mtrue)
+row_sums = rowSums(A_Mtrue1)
 sort_order = order(row_sums)
 
-image(A_Mtrue[sort_order, sort_order], col = c('black','tomato'), main = 'True (Allometric)', xaxt = 'n', yaxt = 'n')
-image(A_Mobs[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed (Allometric)', xaxt = 'n', yaxt = 'n')
+image(A_Mtrue1[sort_order, sort_order], col = c('black','tomato'), main = 'True (Allometric)', xaxt = 'n', yaxt = 'n')
+image(A_Mobs1[sort_order, sort_order],  col = c('black','tomato'), main = 'Observed (Allometric)', xaxt = 'n', yaxt = 'n')
 ```
 
 The effect of body mass concentrates the true links toward the largest species. It is also gravitational: energy, in the form of biomass, flows toward these largest species. The effect of this on the observed links is very subtle but not entirely absent.
 
-```{r, fig.width=6.5, fig.height=6, dpi=300}
-lo = layout_as_tree(graph_from_adjacency_matrix(A_Mobs_list[[1]]))
+```{r, fig.width=6.5, fig.height=6, dpi=300, warning=F}
+lo = layout_as_tree(graph_from_adjacency_matrix(A_Mobs1))
 par(mfrow=c(2,2), mar=c(3,1,3,1))
-plot(graph_from_adjacency_matrix(A_true_list[[1]]),  
+plot(graph_from_adjacency_matrix(A_true1),  
      edge.arrow.size=0.2, 
      vertex.color = 'white', 
      vertex.label = NA, 
      layout = lo, 
      main = 'True')
-plot(graph_from_adjacency_matrix(A_obs_list[[1]]),   
+plot(graph_from_adjacency_matrix(A_obs1),   
      edge.arrow.size=0.2, 
      vertex.color = 'white', 
      vertex.label = NA, 
      layout = lo, 
      main = 'Observed')
-plot(graph_from_adjacency_matrix(A_Mtrue_list[[1]]), 
+plot(graph_from_adjacency_matrix(A_Mtrue1), 
      edge.arrow.size=0.2, 
      vertex.color = 'white', 
      vertex.label = NA, 
      layout = lo, 
      main = 'True (Allometric)')
-plot(graph_from_adjacency_matrix(A_Mobs_list[[1]]),  
+plot(graph_from_adjacency_matrix(A_Mobs1),  
      edge.arrow.size=0.2, 
      vertex.color = 'white', 
      vertex.label = NA, 
      layout = lo, 
      main = 'Observed (Allometric)')
+```
+
+### Stan model
+
+Now we adjust the original Stan model to include these biomass effects. The main changes, besides adding the non-centered effects of $b_k$, are to include the body mass matrix `M`.
+
+``` stan
+
+data {
+  int<lower=1> N_cons;
+  int<lower=1> N_res;
+  int<lower=1> K;
+  matrix[N_cons,K] M;
+  // observed adjacency
+  array[N_cons, N_res, K] int<lower=0, upper=1> A; 
+}
+
+
+parameters {
+  // body mass slopes 
+  vector[K] b_z;
+  real mu_b;
+  real<lower=0> sigma_b;
+  
+  // non-centered latent effects
+  vector[K] p_z;
+  vector[K] alpha_z;
+  matrix[N_cons, K] u_z;
+  matrix[N_res, K] v_z;
+  
+  // hyperparameters
+  real mu_p; 
+  real<lower=0> sigma_p; 
+  real mu_alpha; 
+  real<lower=0> sigma_alpha; 
+  real<lower=0> sigma_u; 
+  real<lower=0> sigma_v;
+}
+
+model {
+  // b priors
+  b_z ~ normal(0,1);
+  mu_b ~ normal(0,1); 
+  sigma_b ~ exponential(1);
+  
+  // priors for latent z-parameters 
+  p_z ~ normal(0,1); 
+  alpha_z ~ normal(0,1);
+  to_vector(u_z) ~ normal(0,1); 
+  to_vector(v_z) ~ normal(0,1); 
+  
+  //priors for hyperparameters 
+  mu_p ~ normal(0,1);
+  sigma_p ~ exponential(1);
+  mu_alpha ~ normal(0,1);
+  sigma_alpha ~ exponential(1); 
+  sigma_u ~ exponential(1);
+  sigma_v ~ exponential(1);
+  
+  // likelihood 
+  for(k in 1:K) {
+    // detection random effect
+    real p_k = inv_logit(mu_p + sigma_p * p_z[k]);
+    
+    // link random effect
+    real alpha_k = mu_alpha + sigma_alpha * alpha_z[k];
+    
+    // body mass slopes 
+    real b_k = mu_b + sigma_b * b_z[k];
+    
+    for(i in 1:N_cons) {
+      // consumer random effects 
+      real u_ik = sigma_u * u_z[i,k];
+      
+      for(j in 1:N_res) {
+        // resource random effect 
+        real v_jk = sigma_v * v_z[j,k];
+        
+        // link probability 
+        real pi_ijk = inv_logit(alpha_k + (u_ik + b_k*M[i,k]) + v_jk);
+        
+        // detection adjusted probability 
+        real q_ijk = p_k * pi_ijk;
+        
+        // likelihood
+        A[i,j,k] ~ bernoulli(q_ijk);
+      }
+    }
+  }
+}
+```
+
+As before, we fit the model but with slightly increased `adapt_delta` to accommodate.
+
+```{r, eval=F}
+Bmod <- cmdstan_model("detection_model_bodymass.stan")
+
+fit2 <- modB$sample(
+  data = data_list,
+  seed = 123,
+  chains = 4,
+  parallel_chains = 4,
+  adapt_delta = 0.95
+)
+
+fit2$save_output_files()
+```
+
+```{r, echo=F, message=F, warning=F}
+fit2 = readRDS('fits/detection_model_bodymass.RDS')
+```
+
+As before, we want to compare the predicted values of $\hat{\alpha}_k$, $\hat{p}_k$, and $\hat{b}_k$ to their input values.
+
+```{r}
+focal_pars2 = data.frame(k = factor(1:k), 
+                        alpha_k, p_k, b_k)
+focal_pars2
+```
+
+```{r, echo=F, fig.width=6.5, fig.height=3.5}
+
+#| fig.cap: "A. Comparison of predicted $\\hat{\\alpha}_k$ to the input values $\\alpha_k$. B. Comparison of predicted $\\hat{p}_k$ to the input values $p_k$."
+
+alpha_k_draws2 = fit2 |> 
+  spread_draws(mu_alpha, sigma_alpha, alpha_z[k]) |>
+  group_by(k) |> 
+  mutate(alpha_k_hat = mu_alpha + sigma_alpha * alpha_z) 
+
+p1 = alpha_k_draws2 |> 
+  ggplot(aes(x=alpha_k_hat, y=factor(k))) + 
+  stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
+  labs(x = TeX("$\\hat{\\alpha}_k$"), y = 'k') + 
+  geom_point(data=focal_pars2, 
+             aes(x = alpha_k, y=k), 
+             color = 'white', pch=8, size=4, stroke=2) +
+  geom_point(data=focal_pars2, 
+             aes(x = alpha_k, y=k), 
+             color = 'magenta', pch=8, size=2, stroke=2)
+
+
+p_k_draws2 = fit2 |> 
+  spread_draws(p_z[k], sigma_p, mu_p) |> 
+  group_by(k) |> 
+  mutate(p_k_hat = inv_logit(mu_p + sigma_p*p_z))
+
+p2 = p_k_draws2 |> 
+  ggplot(aes(x=p_k_hat, y=factor(k))) + 
+  stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
+  labs(x = TeX("$\\hat{p}_k$"), y = 'k') + 
+  geom_point(data=focal_pars2, 
+             aes(x = p_k, y=k), 
+             color = 'white', pch=8, size=4, stroke=2) +
+  geom_point(data=focal_pars, 
+             aes(x = p_k, y=k), 
+             color = 'cyan3', pch=8, size=2, stroke=2)
+
+p1 + p2 + plot_annotation(tag_levels = 'A')
+```
+
+Again we see a decent concordance between the predicted and input values, although in some cases we are near the edge of the highest density posterior interval.
+
+Next, we examine the predicted $\hat{b}_k$ from the posterior against the input values.
+
+```{r, echo=F}
+#| fig.cap: "Comparison of the predicted $\\hat{b}_k$ values against the input values $b_k$."
+
+b_k_draws2 = fit2 |> 
+  spread_draws(b_z[k], sigma_b, mu_b) |> 
+  group_by(k) |> 
+  mutate(b_k_hat = inv_logit(mu_b + sigma_b*b_z))
+
+b_k_draws2 |> 
+  ggplot(aes(x=b_k_hat, y=factor(k))) + 
+  stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
+  labs(x = TeX("$\\hat{b}_k$"), y = 'k') + 
+  geom_point(data=focal_pars2, 
+             aes(x = b_k, y=k), 
+             color = 'white', pch=8, size=4, stroke=2) +
+  geom_point(data=focal_pars, 
+             aes(x = b_k, y=k), 
+             color = '#3300ff', pch=8, size=2, stroke=2)
+
 ```
