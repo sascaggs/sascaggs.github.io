@@ -1,0 +1,219 @@
+---
+title: "Spatial Patterns and Random Fields I"
+date: 2025-12-02
+categories: [landscape ecology, spatial patterns]
+format:
+  html:
+    toc: true
+---
+
+# Introduction
+
+```{r, echo=F, message=F, warning=F}
+library(tidyverse)
+# graphs
+graph_theme = theme(
+  # panels
+  panel.background = element_rect(
+    color  = 'black', 
+    fill   = '#ffffffff', 
+    size   = 1 ), 
+  panel.grid = element_blank( ), 
+  panel.spacing = unit(15, 'pt'), 
+  # axes
+  axis.ticks  = element_line(
+    color = 'black', 
+    size  = 0.5 ), 
+  axis.ticks.length = unit(2, 'mm'), 
+  axis.text = element_text(color='black'), 
+  # strips
+  strip.background = element_rect(
+    color = '#ffffffff', 
+    fill  = '#ffffffff',), 
+  strip.text = element_text(
+    color  = 'black', 
+    vjust  = 1.2,
+    hjust  = 0,
+    size   = 10, 
+    margin = unit( c(4,0,4,0), 'mm') ), 
+  # title
+  plot.title = element_text(
+    size  = 14, 
+    hjust = 0, 
+    vjust = 3),
+  # legend 
+  legend.key = element_blank()
+)
+
+theme_set(graph_theme)
+```
+
+Landscapes contain myriad spatial patterns. These patterns interest us because of their implications for a variety of ecological processes. Here I treat landscapes as random fields and examine the spatial patterns the arise from them. A random field treats a lattice as a continuous surface; a vegetation gradient. Patterns arise on this surface by creating random noise and then smoothing it based on correlation distances.
+
+> White noise has structure inside it; smoothing reveals it.
+
+The objectives of this exercise are to 1) learn to generate random fields, and 2) learn the methods of summarise them (spatial variance, correlation lengths).
+
+# Noisy Field
+
+Suppose we have a square lattice of size $N \times N$ where $i = 1,...,N$ and $j = 1,...,N$. Each cell of this lattice has a coordinate $(i,j)$. We begin by generating a very noisy random field made up of Gaussian noise at each cell location
+
+$$
+\begin{align}
+\varepsilon(i,j) \sim \mathcal{N}(0,\sigma^2), \qquad \text{independent for all }(i,j).
+\end{align}
+$$ We can think of $\varepsilon(i,j)$ as the "speckling" of the grid. This speckling has no spatial pattern that is qualitatively evident.
+
+## Gaussian Kernel
+
+Next we define a kernel $K_{\ell}(\Delta i, \Delta j)$ that depends on the differences between a pair of cells in the lattice. To start, we use a Guassian kernel
+
+$$
+\begin{align}
+K_{\ell}(\Delta i, \Delta j) = \text{exp}\biggl(\frac{\Delta i^2 + \Delta j^2)}{2\ell^2}\biggr).
+\end{align}
+$$ The notation $\Delta i$ and $\Delta j$ capture the differences between the values at cell locations. The locations of these comparison cells are $(u,v)$, with $\Delta i = i - u$ and $\Delta j = j - v$. Here $\ell$ is a scale parameter that controls the correlation length.
+
+-   When $\ell$ is small, the patterns are peaked and rugged.
+
+-   When $\ell$ is large, the patterns are smoother, averaged over many neighbors.
+
+## Convolution
+
+To construct the random field $X(i,j)$, we smooth over the noisy field $\varepsilon(i,j)$ using the chosen Gaussian kernel function. Mathematically, this looks like
+
+$$
+\begin{align}
+X(i,j) = \sum^N_{u=1} \sum^N_{v=1} K_{\ell}(i-u,\ j-v)\varepsilon(u,v)
+\end{align}
+$$
+
+For each focal cell $(i,j)$, we examine a reference pixel $(u,v)$ and compute the difference. This is used to assign a weight $w = K_{\ell}(\Delta i, \Delta j)$ that is multiplied by the noise $\varepsilon(u,v)$. We sum over these such that $X(i,j)$ is a weighted average.
+
+# Simulation
+
+In code, we have two sets of loops: one over $(i,j)$ and a second over $(u,v)$. But first, we generate the noisy field.
+
+```{r, fig.width=4, fig.height=4.5}
+#| fig.cap: "An example of $\\varepsilon(i,j)$."
+library(tidyverse)
+library(latex2exp)
+N = 50
+sigma = 1
+  
+eps = matrix(0, N, N)
+for(i in 1:N) for(j in 1:N) {
+  eps[i,j] = rnorm(1, 0, sigma)
+}
+
+pal = colorRampPalette(c('#0F0E0E','#4D2D8C','#FF714B','#FAD691'))
+
+dat = expand.grid(i=1:nrow(eps), j=1:ncol(eps)) |>  
+  mutate(eps = as.vector(eps))
+
+ggplot(dat, aes(x=j,y=i, fill=eps) ) + 
+  geom_tile() + 
+  scale_fill_gradientn(colours = pal(N)) + 
+  coord_fixed() + 
+  labs(fill = expression(epsilon)) + 
+  theme_void()
+
+
+```
+
+We then apply the smoothing kernel over this noise to obtain $X(i,j)$.
+
+```{r, fig.width=4, fig.height=4.5}
+#| fig.cap: "An example of $X(i,j)$."
+
+ell = 3
+X = matrix(0, N, N)
+for(i in 1:N) for(j in 1:N) {
+  
+  total = 0
+  
+  for(u in 1:N) for(v in 1:N) {
+    
+    dx = i - u
+    dy = j - v
+    
+    d2 = dx*dx + dy*dy
+    
+    w = exp(-d2 / (2 * ell * ell))
+    
+    total = total + w * eps[u,v]
+  }
+  X[i,j] = total
+}
+
+
+dat = expand.grid(i=1:nrow(eps), j=1:ncol(eps)) |>  
+  mutate(X = as.vector(X))
+
+ggplot(dat, aes(x=j,y=i, fill=X) ) + 
+  geom_tile() + 
+  scale_fill_gradientn(colours = pal(N)) + 
+  coord_fixed() + 
+  labs(fill = 'X') + 
+  theme_void()
+```
+
+Changing the value of $\ell$ will adjust the spatial pattern as described above.
+
+```{r, message=F, warning=F, fig.width=6, fig.height=6.5}
+library(tidyverse)
+simulate_grf = function(N = 50, 
+                        sigma, 
+                        ell) {
+  
+  # white noise field 
+  eps = matrix(0, N, N)
+  for(i in 1:N) for(j in 1:N) {
+    eps[i,j] = rnorm(1, 0, sigma)
+  }
+  
+  # output field 
+  X = matrix(0, N, N)
+  for(i in 1:N) for(j in 1:N) {
+    
+    total = 0
+    
+    for(u in 1:N) for(v in 1:N) {
+      
+      dx = i - u
+      dy = j - v
+      
+      d2 = dx*dx + dy*dy
+      
+      # Gaussian kernel 
+      w = exp(-d2 / (2 * ell * ell))
+      
+      total = total + w * eps[u,v]
+      
+    }
+    
+    X[i,j] = total
+  }
+  return(X)
+}
+
+ell_seq = 1:4
+X_list = list()
+for(k in 1:length(ell_seq)) {
+  x = simulate_grf(N, sigma = 1, ell = ell_seq[k])
+  df = expand.grid(i = 1:nrow(x), j = 1:ncol(x)) |> 
+    mutate(value = as.vector(x), 
+           ell = paste('\u2113','=',ell_seq[k]))
+  X_list[[k]] = df
+}
+
+df = bind_rows(X_list)
+
+ggplot(df, aes(x=j, y=i, fill=value)) + 
+  geom_tile() + 
+  scale_fill_gradientn(colours = pal(N)) + 
+  coord_fixed() + 
+  facet_wrap(~ell) +
+  labs(fill = 'X') + 
+  theme_void()
+```
