@@ -52,7 +52,7 @@ Landscapes contain myriad spatial patterns. These patterns interest us because o
 
 > White noise has structure inside it; smoothing reveals it.
 
-The objectives of this exercise are to 1) learn to generate random fields, and 2) learn the methods of summarise them (spatial variance, correlation lengths).
+The objectives of this exercise are to 1. learn to generate random fields, and 2. learn the methods of summarise them (spatial variance, correlation lengths).
 
 # Noisy Field
 
@@ -98,6 +98,9 @@ In code, we have two sets of loops: one over $(i,j)$ and a second over $(u,v)$. 
 #| fig.cap: "An example of $\\varepsilon(i,j)$."
 library(tidyverse)
 library(latex2exp)
+library(patchwork)
+
+set.seed(777)
 N = 50
 sigma = 1
   
@@ -106,17 +109,19 @@ for(i in 1:N) for(j in 1:N) {
   eps[i,j] = rnorm(1, 0, sigma)
 }
 
-pal = colorRampPalette(c('#0F0E0E','#4D2D8C','#FF714B','#FAD691'))
+pal1 = colorRampPalette(c('#0F0E0E','#4D2D8C','#FF714B','#FAD691'))
+pal2 = colorRampPalette(c('#0F0E0E','#0033ff','#00cc00','#FAD691'))
 
 dat = expand.grid(i=1:nrow(eps), j=1:ncol(eps)) |>  
   mutate(eps = as.vector(eps))
 
 ggplot(dat, aes(x=j,y=i, fill=eps) ) + 
   geom_tile() + 
-  scale_fill_gradientn(colours = pal(N)) + 
+  scale_fill_gradientn(colours = pal1(N)) + 
   coord_fixed() + 
   labs(fill = expression(epsilon)) + 
-  theme_void()
+  
+  theme(panel.background = element_rect(color='black', fill=NA, size=2))
 
 
 ```
@@ -152,15 +157,16 @@ dat = expand.grid(i=1:nrow(eps), j=1:ncol(eps)) |>
 
 ggplot(dat, aes(x=j,y=i, fill=X) ) + 
   geom_tile() + 
-  scale_fill_gradientn(colours = pal(N)) + 
+  scale_fill_gradientn(colours = pal1(N)) + 
   coord_fixed() + 
   labs(fill = 'X') + 
-  theme_void()
+   
+  theme(panel.background = element_rect(color='black', fill=NA, size=2))
 ```
 
 Changing the value of $\ell$ will adjust the spatial pattern as described above.
 
-```{r, message=F, warning=F, fig.width=6, fig.height=6.5}
+```{r, message=F, warning=F, fig.width=6, fig.height=6}
 library(tidyverse)
 simulate_grf = function(N = 50, 
                         sigma, 
@@ -209,11 +215,180 @@ for(k in 1:length(ell_seq)) {
 
 df = bind_rows(X_list)
 
-ggplot(df, aes(x=j, y=i, fill=value)) + 
+p1 = ggplot(df, aes(x=j, y=i, fill=value)) + 
   geom_tile() + 
-  scale_fill_gradientn(colours = pal(N)) + 
-  coord_fixed() + 
+  scale_fill_gradientn(colours = pal1(N)) + 
   facet_wrap(~ell) +
   labs(fill = 'X') + 
-  theme_void()
+   
+  theme(panel.background = element_rect(color='black', fill=NA, size=2))
+
+p1
+```
+
+## Correlation Function
+
+We can express the surface $X(i,j)$ as a correlation surface $\hat{C}(h,k)$ where $(h,k)$ is some spatial lag. The function to compute this is
+
+$$
+\begin{align}
+\hat{C}(h,k) = \frac{1}{N_{h,k}} \sum^{N-h}_{i=1} \sum^{N-k}_{j=1} \frac{(X(i,j) - \bar{X})(X(i+h,j+k)-\bar{X}}{\hat{\sigma}^2}
+\end{align}
+$$
+
+This equation centers the values of $X(i,j)$ using the mean $\bar{X}$, then centers the difference between $X(i,j)$ and $X(h,k)$. This expression is then rescaled by the variance $\hat{\sigma}^2$. The fraction $\frac{1}{N_{h,k}}$ identifies the valid pairs to compare after the differences are summed over.
+
+```{r}
+corr_surface = function(X) {
+  N = nrow(X)
+  meanX = mean(X)
+  varX  = var(as.vector(X))
+  
+  C = matrix(0, N, N)
+  
+  for(h in 0:(N-1)) for(k in 0:(N-1)) {
+    
+    total = 0
+    count = 0
+    
+    for(i in 1:(N-h)) for(j in 1:(N-k)) {
+      
+      a = X[i,j] - meanX
+      b = X[i+h,j+k] - meanX
+      
+      total = total + (a * b)
+      count = count + 1
+      
+    }
+    C[h+1,k+1] = total / (count * varX)
+  }
+  return(C)
+}
+
+X = simulate_grf(N = 50, ell = 2, sigma = 1)
+C = corr_surface(X)
+
+corr_df = expand.grid(i = 1:nrow(C), j = 1:ncol(C)) |> 
+  mutate(C = as.vector(C), 
+         X = as.vector(X))
+
+ggplot(corr_df, aes(x=j, y=i, fill=X)) + 
+  geom_tile() + 
+  scale_fill_gradientn(colours = pal1(N)) + 
+  coord_fixed() + 
+  labs(fill = 'X') + 
+  
+  theme(panel.background = element_rect(color='black', fill=NA, size=2)) +
+
+ggplot(corr_df, aes(x=j, y=i, fill=C)) + 
+  geom_tile() + 
+  scale_fill_gradientn(colours = pal2(N)) + 
+  coord_fixed() + 
+  labs(fill = 'C') + 
+  
+  theme(panel.background = element_rect(color='black', fill=NA, size=2))
+```
+
+With the correlation surface in hand, we can reduce it to a correlation function by first defining the distance between each pair
+
+$$
+\begin{align}
+d(h,k) = \sqrt{h^2 + k^2}.
+\end{align}
+$$
+
+In code, this looks like
+
+```{r}
+hk = expand.grid(
+  h = 0:(N-1), 
+  k = 0:(N-1)
+)
+
+hk$d = sqrt(hk$h^2 + hk$k^2)
+```
+
+We then define bins for the distance and compute the average correlation within each bin
+
+$$
+\begin{align}
+\hat{C}(d) = \text{mean} \biggl\{\hat{C}(h,k):(h,k) \in B_d \biggr\}.
+\end{align}
+$$
+
+Here we define the distance bins using `delta` to define the intervals of interest. If `delta = 1`, this is the same as rounding down the distances using `floor`. Plug in the surface from `corr_surface` and average the correlations within each bin, along with the number of pairs.
+
+```{r}
+corr_distance = function(C, delta=1, min_pairs = NULL) {
+  N = nrow(C)
+  
+  # define the grid
+  hk = expand.grid(
+    h = 0:(N-1), 
+    k = 0:(N-1)
+  )
+  
+  # sqrt of distance 
+  hk$d = sqrt(hk$h^2 + hk$k^2)
+  hk$C = as.vector(C)
+  
+  # distance bins 
+  maxd = max(hk$d)
+  centers = seq(0, maxd, by=delta)
+  
+  cd = data.frame(
+    distance = centers, 
+    corr     = NA, 
+    n_pairs  = NA
+    )
+  
+  for(idx in seq_along(centers)) {
+    d0 = centers[idx]
+    # find distances within the bin
+    in_bin = abs(hk$d - d0) < (delta / 2)
+    vals = hk$C[in_bin]
+    
+    if(length(vals) > 0) {
+      cd$corr[idx]    = mean(vals)
+      cd$n_pairs[idx] = length(vals)
+    } else {
+      cd$corr[idx]    = NA
+      cd$n_pairs      = 0
+    }
+  }
+  
+  if(!is.null(min_pairs)) {
+    cd = cd |> filter(n_pairs >= min_pairs)
+  } 
+  return(cd)
+}
+
+cd = corr_distance(C, delta = 1)
+
+ggplot(cd, aes(x=distance, y=corr)) + 
+  geom_line(size=1, color='red') + 
+  labs(x = 'd', y = TeX("$\\hat{C}(d)$"))
+```
+
+The graph shows that cells which are close together in space are highly correlated, that this correlation decays rapidly, but it oscillates. This can indicate some quasi-periodicity in the spatial patterns.
+
+We can now apply this function to different spatial patterns generated by varying the value of $\ell$, and compare the correlation distances.
+
+```{r, fig.height=8.5, fig.width=6}
+ell_seq = 1:4
+C_list = list()
+for(k in 1:length(ell_seq)) {
+  x = simulate_grf(N, sigma = 1, ell = ell_seq[k])
+  c = corr_surface(x)
+  d = corr_distance(c, delta = 1)
+  d$ell = k
+  C_list[[k]] = d
+}
+
+cp = bind_rows(C_list) |> 
+  ggplot(aes(x=distance, y=corr, color = factor(ell))) + 
+  geom_line(size=1) + 
+  labs(color = '\u2113', x = 'd', y = TeX("$\\hat{C}(d)$")) 
+
+p1 / cp + plot_layout(heights = c(2.75,1.5))
 ```
