@@ -514,7 +514,8 @@ alpha_k_draws |>
 $\hat{\alpha}_k$ falls within the density intervals in all cases, and comes extremely close to the mean for webs 1 and 3. We can now do this same to compute $\hat{p}_k$, though in this case we need to transform the model parameters from the log-odds scale to a probability scale.
 
 ```{r, fig.width=4.25, fig.height=4}
-#| fig.cap: "Comparison of predicted $\\hat{p}_k$ to the input values of $p_k$ (cyan $*$). Points are posterior means, and bars are 67\\% and 90\\% highest density posterior intervals."}
+#| fig.cap: "Comparison of predicted $\\hat{p}_k$ to the input values of $p_k$ (cyan $*$). Points are posterior means, and bars are 67\\% and 90\\% highest density posterior intervals."
+
 p_k_draws = fit1 |> 
   spread_draws(p_z[k], sigma_p, mu_p) |> 
   group_by(k) |> 
