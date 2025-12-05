@@ -9,44 +9,7 @@ format:
 
 # Introduction
 
-```{r, echo=F, message=F, warning=F}
-library(tidyverse)
-# graphs
-graph_theme = theme(
-  # panels
-  panel.background = element_rect(
-    color  = 'black', 
-    fill   = '#ffffffff', 
-    size   = 1 ), 
-  panel.grid = element_blank( ), 
-  panel.spacing = unit(15, 'pt'), 
-  # axes
-  axis.ticks  = element_line(
-    color = 'black', 
-    size  = 0.5 ), 
-  axis.ticks.length = unit(2, 'mm'), 
-  axis.text = element_text(color='black'), 
-  # strips
-  strip.background = element_rect(
-    color = '#ffffffff', 
-    fill  = '#ffffffff',), 
-  strip.text = element_text(
-    color  = 'black', 
-    vjust  = 1.2,
-    hjust  = 0,
-    size   = 10, 
-    margin = unit( c(4,0,4,0), 'mm') ), 
-  # title
-  plot.title = element_text(
-    size  = 14, 
-    hjust = 0, 
-    vjust = 3),
-  # legend 
-  legend.key = element_blank()
-)
 
-theme_set(graph_theme)
-```
 
 Landscapes contain myriad spatial patterns. These patterns interest us because of their implications for a variety of ecological processes. Here I treat landscapes as random fields and examine the spatial patterns the arise from them. A random field treats a lattice as a continuous surface; a vegetation gradient. Patterns arise on this surface by creating random noise and then smoothing it based on correlation distances.
 
@@ -94,21 +57,60 @@ For each focal cell $(i,j)$, we examine a reference pixel $(u,v)$ and compute th
 
 In code, we have two sets of loops: one over $(i,j)$ and a second over $(u,v)$. But first, we generate the noisy field.
 
-```{r, fig.width=4, fig.height=4.5}
+```{r, echo=F, message=F, warning=F}
+library(tidyverse)
+# graphs
+graph_theme = theme(
+  # panels
+  panel.background = element_rect(
+    color  = '#ffffff', 
+    fill   = '#ffffffff', 
+    linewidth = 0.5 ), 
+  panel.grid = element_blank( ), 
+  panel.spacing = unit(15, 'pt'), 
+  # axes
+  axis.ticks  = element_blank(), 
+  axis.title  = element_text(family = 'serif', size=14),
+  axis.text = element_blank(),
+  # strips
+  strip.background = element_rect(
+    color = '#ffffffff', 
+    fill  = '#ffffffff',), 
+  strip.text = element_text(
+    color  = 'black', 
+    vjust  = 1.2,
+    hjust  = 0,
+    size   = 10, 
+    margin = unit( c(4,0,4,0), 'mm') ), 
+  # title
+  plot.title = element_text(
+    size  = 14, 
+    hjust = 0, 
+    vjust = 3),
+  # legend 
+  legend.key = element_blank(), 
+  legend.title = element_text(size=14)
+)
+
+theme_set(graph_theme)
+```
+
+```{r, message=F, warning=F}
 #| fig.cap: "An example of $\\varepsilon(i,j)$."
 library(tidyverse)
 library(latex2exp)
 library(patchwork)
 
 set.seed(777)
-N = 50
+N = 70
 sigma = 1
   
 eps = matrix(0, N, N)
 for(i in 1:N) for(j in 1:N) {
   eps[i,j] = rnorm(1, 0, sigma)
 }
-
+```
+```{r, echo=F, fig.width=3.618, fig.height=3, dpi=300, units = 'in'}
 pal1 = colorRampPalette(c('#0F0E0E','#4D2D8C','#FF714B','#FAD691'))
 pal2 = colorRampPalette(c('#0F0E0E','#0033ff','#00cc00','#FAD691'))
 
@@ -118,17 +120,14 @@ dat = expand.grid(i=1:nrow(eps), j=1:ncol(eps)) |>
 ggplot(dat, aes(x=j,y=i, fill=eps) ) + 
   geom_tile() + 
   scale_fill_gradientn(colours = pal1(N)) + 
-  coord_fixed() + 
   labs(fill = expression(epsilon)) + 
   
   theme(panel.background = element_rect(color='black', fill=NA, size=2))
-
-
 ```
 
 We then apply the smoothing kernel over this noise to obtain $X(i,j)$.
 
-```{r, fig.width=4, fig.height=4.5}
+```{r}
 #| fig.cap: "An example of $X(i,j)$."
 
 ell = 3
@@ -151,14 +150,16 @@ for(i in 1:N) for(j in 1:N) {
   X[i,j] = total
 }
 
+```
 
+```{r, echo=F, fig.width=3.618, fig.height=3, dpi=300, units = 'in'}
 dat = expand.grid(i=1:nrow(eps), j=1:ncol(eps)) |>  
   mutate(X = as.vector(X))
 
 ggplot(dat, aes(x=j,y=i, fill=X) ) + 
   geom_tile() + 
+  coord_fixed() +
   scale_fill_gradientn(colours = pal1(N)) + 
-  coord_fixed() + 
   labs(fill = 'X') + 
    
   theme(panel.background = element_rect(color='black', fill=NA, size=2))
@@ -166,9 +167,8 @@ ggplot(dat, aes(x=j,y=i, fill=X) ) +
 
 Changing the value of $\ell$ will adjust the spatial pattern as described above.
 
-```{r, message=F, warning=F, fig.width=6, fig.height=6}
-library(tidyverse)
-simulate_grf = function(N = 50, 
+```{r, message=F, warning=F}
+simulate_grf = function(N = 70, 
                         sigma, 
                         ell) {
   
@@ -212,7 +212,8 @@ for(k in 1:length(ell_seq)) {
            ell = paste('\u2113','=',ell_seq[k]))
   X_list[[k]] = df
 }
-
+```
+```{r, echo=F, fig.width=4, fig.height=4, dpi=300}
 df = bind_rows(X_list)
 
 p1 = ggplot(df, aes(x=j, y=i, fill=value)) + 
@@ -388,7 +389,9 @@ for(k in 1:length(ell_seq)) {
 cp = bind_rows(C_list) |> 
   ggplot(aes(x=distance, y=corr, color = factor(ell))) + 
   geom_line(size=1) + 
-  labs(color = '\u2113', x = 'd', y = TeX("$\\hat{C}(d)$")) 
+  scale_color_manual(values = c("#CD00CD", "#8844CD", "#4488CD", "#00CDCD")) + 
+  labs(color = '\u2113', 
+       x = 'd', y = TeX("$\\hat{C}(d)$"))   
 
 p1 / cp + plot_layout(heights = c(2.75,1.5))
 ```

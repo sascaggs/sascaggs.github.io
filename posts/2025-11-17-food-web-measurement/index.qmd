@@ -547,19 +547,13 @@ $$
 \end{equation}
 $$
 
-Rather than having a single parameter $b$ for all webs, it is more likely that we have distinct allometric relationships per web, because each simulated web could represent a distinct ecological community. This implies a random slopes model:
+Rather than having a single parameter $b$ for all webs, it is more likely that we have distinct allometric relationships per web, because each simulated web could represent a distinct ecological community. To do this, we fit a separate fixed slope for each web $k$
 
 $$
 \begin{align}
-\text{logit}(\pi_{ij,k}) &= \alpha_k + (u_{i,k} + b_k M_{i,k}) + v_{j,k} \\
-b_k &= \mu_b + \sigma_b b^{(z)}_k \\ 
-\mu_b &\sim \mathcal{N}(0,1) \\
-b^{(z)}_k &\sim \mathcal{N}(0,1) \\
-\sigma_b &\sim \text{Exponential}(1) \\ 
+\text{logit}(\pi_{ij,k}) &= \alpha_k + (u_{i,k} + b_k M_{i,k}) + v_{j,k}, \qquad b_k \sim \mathcal{N}(1,1) 
 \end{align}
 $$
-
-where $i \in \{1,...,S\}$ and $k \in \{1,...,K\}$. This means that $i$ in web $k = 1$ is not the same as $i$ in web $k = 2$.
 
 ```{r}
 # ---- Setup ----
@@ -692,6 +686,7 @@ Now we adjust the original Stan model to include these biomass effects. The main
 
 ``` stan
 
+
 data {
   int<lower=1> N_cons;
   int<lower=1> N_res;
@@ -704,9 +699,9 @@ data {
 
 parameters {
   // body mass slopes 
-  vector[K] b_z;
-  real mu_b;
-  real<lower=0> sigma_b;
+  vector[K] b_k;
+  //real mu_b;
+  //real<lower=0> sigma_b;
   
   // non-centered latent effects
   vector[K] p_z;
@@ -725,9 +720,10 @@ parameters {
 
 model {
   // b priors
-  b_z ~ normal(0,1);
-  mu_b ~ normal(0,1); 
-  sigma_b ~ exponential(1);
+  //b_z ~ normal(0,1); // if random slopes, use these
+  //mu_b ~ normal(0,1); 
+  //sigma_b ~ exponential(1); // else 
+  b_k ~ normal(1,1);
   
   // priors for latent z-parameters 
   p_z ~ normal(0,1); 
@@ -752,7 +748,7 @@ model {
     real alpha_k = mu_alpha + sigma_alpha * alpha_z[k];
     
     // body mass slopes 
-    real b_k = mu_b + sigma_b * b_z[k];
+    //real b_k = mu_b + sigma_b * b_z[k];
     
     for(i in 1:N_cons) {
       // consumer random effects 
@@ -763,7 +759,7 @@ model {
         real v_jk = sigma_v * v_z[j,k];
         
         // link probability 
-        real pi_ijk = inv_logit(alpha_k + (u_ik + b_k*M[i,k]) + v_jk);
+        real pi_ijk = inv_logit(alpha_k + (u_ik + b_k[k]*M[i,k]) + v_jk);
         
         // detection adjusted probability 
         real q_ijk = p_k * pi_ijk;
@@ -774,6 +770,7 @@ model {
     }
   }
 }
+
 ```
 
 As before, we fit the model but with slightly increased `adapt_delta` to accommodate.
@@ -852,12 +849,10 @@ Next, we examine the predicted $\hat{b}_k$ from the posterior against the input 
 #| fig.cap: "Comparison of the predicted $\\hat{b}_k$ values against the input values $b_k$."
 
 b_k_draws2 = fit2 |> 
-  spread_draws(b_z[k], sigma_b, mu_b) |> 
-  group_by(k) |> 
-  mutate(b_k_hat = inv_logit(mu_b + sigma_b*b_z))
+  spread_draws(b_k[k]) 
 
 b_k_draws2 |> 
-  ggplot(aes(x=b_k_hat, y=factor(k))) + 
+  ggplot(aes(x=b_k, y=factor(k))) + 
   stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
   labs(x = TeX("$\\hat{b}_k$"), y = 'k') + 
   geom_point(data=focal_pars2, 
@@ -868,3 +863,5 @@ b_k_draws2 |>
              color = '#3300ff', pch=8, size=2, stroke=2)
 
 ```
+
+Treat each slope $b_k$ as a fixed effect lets us recover the input parameters well. Alternatively, if one uses a random slope where $b_k = \mu_b + \sigma_b b^{(z)}_k$, the partial pooling in this model can drag the slope parameter toward 0. This is because $\mu_b$ is essentially competing with other random effects for the same variation. It is also sensible to assume that there would not be any partially pooling across $b_k$.
