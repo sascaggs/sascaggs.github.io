@@ -540,3 +540,110 @@ fit3_3 = det_model$sample(
 )
 fit3_3$save_output_files('/Fits')
 ```
+
+```{r, echo=F}
+fit_names = list.files(pattern = "^fit[0-9]+_[0-9]+\\.RDS$", recursive = T)
+all_fits = sapply(fit_names, readRDS)
+```
+
+Having sampled all the models, we can now look at how well these models recover the original input parameters. These inputs are stored in the output under `params`. We will construct a data frame containing these, along with bespoke labels for later plots.
+
+```{r}
+param_df   = bind_rows(lapply(output, `[[`, 'params'))
+param_df$k = 1:5
+param_df$scenario = rep(1:9, each = 5)
+param_df$mu_beta  = rep(paste(params[,1]), each=5)
+param_df$mu_gamma = rep(paste(params[,2]), each=5)
+param_df$label    = rep(paste0("$\\beta_k = ",params[,1], "$", ", ", "$\\gamma_k = ", params[,2], "$"), each = 5)
+colnames(param_df)[c(1,2,3)] = c('.alpha_k','.beta_k','.gamma_k')
+```
+
+We'll use `tidybayes` to extract the estimated parameter values from the posterior from the list of `all_fits`.
+
+```{r}
+summarise_fits = function(fit, scenario_id) {
+  fit |> 
+    spread_draws(beta_k[k], gamma_k[k]) |> 
+    mean_qi() |> 
+    mutate(scenario = scenario_id)
+} 
+
+post = map_df(
+  .x = seq_along(all_fits), 
+  .f = ~ summarise_fits(all_fits[[.x]], scenario_id = .x)
+)
+```
+
+Then we can merge this posterior summary with the data frame containing the input values.
+
+```{r}
+post_df = merge(param_df, post, by = c('scenario','k'))
+```
+
+## Results 
+
+First, we can examine the $\beta_k$ input against the estimated $\hat{\beta}_k$.
+
+```{r, fig.width=4.5, fig.height=6, echo=F}
+post_df |> 
+  ggplot(aes(x=beta_k, y=k)) + 
+  geom_errorbar(aes(xmin = beta_k.lower, xmax = beta_k.upper),
+                width = 0) + 
+  geom_vline(xintercept = 0, lty=2, color='gray75') + 
+  geom_point() + 
+  geom_point(aes(x=.beta_k, y=k), color='magenta', size=2) + 
+  labs(x = TeX("$\\beta_k$")) + 
+  facet_wrap(~label, labeller = label_tex)
+```
+
+A qualitative inspection suggests that as the difference between $\beta_k$ and $\gamma_k$ increases, our ability to recover $\beta_k$ diminishes. In other words, if there are strong body size effects on the trophic structure, and detection is low, $\beta_k$ inflates.
+
+Here we show the same graph but looking at $\gamma_k$.
+
+```{r, fig.width=4.5, fig.height=6, echo=F}
+post_df |> 
+  ggplot(aes(x=gamma_k, y=k)) + 
+  geom_errorbar(aes(xmin = gamma_k.lower, xmax = gamma_k.upper),
+                width = 0) + 
+  geom_vline(xintercept = 0, lty=2, color='gray75') + 
+  geom_point() + 
+  geom_point(aes(x=.gamma_k, y=k), color='cyan3', size=2) + 
+  labs(x = TeX("$\\gamma_k$")) + 
+  facet_wrap(~label, labeller = label_tex)
+```
+
+Here we see that at greater values of $\gamma_k$, our estimates shrink toward 0, and when $\beta_k$ is large, we overestimate the detection rate. Another way examine this is by calculating the Root Mean Squared Error (RMSE) on the differences between the estimated and input values.
+
+Given the true values $\theta_k$ and $\hat{\theta}_k$ for $k = 1,...,K$
+
+$$
+\begin{align}
+\text{RMSE}(\hat{\theta}) = \sqrt{\frac{1}{K} \sum^K_{k=1} (\hat{\theta}_k - \theta_k)^2}. 
+\end{align}
+$$
+
+```{r}
+RMSE = post_df |> 
+  group_by(mu_beta, mu_gamma) |> 
+  summarise(RMSE_beta  = sqrt(mean((beta_k - .beta_k)^2)), 
+            RMSE_gamma = sqrt(mean((gamma_k - .gamma_k)^2))) 
+```
+
+```{r, echo=F, fig.width=4, fig.height=6}
+p1 = RMSE |>  
+  ggplot(aes(mu_beta, mu_gamma, fill=RMSE_beta)) + 
+  geom_tile() + 
+  scale_fill_viridis_c(limits = c(0,3.25)) + 
+  labs(x=TeX('$\\mu_{\\beta}$'), 
+       y=TeX('$\\mu_{\\gamma}$'), 
+       fill=TeX(paste0('RMSE ', '$(\\beta_k)$')))  
+
+p2 = RMSE |>  
+  ggplot(aes(mu_beta, mu_gamma, fill=RMSE_gamma)) + 
+  geom_tile() + 
+  scale_fill_viridis_c(limits = c(0,3.25)) + 
+  labs(x=TeX('$\\mu_{\\beta}$'), 
+       y=TeX('$\\mu_{\\gamma}$'), 
+       fill=TeX(paste0('RMSE ', '$(\\gamma_k)$')))
+p1 / p2
+```
