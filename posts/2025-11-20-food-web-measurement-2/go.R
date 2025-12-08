@@ -76,6 +76,7 @@ fw_detection_sim = function(
 mu_beta_seq = c(0,1,3)
 mu_gamma_seq = c(0,1,3)
 params = expand.grid(mu_beta_seq, mu_gamma_seq)
+colnames(params) = c('beta_k','gamma_k')
 
 output = list()
 for( s in 1:nrow(params)) {
@@ -106,7 +107,8 @@ stan_datasets <- lapply(output, make_stan_data)
 library(cmdstanr)
 det_model = cmdstan_model("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/detection_model_biomass_det.stan")
 
-
+run_all = T
+if(run_all) {
 fit0_0 = det_model$sample(
   data = stan_datasets[[1]], 
   seed = 123, 
@@ -114,6 +116,8 @@ fit0_0 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.95
 )
+#fit0_0$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit0_0, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit0_0.RDS')
 
 fit1_0 = det_model$sample(
   data = stan_datasets[[2]], 
@@ -122,6 +126,8 @@ fit1_0 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.95
 )
+#fit1_0$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit1_0, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit1_0.RDS')
 
 fit3_0 = det_model$sample(
   data = stan_datasets[[3]], 
@@ -130,6 +136,8 @@ fit3_0 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.95
 )
+#fit3_0$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit3_0, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit3_0.RDS')
 
 fit0_1 = det_model$sample(
   data = stan_datasets[[4]], 
@@ -138,6 +146,8 @@ fit0_1 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.95
 )
+#fit0_1$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit0_1, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit0_1.RDS')
 
 fit1_1 = det_model$sample(
   data = stan_datasets[[5]], 
@@ -146,6 +156,8 @@ fit1_1 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.98
 )
+#fit1_1$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit1_1, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit1_1.RDS')
 
 fit3_1 = det_model$sample(
   data = stan_datasets[[6]], 
@@ -154,6 +166,8 @@ fit3_1 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.98
 )
+#fit3_1$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit3_1, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit3_1.RDS')
 
 fit0_3 = det_model$sample(
   data = stan_datasets[[7]], 
@@ -162,6 +176,8 @@ fit0_3 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.98
 )
+#fit0_3$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit0_3, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit0_3.RDS')
 
 fit1_3 = det_model$sample(
   data = stan_datasets[[8]], 
@@ -170,6 +186,8 @@ fit1_3 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.98
 )
+#fit1_3$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit1_3, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit1_3.RDS')
 
 fit3_3 = det_model$sample(
   data = stan_datasets[[9]], 
@@ -178,18 +196,24 @@ fit3_3 = det_model$sample(
   parallel_chains = 4, 
   adapt_delta = 0.98
 )
+#fit3_3$save_output_files('C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits')
+#saveRDS(fit3_3, file = 'C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/fit3_3.RDS')
+}
 
+#fit_names = list.files(pattern = "^fit[0-9]+_[0-9]+\\.RDS$", recursive = T)
+#all_fits = sapply(fit_names, readRDS)
 
 # get params for comparison 
-param_df = bind_rows(lapply(output, `[[`, 'params'))
-param_df$scenario = rep(1:9, each = 5)
-param_df$scenario_params = rep(paste(params[,1], params[,2], sep = '_'), each=5)
+library(ggforce)
+param_df   = bind_rows(lapply(output, `[[`, 'params'))
 param_df$k = 1:5
+param_df$scenario = rep(1:9, each = 5)
+param_df$mu_beta  = rep(paste(params[,1]), each=5)
+param_df$mu_gamma = rep(paste(params[,2]), each=5)
+param_df$label    = rep(paste0("$\\beta_k = ",params[,1], "$", ", ", "$\\gamma_k = ", params[,2], "$"), each = 5)
 colnames(param_df)[c(1,2,3)] = c('.alpha_k','.beta_k','.gamma_k')
 
 library(tidybayes)
-
-
 fits = list(fit0_0, fit0_1, fit0_3, fit1_0, fit1_1, fit1_3, fit3_0, fit3_1, fit3_3)
 
 summarise_fits = function(fit, scenario_id) {
@@ -205,20 +229,96 @@ post = map_df(
 )
 
 post_df = merge(param_df, post, by = c('scenario','k'))
+write.csv(post_df, file = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/Fits/post.csv")
 
 post_df |> 
   ggplot(aes(x=beta_k, y=k)) + 
   geom_errorbar(aes(xmin = beta_k.lower, xmax = beta_k.upper),
                 width = 0) + 
+  geom_vline(xintercept = 0, lty=2, color='gray75') + 
   geom_point() + 
-  geom_point(aes(x=.beta_k, y=k), color='red') + 
-  facet_wrap(~scenario_params)
+  geom_point(aes(x=.beta_k, y=k), color='magenta', size=2) + 
+  labs(x = TeX("$\\beta_k$")) + 
+  facet_wrap(~label, labeller = label_tex)
 
 
-params |> 
-  mutate(label = TeX(paste0("$\\beta_k = ", Var1,"$")))
 
-TeX(paste0("$\\beta_k = ", params$Var1,"$"))
+post_df |> 
+  ggplot(aes(x=gamma_k, y=k)) + 
+  geom_errorbar(aes(xmin = gamma_k.lower, xmax = gamma_k.upper),
+                width = 0) + 
+  geom_vline(xintercept = 0, lty=2, color='gray75') + 
+  geom_point() + 
+  geom_point(aes(x=.gamma_k, y=k), color='cyan3', size=2) + 
+  labs(x = TeX("$\\gamma_k$")) + 
+  facet_wrap(~label, labeller = label_tex)
+
+
+# posterior bias 
+
+bias_by_scenario = post_df |> 
+  mutate(
+    beta_bias  = beta_k - .beta_k, 
+    gamma_bias = gamma_k - .gamma_k
+  ) |> 
+  group_by(mu_beta, mu_gamma) |> 
+  summarise(
+    beta_bias_mean  = mean(beta_bias), 
+    beta_bias_sd    = sd(beta_bias), 
+    gamma_bias_mean = mean(gamma_bias), 
+    gamma_bias_sd   = sd(gamma_bias), 
+    .groups = 'drop'
+  ) 
+
+bias_by_scenario |> 
+  ggplot(aes(mu_beta, mu_gamma, fill = beta_bias_mean)) + 
+  geom_tile() + 
+  scico::scale_fill_scico(palette = 'romaO', limits = c(-3,3)) + 
+  labs(x=TeX('$\\mu_{\\beta}$'), 
+       y=TeX('$\\mu_{\\gamma}$'), 
+       fill=TeX(paste0('$\\beta_k$',' bias')))
+
+bias_by_scenario |> 
+  ggplot(aes(mu_beta, mu_gamma, fill = gamma_bias_mean)) + 
+  geom_tile() + 
+  scico::scale_fill_scico(palette = 'romaO', limits = c(-3,3)) + 
+  labs(x=TeX('$\\mu_{\\beta}$'), 
+       y=TeX('$\\mu_{\\gamma}$'), 
+       fill=TeX(paste0('$\\gamma_k$',' bias')))
+
+
+# RMSE 
+
+RMSE = post_df |> 
+  group_by(mu_beta, mu_gamma) |> 
+  summarise(RMSE_beta  = sqrt(mean((beta_k - .beta_k)^2)), 
+            RMSE_gamma = sqrt(mean((gamma_k - .gamma_k)^2))) 
+
+RMSE |>  
+  ggplot(aes(mu_beta, mu_gamma, fill=RMSE_beta)) + 
+  geom_tile() + 
+  scale_fill_viridis_c() + 
+  labs(x=TeX('$\\mu_{\\beta}$'), 
+       y=TeX('$\\mu_{\\gamma}$'), 
+       fill=TeX(paste0('RMSE ', '$\\beta_k$')))
+
+RMSE |>  
+  ggplot(aes(mu_beta, mu_gamma, fill=RMSE_gamma)) + 
+  geom_tile() + 
+  scale_fill_viridis_c() + 
+  labs(x=TeX('$\\mu_{\\beta}$'), 
+       y=TeX('$\\mu_{\\gamma}$'), 
+       fill=TeX(paste0('RMSE ', '$\\gamma_k$')))
+
+# generating new food webs 
+
+  
+
+
+
+
+
+
 
 
 

@@ -560,7 +560,7 @@ colnames(param_df)[c(1,2,3)] = c('.alpha_k','.beta_k','.gamma_k')
 
 We'll use `tidybayes` to extract the estimated parameter values from the posterior from the list of `all_fits`.
 
-```{r}
+```{r, eval=F}
 summarise_fits = function(fit, scenario_id) {
   fit |> 
     spread_draws(beta_k[k], gamma_k[k]) |> 
@@ -576,8 +576,12 @@ post = map_df(
 
 Then we can merge this posterior summary with the data frame containing the input values.
 
-```{r}
+```{r, eval=F}
 post_df = merge(param_df, post, by = c('scenario','k'))
+```
+
+```{r, echo=F}
+post_df = read.csv('Fits/post.csv')
 ```
 
 ## Results 
@@ -612,7 +616,9 @@ post_df |>
   facet_wrap(~label, labeller = label_tex)
 ```
 
-Here we see that at greater values of $\gamma_k$, our estimates shrink toward 0, and when $\beta_k$ is large, we overestimate the detection rate. Another way examine this is by calculating the Root Mean Squared Error (RMSE) on the differences between the estimated and input values.
+Here we see that at greater values of $\gamma_k$, our estimates shrink toward 0, and when $\beta_k$ is large, we overestimate the detection rate. Overall, we're seeing that when either $\beta_k$ or $\gamma_k$ are large, or more precisely when the difference between $\beta_k$ and $\gamma_k$ is greater, there can be identifiability issues where the effects of one is confused with the other.
+
+Another way examine this is by calculating the Root Mean Squared Error (RMSE) on the differences between the estimated and input values.
 
 Given the true values $\theta_k$ and $\hat{\theta}_k$ for $k = 1,...,K$
 
@@ -629,21 +635,38 @@ RMSE = post_df |>
             RMSE_gamma = sqrt(mean((gamma_k - .gamma_k)^2))) 
 ```
 
-```{r, echo=F, fig.width=4, fig.height=6}
+```{r, echo=F, fig.width=4, fig.height=6, message=F, warning=F}
 p1 = RMSE |>  
-  ggplot(aes(mu_beta, mu_gamma, fill=RMSE_beta)) + 
+  ggplot(aes(factor(mu_beta), 
+             factor(mu_gamma), fill=RMSE_beta)) + 
   geom_tile() + 
-  scale_fill_viridis_c(limits = c(0,3.25)) + 
+  scale_fill_viridis_c() + 
   labs(x=TeX('$\\mu_{\\beta}$'), 
        y=TeX('$\\mu_{\\gamma}$'), 
        fill=TeX(paste0('RMSE ', '$(\\beta_k)$')))  
 
 p2 = RMSE |>  
-  ggplot(aes(mu_beta, mu_gamma, fill=RMSE_gamma)) + 
+  ggplot(aes(factor(mu_beta), 
+             factor(mu_gamma), fill=RMSE_gamma)) + 
   geom_tile() + 
-  scale_fill_viridis_c(limits = c(0,3.25)) + 
+  scale_fill_viridis_c() + 
   labs(x=TeX('$\\mu_{\\beta}$'), 
        y=TeX('$\\mu_{\\gamma}$'), 
        fill=TeX(paste0('RMSE ', '$(\\gamma_k)$')))
 p1 / p2
+```
+
+We can also look at the joint RMSE for the two parameters.
+
+```{r, fig.width=5, fig.height=4, message=F, warning=F}
+post_df |> 
+  group_by(mu_beta, mu_gamma) |> 
+  summarise(RMSE_joint  = sqrt(mean((beta_k - .beta_k)^2 + (gamma_k - .gamma_k)^2))) |> 
+  ggplot(aes(factor(mu_beta), factor(mu_gamma), 
+             fill = RMSE_joint)) + 
+  geom_tile() + 
+  scale_fill_viridis_c() + 
+  labs(x=TeX('$\\mu_{\\beta}$'), 
+       y=TeX('$\\mu_{\\gamma}$'), 
+       fill=TeX(paste0('RMSE ', '$(\\beta_k, \ \\gamma_k)$')))
 ```
