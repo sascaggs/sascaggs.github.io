@@ -56,7 +56,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -254,6 +274,8 @@ window.Quarto = {
   <li><a href="#size-ratio-model" id="toc-size-ratio-model" class="nav-link" data-scroll-target="#size-ratio-model">Size Ratio Model</a></li>
   <li><a href="#size-mismatch-model" id="toc-size-mismatch-model" class="nav-link" data-scroll-target="#size-mismatch-model">Size Mismatch Model</a></li>
   </ul></li>
+  <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation">Simulation</a></li>
+  <li><a href="#consumer-size-vs.-size-ratio" id="toc-consumer-size-vs.-size-ratio" class="nav-link" data-scroll-target="#consumer-size-vs.-size-ratio">Consumer Size vs.&nbsp;Size-Ratio</a></li>
   </ul>
 </nav>
     </div>
@@ -341,29 +363,30 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 </section>
 <section id="consumer-size-model" class="level3">
 <h3 class="anchored" data-anchor-id="consumer-size-model">Consumer Size Model</h3>
-<p>We define a parameter <span class="math inline">\(\beta_M\)</span> which controls the effect of consumer body mass on detection.</p>
+<p>We define a parameter <span class="math inline">\(\nu_k\)</span> which controls the effect of consumer body mass on detection.</p>
 <p><span class="math display">\[
 \begin{align}
-\text{logit}(p_{i,k}) = \mu_p + \beta_M M_i + \sigma_p p^{(z)}_{i,k}
+\text{logit}(p_{i,k}) = \mu_p + \gamma_k M_i + \sigma_p p^{(z)}_{i,k}
 \end{align}
 \]</span></p>
-<p>When <span class="math inline">\(\beta_M &gt; 0\)</span>, the feeding links of larger species are detected more often.</p>
+<p>When <span class="math inline">\(\nu_k &gt; 0\)</span>, the feeding links of larger species are detected more often. This model creates a serious confound: body mass effect on links and detection are competing, potentially making the probability <span class="math inline">\(q_{ij,k}\)</span> unidentifiable.</p>
 </section>
 <section id="size-ratio-model" class="level3">
 <h3 class="anchored" data-anchor-id="size-ratio-model">Size Ratio Model</h3>
-<p>An second approach could hypothesize that it is the ratio of <span class="math inline">\(M_i\)</span> to <span class="math inline">\(M_j\)</span> that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect <span class="math inline">\(\beta_R\)</span>.</p>
+<p>An second approach that aligns with food web theory <span class="citation" data-cites="allesina2011predicting">(<a href="#ref-allesina2011predicting" role="doc-biblioref">Allesina 2011</a>)</span> might hypothesize that it is the ratio of <span class="math inline">\(M_i\)</span> to <span class="math inline">\(M_j\)</span> that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect <span class="math inline">\(\nu_k\)</span>.</p>
 <p><span class="math display">\[
 \begin{align}
-\text{logit}(p_{ij,k}) &amp;= \mu_p + \beta_R (M_i - M_j) + \sigma_p p^{(z)}_{ij,k}
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k (M_i - M_j) + \sigma_p p^{(z)}_{ij,k}
 \end{align}
 \]</span></p>
+<p>This does not magically remove the identifiability problem but it slices the variation differently such that we can attribute link variation associated with size ratio vs.&nbsp;detection that is associated with consumer body size.</p>
 </section>
 <section id="size-mismatch-model" class="level3">
 <h3 class="anchored" data-anchor-id="size-mismatch-model">Size Mismatch Model</h3>
-<p>A third option would be to focus on the absolute difference between the species body sizes. This means something quite difference biologically.</p>
+<p>Similar to the size-ratio model, a third option would be to focus on the absolute difference between the species body sizes. This means something quite difference biologically.</p>
 <p><span class="math display">\[
 \begin{align}
-\text{logit}(p_{ij,k}) &amp;= \mu_p + \beta_A |M_i - M_j| + \sigma_p p^{(z)}_{ij,k}
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k |M_i - M_j| + \sigma_p p^{(z)}_{ij,k}
 \end{align}
 \]</span></p>
 <p>Each of the detection mechanisms contain very different assumptions about how detection scales body size.</p>
@@ -372,54 +395,58 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 <li><strong>Size Ratio Model</strong>: This edge-level mechanisms suggests that the probability of observing a feeding link depends on the ratio of consumer to resource body size. Observing large predators feeding on smaller prey are more likely, whereas a predator which is much smaller than it prey are ecological unusual and difficult to detect. The detection probability of such unusual events is proportionally lower.</li>
 <li><strong>Size Mismatch Model</strong>: This edge-level mechanism assumes that detection probability depends on the absolute difference between predators and prey. This mechanism does not imply that size mismatches are uncommon, only that such interactions leave evidence that is more difficult to detect.</li>
 </ol>
+</section>
+</section>
+<section id="simulation" class="level1">
+<h1>Simulation</h1>
 <p>To further investigate these mechanisms, we can simulate their effect on detection probability.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">666</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">exp</span>(x) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(x))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">=</span> <span class="cf">function</span>(x) <span class="fu">exp</span>(x) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(x))</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">50</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mu_p <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>sigma_p <span class="ot">&lt;-</span> <span class="fl">0.25</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>bM <span class="ot">&lt;-</span> bR <span class="ot">&lt;-</span> bA <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">50</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mu_p <span class="ot">=</span> <span class="sc">-</span><span class="dv">2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>sigma_p <span class="ot">=</span> <span class="fl">0.25</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>nu_k <span class="ot">=</span> <span class="dv">1</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Body mass</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mass <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">seq</span>(<span class="fu">log</span>(<span class="fl">0.01</span>), <span class="fu">log</span>(<span class="dv">1000</span>), <span class="at">length.out =</span> N))  <span class="co"># mass on raw scale</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">log10</span>(mass)  <span class="co"># log10 body mass</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mass <span class="ot">=</span> <span class="fu">exp</span>(<span class="fu">seq</span>(<span class="fu">log</span>(<span class="fl">0.01</span>), <span class="fu">log</span>(<span class="dv">1000</span>), <span class="at">length.out =</span> N))  <span class="co"># mass on raw scale</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">log10</span>(mass)  <span class="co"># log10 body mass</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Pairwise matrices</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>Bi <span class="ot">&lt;-</span> <span class="fu">matrix</span>(M, N, N)  <span class="co"># consumer</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>Bj <span class="ot">&lt;-</span> <span class="fu">t</span>(Bi)            <span class="co"># resource</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>Bi <span class="ot">=</span> <span class="fu">matrix</span>(M, N, N)  <span class="co"># consumer</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>Bj <span class="ot">=</span> <span class="fu">t</span>(Bi)            <span class="co"># resource</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Covariates</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>ratio <span class="ot">&lt;-</span> Bi <span class="sc">-</span> Bj</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>mismatch <span class="ot">&lt;-</span> <span class="fu">abs</span>(Bi <span class="sc">-</span> Bj)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>ratio <span class="ot">=</span> Bi <span class="sc">-</span> Bj</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>mismatch <span class="ot">=</span> <span class="fu">abs</span>(Bi <span class="sc">-</span> Bj)</span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Noise</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>eps <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(N<span class="sc">*</span>N, <span class="dv">0</span>, sigma_p), N, N)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>eps <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(N<span class="sc">*</span>N, <span class="dv">0</span>, sigma_p), N, N)</span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># (1) Consumer Size Model</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>pM <span class="ot">&lt;-</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> bM <span class="sc">*</span> M <span class="sc">+</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, sigma_p))</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>pM_mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(pM, N, N, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pM_mat) <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>pM <span class="ot">=</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> nu_k <span class="sc">*</span> M <span class="sc">+</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, sigma_p))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>pM_mat <span class="ot">=</span> <span class="fu">matrix</span>(pM, N, N, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pM_mat) <span class="ot">=</span> <span class="cn">NA</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># (2) Size Ratio Model</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>pR_mat <span class="ot">&lt;-</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> bR <span class="sc">*</span> ratio <span class="sc">+</span> eps)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pR_mat) <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>pR_mat <span class="ot">=</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> nu_k <span class="sc">*</span> ratio <span class="sc">+</span> eps)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pR_mat) <span class="ot">=</span> <span class="cn">NA</span></span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># (3) Size Mismatch Model</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>pA_mat <span class="ot">&lt;-</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> bA <span class="sc">*</span> mismatch <span class="sc">+</span> eps)</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pA_mat) <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>pA_mat <span class="ot">=</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> nu_k <span class="sc">*</span> mismatch <span class="sc">+</span> eps)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(pA_mat) <span class="ot">=</span> <span class="cn">NA</span></span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co"># (4) Random Model - uniform random probabilities</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>p_rand_mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(N <span class="sc">*</span> N, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>), N, N)</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(p_rand_mat) <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>p_rand_mat <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(N <span class="sc">*</span> N, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>), N, N)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(p_rand_mat) <span class="ot">=</span> <span class="cn">NA</span></span>
 <span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Data for plotting</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">consumer_mass_log10 =</span> <span class="fu">as.vector</span>(Bi),</span>
 <span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">resource_mass_log10 =</span> <span class="fu">as.vector</span>(Bj),</span>
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_ratio =</span> <span class="fu">as.vector</span>(ratio),</span>
@@ -437,7 +464,7 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'latex2exp' was built under R version 4.3.3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_raster <span class="ot">&lt;-</span> <span class="cf">function</span>(df, zvar, title) {</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_raster <span class="ot">=</span> <span class="cf">function</span>(df, zvar, title) {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> resource_mass_log10, <span class="at">y =</span> consumer_mass_log10, <span class="at">fill =</span> .data[[zvar]])) <span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"white"</span>, <span class="at">name =</span> zvar, <span class="at">option =</span> <span class="st">'A'</span>) <span class="sc">+</span></span>
@@ -466,12 +493,63 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 </div>
 </div>
 </div>
+</section>
+<section id="consumer-size-vs.-size-ratio" class="level1">
+<h1>Consumer Size vs.&nbsp;Size-Ratio</h1>
+<p>To probe into the implications of these models and their potential confounds, we will focus on the consumer size and size-ratio models. We state the full model as follows</p>
+<p><span class="math display">\[
+\begin{align}
+A_{ij,k} &amp;\sim \text{Bernoulli}(q_{ij,k}) &amp; &amp;\text{Likelihood} \\
+q_{ij,k} &amp;= \pi_{ij,k} \cdot p_{ij,k} &amp; &amp;\text{Adjusted probability} \\
+\text{logit}(\pi_{ij,k}) &amp;= \alpha_k + u_{i,k} + v_{j,k} + \beta_k M_{i,k} &amp; &amp;\text{True link probability} \\
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k(\text{log} \ M_i - \text{log} \ M_j) &amp; &amp;\text{Detection probability}
+\end{align}
+\]</span></p>
+<p>Let’s imagine a <span class="math inline">\(3 \times 3\)</span> matrix of simulation scenarios.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><strong>Null</strong></td>
+<td><strong>Weak</strong></td>
+<td><strong>Strong</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Null</strong></td>
+<td><span class="math inline">\(\gamma_k = 0\)</span>, <span class="math inline">\(\beta_k = 0\)</span></td>
+<td><span class="math inline">\(\gamma_k = 0\)</span>, <span class="math inline">\(\beta_k = 1\)</span></td>
+<td><span class="math inline">\(\gamma_k = 0\)</span>, <span class="math inline">\(\beta_k = 3\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Weak</strong></td>
+<td><span class="math inline">\(\gamma_k = 1\)</span>, <span class="math inline">\(\beta_k = 0\)</span></td>
+<td><span class="math inline">\(\gamma_k = 1\)</span>, <span class="math inline">\(\beta_k = 1\)</span></td>
+<td><span class="math inline">\(\gamma_k = 1\)</span>, <span class="math inline">\(\beta_k = 3\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Strong</strong></td>
+<td><span class="math inline">\(\gamma_k = 3\)</span>, <span class="math inline">\(\beta_k = 0\)</span></td>
+<td><span class="math inline">\(\gamma_k = 3\)</span>, <span class="math inline">\(\beta_k = 1\)</span></td>
+<td><span class="math inline">\(\gamma_k = 3\)</span>, <span class="math inline">\(\beta_k = 3\)</span></td>
+</tr>
+</tbody>
+</table>
+
 
 
 </section>
-</section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-allesina2011predicting" class="csl-entry" role="listitem">
+Allesina, Stefano. 2011. <span>“Predicting Trophic Relations in Ecological Networks: A Test of the Allometric Diet Breadth Model.”</span> <em>Journal of Theoretical Biology</em> 279 (1): 161–68.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

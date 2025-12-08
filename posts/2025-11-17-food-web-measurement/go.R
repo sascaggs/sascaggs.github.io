@@ -1,6 +1,42 @@
 library(tidyverse)
 library(latex2exp)
 
+# graphs
+graph_theme = theme(
+  # panels
+  panel.background = element_rect(
+    color  = 'black', 
+    fill   = '#ffffffff', 
+    size   = 1 ), 
+  panel.grid = element_blank( ), 
+  panel.spacing = unit(15, 'pt'), 
+  # axes
+  axis.ticks  = element_line(
+    color = 'black', 
+    size  = 0.5 ), 
+  axis.ticks.length = unit(2, 'mm'), 
+  axis.text = element_text(color='black'), 
+  # strips
+  strip.background = element_rect(
+    color = '#ffffffff', 
+    fill  = '#ffffffff',), 
+  strip.text = element_text(
+    color  = 'black', 
+    vjust  = 1.2,
+    hjust  = 0,
+    size   = 10, 
+    margin = unit( c(4,0,4,0), 'mm') ), 
+  # title
+  plot.title = element_text(
+    size  = 14, 
+    hjust = 0, 
+    vjust = 3),
+  # legend 
+  legend.key = element_blank()
+)
+
+theme_set(graph_theme)
+
 # ---- Setup ----
 set.seed(777)
 inv_logit = function(x) exp(x) / (1 + exp(x))
@@ -48,7 +84,7 @@ data_list = list(
 
 library(cmdstanr)
 
-run = T
+run = F
 if(run) {
 mod <- cmdstan_model("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/detection_model.stan")
 
@@ -170,7 +206,7 @@ data_list = list(
   A      = A_Mobs
 )
 
-run = F
+run = T
 if(run) {
   mod2 <- cmdstan_model("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-17-food-web-measurement/detection_model_bodymass.stan")
   
@@ -226,12 +262,11 @@ p_k_draws2 |>
 
 
 b_k_draws2 = fit2 |> 
-  spread_draws(b_z[k], sigma_b, mu_b) |> 
-  group_by(k) |> 
-  mutate(b_k_hat = inv_logit(mu_b + sigma_b*b_z))
+  spread_draws(b_k[k]) |> 
+  group_by(k) 
 
 b_k_draws2 |> 
-  ggplot(aes(x=b_k_hat, y=factor(k))) + 
+  ggplot(aes(x=b_k, y=factor(k))) + 
   stat_pointinterval(color='black', .width=c(0.67,0.9)) + 
   labs(x = TeX("$\\hat{b}_k$"), y = 'k') + 
   geom_point(data=focal_pars2, 
