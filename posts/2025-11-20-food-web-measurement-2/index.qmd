@@ -241,7 +241,7 @@ $$
 Let's imagine a $3 \times 3$ matrix of simulation scenarios for different combinations of $\beta_k$ and $\gamma_k$.
 
 |  |  |  |  |
-|------------------|------------------|------------------|------------------|
+|----|----|----|----|
 |  | **Null** | **Weak** | **Strong** |
 | **Null** | $\gamma_k = 0$, $\beta_k = 0$ | $\gamma_k = 0$, $\beta_k = 1$ | $\gamma_k = 0$, $\beta_k = 3$ |
 | **Weak** | $\gamma_k = 1$, $\beta_k = 0$ | $\gamma_k = 1$, $\beta_k = 1$ | $\gamma_k = 1$, $\beta_k = 3$ |
@@ -333,7 +333,6 @@ model {
     }
   }
 }
-
 ```
 
 To conduct the simulations, we wrap the simulation in a function and then sweep through a parameter grid.
@@ -584,7 +583,7 @@ post_df = merge(param_df, post, by = c('scenario','k'))
 post_df = read.csv('Fits/post.csv')
 ```
 
-## Results 
+## Results
 
 First, we can examine the $\beta_k$ input against the estimated $\hat{\beta}_k$.
 
