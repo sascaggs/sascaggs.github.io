@@ -1,0 +1,7 @@
+---
+title: "Multilevel Ising"
+author: "Shane A. Scaggs"
+format: html
+---
+
+

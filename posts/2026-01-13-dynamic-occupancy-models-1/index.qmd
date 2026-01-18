@@ -1,0 +1,43 @@
+---
+title: "Dynamic Occupancy Models I"
+author: "Shane A. Scaggs"
+format: html
+execute: 
+  warning: false
+  message: false
+bibliography: references.bib
+draft: true
+---
+
+The following are my notes on dynamic occupancy models, based primarily on seminal papers [@royle2007bayesian] and recent reviews [@kelleher2025twenty]. Occupancy models are a general class of models used to study species turnover, overlap, recruitment, and extinction in community ecological datasets. Dynamic occupancy models are a time-varying extension of these models that make use of a latent state-space formulation (e.g., observation and measurement processes; detection and occupancy).
+
+Following @royle2007bayesian, let $i = 1, 2, ..., N$ be observational units, typically sites or patches, or even individuals in microbiome community composition studies. These sites are sampled repeatedly $j$ times, where $j = 1, 2, ..., J$ across $t = 1, 2, ..., T$ time points.
+
+Within each site, the observed occupancy status for site $i$ in survey $j$ at time $t$ for a given species is represented by $y_j(i,t)$. For each observed status, we assume a "true" occupancy status $z(i,t)$ with states "present" $(z = 1)$ and "absent" $(z = 0)$. Using the notation given by @royle2007bayesian, define the probability of a species occurrence at time point $t$ as $\psi_t = \Pr(z(i,t) = 1)$.
+
+A key interest in such models is whether a present species survives to the next time point, denote by $\phi_t$ such that a site that remains occupied from $t$ to $t+1$ is $\phi_t = \Pr(z(i, t+1) = 1 \ | \ z(i,t) = 1)$. In other words, the probability that a site remains occupied at the next time point is conditional on the probability that it is present at the current time point. It follows that the probability that a species goes extinct $\varepsilon_t$ within a site is $\varepsilon = 1 - \phi_t$. Let $\gamma_t$ be the probability that an empty site becomes occupied by a species at time $t$, such that $\gamma_t = \Pr(z(i,+1) = 1 \ | \ z(i,t) = 0)$.
+
+| Parameter       | Defintion                                                |
+|------------------|------------------------------------------------------|
+| $\psi_t$        | Probability that a species is present at time $t$.       |
+| $\phi_t$        | Probability that a species survives from $t$ to $t+1$.   |
+| $\varepsilon_t$ | Probability that a species goes extinct at time $t$.     |
+| $\gamma_t$      | Probability that a species recruits at site at time $t$. |
+
+@royle2007bayesian explain that iwith initial occupancy probability at $t=1$ is $\psi_1$, occupancy is Bernoulli distributed
+
+$$
+\begin{align}
+z(i,t) \sim \text{Bernoulli}(\psi_1) \quad \text{for} \quad i \ \text{in} \ 1,2,...,N.
+\end{align}
+$$
+
+Subsequent times points $[z(i,t)]$ are conditional on previous times points $[z(i,t-1)]$ and determined by additional parameters such as the survival and recruitment probabilities: $\{\phi_t\}^{T-1}_{t=1}$ and $\{\gamma_t\}^{T-1}_{t=1}$, respectively. Consequently, occupancy over time is also Bernoulli distributed with probability based on these features
+
+$$
+\begin{align}
+z(i,t) \ | \ z(i,t-1) \sim \text{Bernoulli}\{z(i,t-1)\phi_{t-1} + [1-z(i,t-1)]\gamma_{t-1}\} \\
+\\ 
+\text{for} \quad t \ \text{in} \ 2,3,...,T.
+\end{align}
+$$

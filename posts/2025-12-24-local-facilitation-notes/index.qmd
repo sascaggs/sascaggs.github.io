@@ -1,0 +1,243 @@
+---
+title: "Local Facilitation Model"
+draft: true
+---
+
+```{r, echo=F, message=F, warning=F}
+library(tidyverse)
+```
+
+
+# Local Facilitation Model
+
+Let $s_i(t) \in \{0,1\}$ be the state of a cell $i$, and $n_i = \sum_{j \in A(i)} s_j$, where $A(i)$ is the adjacency set of $i$ based on a user-defined neighborhood (e.g., von Neumann, Moore, disk).
+
+Within the local neighborhood, we compute the fraction of occupied sites adjacent to $i$.
+
+$$
+\begin{equation}
+\bar{n}_i = \frac{1}{|A(i)|} \sum_{j \in A(i)} s_j
+\end{equation}
+$$
+
+This encodes the local facilitation. Whether $i$ changes state depends on the facilitation effect itself.
+
+$$
+\begin{equation}
+\textbf{Pr}[s_i(t+1) = 1 \ | \ s_i(t) = 0] = \alpha + \beta f(\bar{n}_i)
+\end{equation}
+$$
+
+The probability that $s_i = 1$ at time $t+1$ given that $s_i(t) = 0$ depends on the global propensity to change state, $\alpha$, and the strength of the facilitation, $\beta$. The function $f$ controls the form of this strength (e.g., linear, saturating, etc). In other words, empty sites are more likely to become occupied if their neighbors are occupied.
+
+Then the probability that an occupied site becomes unoccupied is controlled by a mortality function
+
+$$
+\begin{equation}
+\textbf{Pr}[s_i(t+1) = 0 \ | \ s_i(t) = 1] = \mu
+\end{equation}
+$$ 
+
+where $\mu$ controls the mortality rate.
+
+At the landscape level, the mean-field approximation is
+
+$$
+\begin{equation}
+\frac{d\rho}{dt} = (\alpha + \beta \rho)(1 - \rho) - \mu \rho
+\end{equation}
+$$
+
+where $\rho$ is the overall vegetation cover. This can be understood as a kind of feedback based percolation model as there is no diffusion process, no conservation, no resource constraints.
+
+If $s_i \in \{1,...,q\}$, then we define indicator variables
+
+$$
+\begin{equation}
+\mathbb{I}(s_j = k), \qquad k = 1,...,q
+\end{equation}
+$$
+
+such that
+
+$$
+\begin{equation}
+n_{ik} = \frac{1}{|A(i)|} \sum_{j \in A(i)} \mathbb{I}(s_j = k)
+\end{equation}
+$$
+
+In this case, $\textbf{n}_i$ is a local state frequency vector. The transition probabilities from one state to another can be defined by
+
+$$
+\begin{equation}
+\textbf{Pr}[s_i(t+1) = k] \propto \alpha_k + \sum^q_{\ell = 1} \beta_{k\ell} n_{i\ell}
+\end{equation}
+$$
+
+However, there is a decision to make here. Can $s_i$ really transition into any other state? Or does $s_i$ progress through states? For instance
+
+$$
+s_2 \leftarrow s_1 \rightarrow s_3 \qquad \text{versus} \qquad s_1 \rightarrow s_2 \rightarrow s_3
+$$ 
+
+For the latter, we could use a local average $m_i$ instead of a vector of counts
+
+$$
+ \begin{equation}
+ m_i = \frac{1}{|A(i)|} \sum_{j \in A(i)} g(s_j)
+ \end{equation}
+$$
+
+where $g(s)$ is a function that shapes the successional process. This is the same as our original formulation although the transitions must now be sequential. For state $k \in \{1,...,q-1\}$,
+
+$$
+\begin{equation}
+\textbf{Pr}[s_i(t+1) = k + 1 \ | \ s_i(t) = k] = p_k(m_i) 
+\end{equation}
+$$
+
+with $p_k(\cdot)$ controlling the speed of succession across states. For example, this can be exponential or sigmoidal
+
+$$
+\begin{align}
+p_k(m_i) &= \exp(\nu_k + \beta_km_i), \qquad &\text{Succession probability increases exponentially with local maturity.} \\
+p_k(m_i) &= \frac{1}{1 + \exp[-(\nu_k + \beta_k m_i)]}, \qquad &\text{Succession probability increases sigmoidally and is bounded in }(0,1).
+\end{align}
+$$
+
+## Disturbance and Update Rules 
+
+We allow $s_i < 1 \le q$ to be probabilistically disturbed and set back to $s_i = 1$. Then, our update rules are as follows. If $k \in \{1,...,q-1\}$, 
+
+$$
+\begin{align}
+s_i(t+1) = 
+\begin{cases} 
+1   \qquad &\text{with }\textbf{Pr}(d_k), \\ 
+k+1 \qquad &\text{with }\textbf{Pr}(1-d_k)p_k(m_i(t)), \\
+k   \qquad &\text{with }\textbf{Pr}(1-d_k)[1 - p_k(m_i(t))]. 
+\end{cases} 
+\end{align}
+$$
+If $k = q$, 
+
+$$
+\begin{align}
+s_i(t+1) =
+\begin{cases}
+1 \qquad &\text{with }\textbf{Pr}(d_q), \\
+q \qquad &\text{with }\textbf{Pr}(1-d_q).
+\end{cases}
+\end{align}
+$$
+
+## Simulation 
+
+To simulate this system, we need some helper functions.
+
+```{r}
+# logit^-1
+inv_logit = function(x) 1 / (1+exp(-x))
+
+# neighbor factory
+make_neighbors = function(offsets, N) {
+  
+  function(i, j) {
+    ii = (i + offsets[,1] - 1) %% N + 1
+    jj = (j + offsets[,2] - 1) %% N + 1
+    cbind(ii, jj)
+  }
+}
+
+# disk function 
+disk_offsets = function(rd) {
+  disk = as.matrix(expand.grid(-rd:rd, -rd:rd))
+  disk = disk[rowSums(disk^2) <= rd^2 & rowSums(disk^2) > 0,]
+  return(disk)
+}
+
+
+```
+
+Then we set up the conditions. 
+
+```{r}
+
+qstate_facilitation = function(
+    seed = NULL,
+    N     = 50,
+    q     = 4,
+    max_T = 500,
+    
+    nu    = c(-4,-3,-2),
+    beta  = c(0.8,0.4,0.2),
+    d     = c(0.001,0.001,0.001,0.001),
+    
+    rd    = 1 # neighborhood distance
+) {
+  
+  
+  set.seed(seed)
+  
+  offsets   = disk_offsets(rd)
+  neighbors = make_neighbors(offsets, N)
+  
+  # Initialize the matrix of states  
+  S = matrix(sample(1:q, N*N, replace = T), N, N)
+  
+  # Simulation 
+  for(t in seq_len(max_T)) {
+    
+    i = sample.int(N, 1)
+    j = sample.int(N, 1)
+    k = S[i,j]
+    
+    nb  = neighbors(i,j)
+    m_i = mean(S[nb])
+    
+    # Disturbance 
+    if(runif(1) < d[k]) {
+      S[i,j] = 1
+      next
+    }
+    
+    # Progression 
+    if(k < q) {
+      p = inv_logit(nu[k] + beta[k]*m_i)
+      if(runif(1) < p) {
+        S[i,j] = k + 1
+      }
+    }
+  }
+  return(S)
+}
+```
+
+```{r}
+N = 100
+q = 2
+S = qstate_facilitation(N=N, q=2,
+                        nu=rep(0,q),
+                        beta=c(0.01,0.1),
+                        max_T = 50000, 
+                        d = rep(0.1,q), 
+                        seed=777)
+
+expand.grid(i = 1:N, j = 1:N) |> 
+  mutate(S = as.vector(S)) |> 
+  ggplot(aes(i,j)) + 
+  geom_tile(aes(fill=factor(S))) + 
+  scale_fill_viridis_d() + 
+  theme_void() + 
+  theme(legend.position = 'none') +
+  coord_fixed()
+```
+
+
+
+
+
+
+
+
+

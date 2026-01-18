@@ -12,10 +12,6 @@ execute:
 bibliography: 2025-12-19.bib
 ---
 
-# Introduction
-
-As I have been learning about spatial patterns, I've become more interested in model families and the characteristic geometries that these families generate. For example, which models can produces spots? Clusters? Waves? Labyrinths?
-
 # Ising and Potts Models
 
 The Ising/Potts model defines a probability distribution over spatial configurations composed of discrete states. In it's simplest form (the Ising Model)
@@ -24,26 +20,27 @@ $$
 P(s) = \frac{1}{Z} \exp (-\beta H(s))
 $$ {#eq-ising}
 
-the state configuration $P(s)$ depends on a Hamiltonian energy $H(s)$. This energy arises from neighborhood interactions
+the state configuration $P(s)$ depends on a Hamiltonian energy $H(s)$. This energy is based on user-defined local neighborhood interactions
 
 $$
 H(s) = -J\sum_{\langle i, j\rangle} \delta(s_i,s_j)
 $$ {#eq-ising-hamiltonian}
 
-where $\langle i, j \rangle$ identifies the neighboring sites. The Kronecker $\delta$ returns a 1 when the states of two neighbors are the same ($s_i = s_j$), and a 0 when they are not ($s_i \ne s_j$). For the Ising Model, $s_i \in \{-1,+1\}$ which can then be written simply has $s_i s_j$. For the Potts model, $s_i \in \{1,...,q\}$.
+where $\langle i, j \rangle$ identifies the neighboring sites. The Kronecker $\delta$ returns a 1 when the states of two neighbors are the same ($s_i = s_j$), and a 0 when they are not ($s_i \ne s_j$). For the Ising Model, $s_i \in \{-1,+1\}$ which can then be written simply has $s_i s_j$. For the Potts model, $s_i \in \{1,...,q\}$ with $q$ being the number of discrete states.
 
-The parameter $\beta$ controls the degree of stochasticity in the energetic alignment (e.g., temperature), and the parameter $J$ determines the strength of the alignment.
+The parameter $\beta$ controls the degree of stochasticity in the energetic alignment (e.g., inverse temperature), and the parameter $J$ determines the magnitude and direction of the alignment between neighboring states.
 
 To simulate such a system, we first begin with random states on a lattice. This is our initial $s$.
 
-```{r}
+```{r, message=F, warning=F}
 library(tidyverse)
 N = 50
 S = matrix(
   sample(c(-1,1), N*N, replace = T), 
   N, N
 ) 
-
+```
+```{r, echo=F, fig.height=4, fig.width=4}
 expand.grid(i=1:N, j=1:N) |> 
   mutate(s = as.vector(S)) |> 
   ggplot(aes(i,j, fill=s)) + 
@@ -61,7 +58,7 @@ i = sample.int(N,1)
 j = sample.int(N,1)
 ```
 
-and then identify the neighbors of $i$ and $j$. In this case, we identify the von Neumann neighborhood. This is done using some indexing tricks to deal with indexing that begins at 1 instead of 0, and to ensure that the neighborhood wraps around the lattice (no edge effects).
+and identify the neighbors of $(i,j)$. In this case, we use the von Neumann neighborhood. 
 
 ```{r}
 neighbor_sum = function(i,j,S) {
