@@ -8,3 +8,5 @@ format:
   html: 
     css: /posts/custom-posts.css
 ---
+
+These blog listings host my notes on a variety of topics; mostly ecological anthropology, ecology, computational social science, and statistics. The content within them reflects my attempts at learning these materials independently are may not necessarily be the convention or stat-of-the-art. Nevertheless, they may be useful. 
