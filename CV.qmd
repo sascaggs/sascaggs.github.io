@@ -14,7 +14,7 @@ library(tidyverse)
 
 <p style="text-align: left;">
 
-President's Postdoctoral Scholar<br> [Health and Environment Modeling Laboratory](https://healmod.osu.edu/)<br> Division of Biostatistics<br> The Ohio State University<br> scaggs.32\@osu.edu
+President's Postdoctoral Scholar<br> School of Environment and Natural Resources <br> The Ohio State University<br> scaggs.32\@osu.edu
 
 </p>
 
@@ -30,7 +30,7 @@ Ecological, Evolutionary, & Cultural Anthropology $\times$ Complex Adaptive Syst
 
 +---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
 | 2025    | **President's Postdoctoral Scholar\                                                                                                                       |
-|         | **Health and Environment Modeling Laboratory, Division of Biostatistics, The Ohio State University, Columbus, OH                                          |
+|         | **School of Environment and Natural resources (mentor: Jo Peacock), The Ohio State University, Columbus, OH                                          |
 +---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
 |         |                                                                                                                                                           |
 +---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
