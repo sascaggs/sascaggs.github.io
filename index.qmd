@@ -6,5 +6,21 @@ about:
   image: img/Shane_Scaggs_Postdoc0846crop.png
 ---
 
-I am a President's Postdoctoral Scholar in the School of Environment and Natural Resources. My research combines approaches from anthropology, ecology, and data science to understand how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions. 
+I am currently a President's Postdoctoral Scholar in the School of Environment and Natural Resources working with Dr. Jo Peacock. My research combines approaches from anthropology, ecology, and data science to understand how humans, wildlife, and plants interact, and the complex patterns that emerge from these interactions. 
+
+I spend my research time thinking about: 
+
+1. The spatial patterns of landscapes, the human and non-human behaviors that shape these patterns, and disturbance processes. Here I have focused primarily on the study of swidden agriculture as a widespread example of how anthropogenic disturbance influences spatial structure.  
+2. The assembly of ecological communities, including the role of humans within these communities. Here I have focused primarily on food webs, using tools from network science and hierarchical modeling to understand patterns of trophic interaction. I have recently expanded my study of community ecology with collaborations related to the composition of the human gut microbiome and the functional ecology of bird and plant communities in Ohio and Bolivia. 
+3. Methodological problems related to causal inference, data generation processes, and hierarchical modeling. Many of these problems are related to network inference, but I have also been thinking about how detection and allometry confound our understanding of food web structure. 
+4. Social organization, cooperation and collective action, resource management in foraging and farming societies. 
+
+In my free time, I enjoy: 
+
+1. Making art using many kinds of mediums. 
+2. Farming and gardening with my family.
+3. Hiking and exploring. 
+
+For more information, see my CV and Google Scholar pages. 
+
 
