@@ -46,7 +46,7 @@ Ecological, Evolutionary, & Cultural Anthropology $\times$ Complex Adaptive Syst
 
 ## [Publications](https://scholar.google.com/citations?user=CtWNkOkAAAAJ&hl=en&oi=sra)
 
-As of `r Sys.Date()`: Total citations (283), h-index (8), i10-index (7).\
+As of `r Sys.Date()`: Total citations (302), h-index (8), i10-index (8).\
 ORCID: [0000-0003-1223-8588](https://orcid.org/0000-0003-1223-8588)\
 \*Published on a pre-print server.
 
