@@ -28,27 +28,21 @@ Ecological, Evolutionary, & Cultural Anthropology $\times$ Complex Adaptive Syst
 
 ## Professional Preparation
 
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-| 2025    | **President's Postdoctoral Scholar (mentor: Jo Peacock)\                                                                                                                       |
-|         | **School of Environment and Natural resources , The Ohio State University, Columbus, OH                                          |
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-|         |                                                                                                                                                           |
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-| 2025    | **Ph.D. in Anthropology (advisor: Dr. Sean Downey)\                                                                                                       |
-|         | **Department of Anthropology, The Ohio State University, Columbus, OH\                                                                                    |
-|         | Dissertation: "Rethinking the Socio-Ecology of Swidden Agriculture using Ecological Anthropology, Landscape and Community Ecology, and Complexity Theory" |
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-|         |                                                                                                                                                           |
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-| 2018    | **M.S. in Applied Anthropology (advisor: Dr. Drew Gerkey)\                                                                                                |
-|         | **School of Language, Culture, and Society, Oregon State University, Corvallis, OR\                                                                       |
-|         | Thesis: "Subsistence Harvest Diversity in Alaskan Food Sharing Networks"                                                                                  |
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-|         |                                                                                                                                                           |
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
-| 2016    | **B.S. in Anthropology (advisor: Dr. John Ziker)\                                                                                                         |
-|         | **Department of Anthropology, Boise State University, Boise, ID                                                                                           |
-+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2025   | **President's Postdoctoral Scholar (mentor: Jo Peacock)**\                                                                                                |
+|        | School of Environment and Natural Resources, The Ohio State University, Columbus, OH                                                                      |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2025   | **Ph.D. in Anthropology (advisor: Dr. Sean Downey)**\                                                                                                     |
+|        | Department of Anthropology, The Ohio State University, Columbus, OH\                                                                                      |
+|        | Dissertation: "Rethinking the Socio-Ecology of Swidden Agriculture using Ecological Anthropology, Landscape and Community Ecology, and Complexity Theory" |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2018   | **M.S. in Applied Anthropology (advisor: Dr. Drew Gerkey)**\                                                                                              |
+|        | School of Language, Culture, and Society, Oregon State University, Corvallis, OR\                                                                         |
+|        | Thesis: "Subsistence Harvest Diversity in Alaskan Food Sharing Networks"                                                                                  |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 2016   | **B.S. in Anthropology (advisor: Dr. John Ziker)**\                                                                                                       |
+|        | Department of Anthropology, Boise State University, Boise, ID                                                                                             |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## Publications
 
@@ -63,7 +57,7 @@ bold_text <- function(text, to_bold) {
     fixed = TRUE
   )
 }
-pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=3)
+pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=3)
 pubs$DOI_link <- paste0(
   "<a href='", pubs$DOI, "' target='_blank'>", pubs$DOI, "</a>"
 )
@@ -99,7 +93,7 @@ kbl(pubs[,c('Year','Citation')],
 ## Contributions
 
 ```{r, echo=F, message=F, warning=F, fig.width=8, fig.height=4, fig.cap="Contribution matrix.", fig.align='center'}
-cont <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=2)
+cont <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=2)
 
 cont %>% 
   gather(key=key, value=value, -Contribution) %>%
@@ -117,7 +111,7 @@ cont %>%
 ## Awards, Fellowships, and Funding Support
 
 ```{r,echo=F}
-funds <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/funds.csv")
+funds <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/funds.csv")
 #colnames(funds) <- c('Year','Title','Agency','Amount')
 funds <- funds[, 1:2]
 
@@ -132,7 +126,7 @@ kbl(funds, format = 'html', align = 'l', linesep = "\\addlinespace", longtable =
 ## Conference Proceedings
 
 ```{r,echo=F}
-conf <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/conf.csv")
+conf <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/conf.csv")
 #colnames(conf) <- c('Year','Title','Conference','Type')
 conf <- conf %>% arrange(desc(Year))
 
@@ -157,7 +151,7 @@ kbl(conf[,1:2], format = 'html', align = 'l', linesep = "\\addlinespace", longta
 ## Teaching Experience
 
 ```{r, echo=FALSE}
-teach <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/teach.csv")
+teach <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/teach.csv")
 teach$Term = paste0(teach$Term, ' ', teach$Year)
 teach <- teach[ , c(2,3,4,5)]
 
@@ -175,7 +169,7 @@ kable(teach, format = 'html', align = 'l', linesep = "\\addlinespace", longtable
 ### Service and Outreach
 
 ```{r, echo=F}
-serv <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/csv/serv.csv")
+serv <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/serv.csv")
 serv <- serv %>% select(Year, Role)
 
 kbl(serv, format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
