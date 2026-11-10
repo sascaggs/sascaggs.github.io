@@ -46,7 +46,22 @@ Ecological, Evolutionary, & Cultural Anthropology $\times$ Complex Adaptive Syst
 
 ## [Publications](https://scholar.google.com/citations?user=CtWNkOkAAAAJ&hl=en&oi=sra)
 
-As of `r Sys.Date()`: Total citations (302), h-index (8), i10-index (8).\
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+scholar_cache <- "csv/scholar.csv"
+
+gs <- tryCatch({
+  p <- scholar::get_profile("CtWNkOkAAAAJ")
+  out <- data.frame(date = Sys.Date(), cites = p$total_cites,
+                    h = p$h_index, i10 = p$i10_index)
+  write.csv(out, scholar_cache, row.names = FALSE)   # save for next time
+  out
+}, error = function(e) read.csv(scholar_cache))      # fall back to last saved
+```
+
+As of `r gs$date`: Total citations (`r gs$cites`), h-index (`r gs$h`), i10-index (`r gs$i10`).\
 ORCID: [0000-0003-1223-8588](https://orcid.org/0000-0003-1223-8588)\
 \*Published on a pre-print server.
 
