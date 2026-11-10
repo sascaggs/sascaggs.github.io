@@ -44,69 +44,102 @@ Ecological, Evolutionary, & Cultural Anthropology $\times$ Complex Adaptive Syst
 |        | Department of Anthropology, Boise State University, Boise, ID                                                                                             |
 +--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-## Publications
+## [Publications](https://scholar.google.com/citations?user=CtWNkOkAAAAJ&hl=en&oi=sra)
 
-```{r,echo=F}
-library(kableExtra)
+As of `r Sys.Date()`: Total citations (283), h-index (8), i10-index (7).\
+ORCID: [0000-0003-1223-8588](https://orcid.org/0000-0003-1223-8588)\
+\*Published on a pre-print server.
 
-bold_text <- function(text, to_bold) {
-  gsub(
-    to_bold, 
-    paste0("\\\\textbf{", to_bold, "}"), 
-    text, 
-    fixed = TRUE
-  )
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+pubs_all <- openxlsx::read.xlsx(xlsxFile = "csv/pubs.xlsx", sheet = 3)
+pubs_all$Year <- as.character(pubs_all$Year)
+
+# Escape characters that have special meaning in HTML; turn NA into ""
+html_escape <- function(x) {
+  x <- ifelse(is.na(x), "", as.character(x))
+  x <- gsub("&", "&amp;", x, fixed = TRUE)
+  x <- gsub("<", "&lt;", x, fixed = TRUE)
+  gsub(">", "&gt;", x, fixed = TRUE)
 }
-pubs <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=3)
-pubs$DOI_link <- paste0(
-  "<a href='", pubs$DOI, "' target='_blank'>", pubs$DOI, "</a>"
+
+# Link a DOI, whether stored as "10.xxxx/..." or a full https://doi.org/ URL
+doi_link <- function(doi) {
+  doi <- ifelse(is.na(doi), "", trimws(doi))
+  url <- ifelse(grepl("^https?://", doi), doi, paste0("https://doi.org/", doi))
+  ifelse(doi == "", "",
+         paste0('<a href="', url, '" target="_blank">', html_escape(doi), '</a>'))
+}
+
+pubs_all$Citation <- paste(
+  html_escape(pubs_all$Authors),
+  html_escape(pubs_all$Title),
+  ifelse(is.na(pubs_all$Journal), "",
+         paste0("<em>", html_escape(pubs_all$Journal), "</em>")),
+  html_escape(pubs_all$Volume),
+  doi_link(pubs_all$DOI)
 )
-pubs$Citation = paste0(pubs$Authors, ' ', 
-                       pubs$Title, ' ',
-                       pubs$Journal, 
-                       pubs$Volume, ' ', 
-                       pubs$DOI_link)
-#pubs$Citation = gsub('_', '\\\\_', pubs$Citation)
-#pubs$Citation = gsub('Scaggs, S. A.', '\\\\textbf{Scaggs, S. A.}', pubs$Citation)
+pubs_all$Citation <- str_squish(pubs_all$Citation)
+pubs_all$Citation <- gsub("Scaggs, S. A.", "<strong>Scaggs, S. A.</strong>",
+                          pubs_all$Citation, fixed = TRUE)
 
-#pubs$Citation = gsub('/', '\\\\/', pubs$Citation)
-#pubs$Citation = gsub('[', '\\\\[', pubs$Citation)
-#pubs$Citation = gsub(']', '\\\\]', pubs$Citation)
+# One function draws every publication table
+pubs_table <- function(df) {
+  if (nrow(df) == 0) return(invisible(NULL))
+  df |>
+    arrange(desc(Year)) |>
+    select(Year, Citation) |>
+    kbl(format = "html", escape = FALSE, col.names = NULL, align = "l") |>
+    kable_styling(full_width = TRUE) |>
+    column_spec(1, width = "1in")
+}
 
-pubs = pubs |> arrange(desc(Year))
-kbl(pubs[,c('Year','Citation')], 
-    format = 'html', 
-    align = 'l', 
-    linesep = "\\addlinespace", 
-    longtable = T, 
-    row.names = NA, 
-    escape=F) %>% 
-  kable_styling(latex_options = c('HOLD_position','repeat_header')) %>%
-  row_spec(nrow(pubs), extra_latex_after = "\\arrayrulecolor{white}") %>%
-  row_spec(0, bold = T) %>%
-  column_spec(1, width = '1in') %>%
-  column_spec(2, width = '5in')
+unpublished <- c("In prep", "Under review", "Submitted")
 
-
+pubs_all |>
+  filter(!Year %in% unpublished, !str_detect(Year, fixed("*"))) |>
+  pubs_table()
 ```
 
-## Contributions
+## Manuscripts Submitted or Under Review
 
-```{r, echo=F, message=F, warning=F, fig.width=8, fig.height=4, fig.cap="Contribution matrix.", fig.align='center'}
-cont <- openxlsx::read.xlsx(xlsxFile = "C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=2)
+```{r}
+#| echo: false
+pubs_all |> filter(Year == "Under review" | Year == "Submitted") |> pubs_table()
+```
+
+## Manuscripts in Preparation
+
+```{r}
+#| echo: false
+pubs_all |> filter(Year %in% c("In prep", "In submission")) |> pubs_table()
+```
+
+## Pre-prints
+
+```{r}
+#| echo: false
+pubs_all |> filter(str_detect(Year, fixed("*"))) |> pubs_table()
+```
+
+```{r, message=F, warning=F, fig.width=8, fig.height=4, fig.cap="Contribution matrix.", include=F}
+cont <- openxlsx::read.xlsx("C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/pubs.xlsx", sheet=2)
 
 cont %>% 
   gather(key=key, value=value, -Contribution) %>%
   mutate(value = ifelse(is.na(value)==T, 'No', 'Yes')) %>%
-  ggplot() + geom_tile(aes(x=key, y=Contribution, fill=factor(value),), color='white',size=1) + 
-  scale_fill_manual(values = c('white','#09c9c988')) +
+  ggplot() + geom_tile(aes(x=key, y=Contribution, fill=factor(value)), color='black',size=1) + 
+  scale_fill_manual(values = c('white','magenta')) +
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 40, hjust = 1), 
         axis.text = element_text(color='black'),
-        text = element_text(size=14, color='black'), 
-        panel.grid = element_blank()) + 
-  labs(x=NULL, y=NULL, fill='Contributed?')  
+        text = element_text(size=14, color='black')) + 
+  labs(x=NULL, y=NULL, fill='Contributed?') 
 ```
+
 
 ## Awards, Fellowships, and Funding Support
 
@@ -153,7 +186,7 @@ kbl(conf[,1:2], format = 'html', align = 'l', linesep = "\\addlinespace", longta
 ```{r, echo=FALSE}
 teach <- read.csv("C:/Users/scaggs.32/OneDrive - The Ohio State University (1)/BuckeyeOneDriveMigrated/Professional/sascaggs.github.io/csv/teach.csv")
 teach$Term = paste0(teach$Term, ' ', teach$Year)
-teach <- teach[ , c(2,3,4,5)]
+teach <- teach[ , c(2,3,4,5)] 
 
 
 kable(teach, format = 'html', align = 'l', linesep = "\\addlinespace", longtable = T) %>% 
