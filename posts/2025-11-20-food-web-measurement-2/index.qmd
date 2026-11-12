@@ -15,6 +15,7 @@ library(tidyverse)
 library(tidygraph)
 library(ggraph)
 library(patchwork)
+library(ggforce)
 
 # graphs
 graph_theme = theme(
@@ -453,7 +454,6 @@ det_model = cmdstan_model("detection_model_biomass_det.stan")
 
 ```{r, echo=F}
 library(cmdstanr)
-det_model = cmdstan_model("C:/Users/scaggs.32/OneDrive - The Ohio State University/Professional/sascaggs.github.io/posts/2025-11-20-food-web-measurement-2/detection_model_biomass_det.stan")
 ```
 
 Now we can run each model and save the fit.
@@ -596,7 +596,7 @@ post_df |>
   geom_point() + 
   geom_point(aes(x=.beta_k, y=k), color='magenta', size=2) + 
   labs(x = TeX("$\\beta_k$")) + 
-  facet_wrap(~label, labeller = label_tex)
+  facet_wrap(~label, labeller = ggforce::label_tex)
 ```
 
 A qualitative inspection suggests that as the difference between $\beta_k$ and $\gamma_k$ increases, our ability to recover $\beta_k$ diminishes. In other words, if there are strong body size effects on the trophic structure, and detection is low, $\beta_k$ inflates.

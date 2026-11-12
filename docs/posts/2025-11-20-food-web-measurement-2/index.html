@@ -277,7 +277,10 @@ window.Quarto = {
   <li><a href="#size-mismatch-model" id="toc-size-mismatch-model" class="nav-link" data-scroll-target="#size-mismatch-model">Size Mismatch Model</a></li>
   </ul></li>
   <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation">Simulation</a></li>
-  <li><a href="#consumer-size-vs.-size-ratio" id="toc-consumer-size-vs.-size-ratio" class="nav-link" data-scroll-target="#consumer-size-vs.-size-ratio">Consumer Size vs.&nbsp;Size-Ratio</a></li>
+  <li><a href="#focusing-on-size-ratio" id="toc-focusing-on-size-ratio" class="nav-link" data-scroll-target="#focusing-on-size-ratio">Focusing on Size-Ratio</a>
+  <ul class="collapse">
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -361,24 +364,25 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 </tr>
 </tbody>
 </table>
-<p>Though this is an important advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect that accounts for <em>false negatives</em>. However, it might be reasonable to assume that detection is non-random: species with particular traits may be more readily observed. For example, if larger species are easier to sample, then we would detect their diets more often. To incorporate this, we make an adjustment to Equation 3. We have a few options here. First, let <span class="math inline">\(M_i\)</span> and <span class="math inline">\(M_j\)</span> be the log body masses of consumer <span class="math inline">\(i\)</span> and resource <span class="math inline">\(j\)</span>.</p>
+<p>Though this is an useful advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect that accounts for <em>false negatives</em>. However, it might be reasonable to assume that detection is non-random: species with particular traits may be more readily observed. For example, if larger species are easier to sample, then we would detect their diets more often. To incorporate this, we make an adjustment to Equation 3. We have a few options here. First, let <span class="math inline">\(M_{i,k}\)</span> and <span class="math inline">\(M_{j,k}\)</span> be the log body masses of consumer <span class="math inline">\(i\)</span> and resource <span class="math inline">\(j\)</span>.</p>
+<p>We generate the raw body masses as <span class="math inline">\(\text{exp}(\mathcal{N}(\mu_M, \ \sigma_M))\)</span> only to transform it back using <span class="math inline">\(\text{log}_{10}(M_{i,k})\)</span>.</p>
 </section>
 <section id="consumer-size-model" class="level3">
 <h3 class="anchored" data-anchor-id="consumer-size-model">Consumer Size Model</h3>
-<p>We define a parameter <span class="math inline">\(\nu_k\)</span> which controls the effect of consumer body mass on detection.</p>
+<p>We define a parameter <span class="math inline">\(\gamma_k\)</span> which controls the effect of consumer body mass on detection.</p>
 <p><span class="math display">\[
 \begin{align}
-\text{logit}(p_{i,k}) = \mu_p + \gamma_k M_i + \sigma_p p^{(z)}_{i,k}
+\text{logit}(p_{i,k}) = \mu_p + \gamma_k M_{i,k} + \sigma_p p^{(z)}_{i,k}
 \end{align}
 \]</span></p>
-<p>When <span class="math inline">\(\nu_k &gt; 0\)</span>, the feeding links of larger species are detected more often. This model creates a serious confound: body mass effect on links and detection are competing, potentially making the probability <span class="math inline">\(q_{ij,k}\)</span> unidentifiable.</p>
+<p>When <span class="math inline">\(\gamma_k &gt; 0\)</span>, the feeding links of larger species are detected more often. This model creates a serious confound: body mass effect on links and detection are competing, potentially making the probability <span class="math inline">\(q_{ij,k}\)</span> unidentifiable.</p>
 </section>
 <section id="size-ratio-model" class="level3">
 <h3 class="anchored" data-anchor-id="size-ratio-model">Size Ratio Model</h3>
 <p>An second approach that aligns with food web theory <span class="citation" data-cites="allesina2011predicting">(<a href="#ref-allesina2011predicting" role="doc-biblioref">Allesina 2011</a>)</span> might hypothesize that it is the ratio of <span class="math inline">\(M_i\)</span> to <span class="math inline">\(M_j\)</span> that influences detection. Since both covariates are on a log scale, we compute the difference between them and estimate the effect <span class="math inline">\(\nu_k\)</span>.</p>
 <p><span class="math display">\[
 \begin{align}
-\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k (M_i - M_j) + \sigma_p p^{(z)}_{ij,k}
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k (M_{i,k} - M_{j,k}) + \sigma_p p^{(z)}_{ij,k}
 \end{align}
 \]</span></p>
 <p>This does not magically remove the identifiability problem but it slices the variation differently such that we can attribute link variation associated with size ratio vs.&nbsp;detection that is associated with consumer body size.</p>
@@ -388,7 +392,7 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 <p>Similar to the size-ratio model, a third option would be to focus on the absolute difference between the species body sizes. This means something quite difference biologically.</p>
 <p><span class="math display">\[
 \begin{align}
-\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k |M_i - M_j| + \sigma_p p^{(z)}_{ij,k}
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k |M_{i,k} - M_{j,k}| + \sigma_p p^{(z)}_{ij,k}
 \end{align}
 \]</span></p>
 <p>Each of the detection mechanisms contain very different assumptions about how detection scales body size.</p>
@@ -462,31 +466,28 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 <p>First, we can consider the matrices produced by these models. Each cell contains the probability of detecting an interaction between the two species.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create a raster plot</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'latex2exp' was built under R version 4.3.3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_raster <span class="ot">=</span> <span class="cf">function</span>(df, zvar, title) {</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> resource_mass_log10, <span class="at">y =</span> consumer_mass_log10, <span class="at">fill =</span> .data[[zvar]])) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"white"</span>, <span class="at">name =</span> zvar, <span class="at">option =</span> <span class="st">'A'</span>) <span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">TeX</span>(<span class="st">"Resource ${log}_{10}$ mass"</span>),</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="fu">TeX</span>(<span class="st">"Consumer ${log}_{10}$ mass"</span>),</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot each model</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_random"</span>, <span class="st">"Random Model"</span>)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_consumer"</span>, <span class="st">"Consumer Size Model"</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_ratio"</span>, <span class="st">"Size Ratio Model"</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_mismatch"</span>, <span class="st">"Size Mismatch Model"</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">+</span> p2) <span class="sc">/</span> (p3 <span class="sc">+</span> p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(latex2exp)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plot_raster <span class="ot">=</span> <span class="cf">function</span>(df, zvar, title) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> resource_mass_log10, <span class="at">y =</span> consumer_mass_log10, <span class="at">fill =</span> .data[[zvar]])) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"white"</span>, <span class="at">name =</span> zvar, <span class="at">option =</span> <span class="st">'A'</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="fu">TeX</span>(<span class="st">"Resource ${log}_{10}$ mass"</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="fu">TeX</span>(<span class="st">"Consumer ${log}_{10}$ mass"</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> title</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot each model</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_random"</span>, <span class="st">"Random Model"</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_consumer"</span>, <span class="st">"Consumer Size Model"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_ratio"</span>, <span class="st">"Size Ratio Model"</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> <span class="fu">plot_raster</span>(dat, <span class="st">"p_mismatch"</span>, <span class="st">"Size Mismatch Model"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">+</span> p2) <span class="sc">/</span> (p3 <span class="sc">+</span> p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -496,18 +497,19 @@ p^{(z)}_k, \alpha^{(z)}_k, u^{(z)}_{i,k},v^{(z)}_{j,k} &amp;\sim \mathcal{N}(0,1
 </div>
 </div>
 </section>
-<section id="consumer-size-vs.-size-ratio" class="level1">
-<h1>Consumer Size vs.&nbsp;Size-Ratio</h1>
-<p>To probe into the implications of these models and their potential confounds, we will focus on the consumer size and size-ratio models. We state the full model as follows</p>
+<section id="focusing-on-size-ratio" class="level1">
+<h1>Focusing on Size-Ratio</h1>
+<p>To probe into the implications this model and potential confounds, we will focus on the size-ratio model. Let <span class="math inline">\(M_{i,k}\)</span> and <span class="math inline">\(M_{j,k}\)</span> be the <span class="math inline">\(\text{log}_{10}\)</span> body masses of the consumer and resource species, respectively.</p>
+<p>Then the model is</p>
 <p><span class="math display">\[
 \begin{align}
-A_{ij,k} &amp;\sim \text{Bernoulli}(q_{ij,k}) &amp; &amp;\text{Likelihood} \\
-q_{ij,k} &amp;= \pi_{ij,k} \cdot p_{ij,k} &amp; &amp;\text{Adjusted probability} \\
+A_{ij,k} &amp;\sim \text{Bernoulli}(q_{ij,k}) &amp; &amp;\text{Observed link} \\
+q_{ij,k} &amp;= \pi_{ij,k} \cdot p_{ij,k} &amp; &amp;\text{True link } \times \text{Detection probability}  \\
 \text{logit}(\pi_{ij,k}) &amp;= \alpha_k + u_{i,k} + v_{j,k} + \beta_k M_{i,k} &amp; &amp;\text{True link probability} \\
-\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k(\text{log} \ M_i - \text{log} \ M_j) &amp; &amp;\text{Detection probability}
+\text{logit}(p_{ij,k}) &amp;= \mu_p + \gamma_k(M_{i,k} - \ M_{j,k}) &amp; &amp;\text{Detection probability}
 \end{align}
 \]</span></p>
-<p>Let’s imagine a <span class="math inline">\(3 \times 3\)</span> matrix of simulation scenarios.</p>
+<p>Let’s imagine a <span class="math inline">\(3 \times 3\)</span> matrix of simulation scenarios for different combinations of <span class="math inline">\(\beta_k\)</span> and <span class="math inline">\(\gamma_k\)</span>.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -542,9 +544,406 @@ q_{ij,k} &amp;= \pi_{ij,k} \cdot p_{ij,k} &amp; &amp;\text{Adjusted probability}
 </tr>
 </tbody>
 </table>
+<p>For each of these combinations, we simulate an observed food web and then fit the same stan model.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N_cons;</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N_res;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; K;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">matrix</span>[N_cons,K] M;</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// observed adjacency</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[N_cons, N_res, K] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; A; </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// body mass slopes </span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[K] beta_k;</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">// body mass detection</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[K] gamma_k;</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">// non-centered latent effects</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[K] alpha_z;</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">matrix</span>[N_cons, K] u_z;</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">matrix</span>[N_res, K] v_z;</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// hyperparameters</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu_p; </span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu_alpha; </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_alpha; </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_u; </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma_v;</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="co">// priors </span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  beta_k ~ normal(<span class="dv">0</span>,<span class="dv">1</span>);</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  gamma_k ~ normal(<span class="dv">0</span>,<span class="dv">1</span>);</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="co">// priors for latent z-parameters </span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  alpha_z ~ normal(<span class="dv">0</span>,<span class="dv">1</span>);</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  to_vector(u_z) ~ normal(<span class="dv">0</span>,<span class="dv">1</span>); </span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  to_vector(v_z) ~ normal(<span class="dv">0</span>,<span class="dv">1</span>); </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="co">//priors for hyperparameters </span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  mu_p ~ normal(<span class="dv">0</span>,<span class="dv">1</span>);</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  mu_alpha ~ normal(<span class="dv">0</span>,<span class="dv">1</span>);</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  sigma_alpha ~ exponential(<span class="dv">1</span>); </span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  sigma_u ~ exponential(<span class="dv">1</span>);</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  sigma_v ~ exponential(<span class="dv">1</span>);</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="co">// likelihood </span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span>:K) {</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="co">// link random effect</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="dt">real</span> alpha_k = mu_alpha + sigma_alpha * alpha_z[k];</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span>:N_cons) {</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>      <span class="co">// consumer random effects </span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>      <span class="dt">real</span> u_ik = sigma_u * u_z[i,k];</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span>:N_res) {</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>        <span class="co">// resource random effect </span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>        <span class="dt">real</span> v_jk = sigma_v * v_z[j,k];</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>        <span class="co">// detection random effect</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>        <span class="dt">real</span> p_ijk = inv_logit(mu_p + gamma_k[k] * (M[i,k] - M[j,k]) );</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>        <span class="co">// link probability </span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>        <span class="dt">real</span> pi_ijk = inv_logit(alpha_k + u_ik + v_jk + beta_k[k] * M[i,k]);</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>        <span class="co">// detection adjusted probability </span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        <span class="dt">real</span> q_ijk = p_ijk * pi_ijk;</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>        <span class="co">// likelihood</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>        A[i,j,k] ~ bernoulli(q_ijk);</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To conduct the simulations, we wrap the simulation in a function and then sweep through a parameter grid.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fw_detection_sim <span class="ot">=</span> <span class="cf">function</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="cn">NULL</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">K    =</span> <span class="dv">5</span>,   </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">S    =</span> <span class="dv">30</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_alpha    =</span> <span class="sc">-</span><span class="fl">2.5</span>, <span class="co"># base rate</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_alpha =</span> <span class="dv">1</span>,    <span class="co"># variation </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_u     =</span> <span class="fl">1.5</span>,  <span class="co"># consumer random effect</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_v     =</span> <span class="fl">1.5</span>,  <span class="co"># resource random effect</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_p        =</span> <span class="sc">-</span><span class="dv">2</span>,   <span class="co"># detection intercept</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_beta     =</span> <span class="dv">1</span>,    <span class="co"># mean effect of consumer mass on preferences</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_beta  =</span> <span class="fl">0.5</span>,  <span class="co"># variation in beta</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_gamma    =</span> <span class="dv">1</span>,    <span class="co"># mean effect of size ratio on deection </span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_gamma =</span> <span class="fl">0.3</span>,  <span class="co"># variation in gamma</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_M        =</span> <span class="dv">0</span>,    <span class="co"># mean Mass</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_M     =</span> <span class="fl">1.5</span>)  <span class="co"># variation in mass </span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Setup ----</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  inv_logit <span class="ot">=</span> <span class="cf">function</span>(x) <span class="fu">exp</span>(x) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(x))</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># consumer mass </span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">=</span> <span class="fu">matrix</span>(<span class="cn">NA_real_</span>, <span class="at">nrow =</span> S, <span class="at">ncol =</span> K)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate varying base rates and detection probabilities, and body mass effects </span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  alpha_k <span class="ot">=</span> <span class="fu">rnorm</span>(K, mu_alpha, sigma_alpha)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  beta_k <span class="ot">=</span> <span class="fu">rnorm</span>(K, mu_beta, sigma_beta)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  gamma_k <span class="ot">=</span> <span class="fu">rnorm</span>(K, mu_gamma, sigma_gamma)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ---- Outputs ----</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  A_Mtrue <span class="ot">=</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(S,S,K))</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  A_Mobs  <span class="ot">=</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(S,S,K))</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K) {</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Random effects</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    u_i <span class="ot">=</span> <span class="fu">rnorm</span>(S, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_u)</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    v_j <span class="ot">=</span> <span class="fu">rnorm</span>(S, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_v)</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Mass </span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    mass_k <span class="ot">=</span> <span class="fu">exp</span>(<span class="fu">rnorm</span>(S, mu_M, sigma_M))</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    M[,k] <span class="ot">=</span> <span class="fu">log10</span>(mass_k)</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Loop </span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S) {</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>      <span class="co"># true links </span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>      pi_ijk <span class="ot">=</span> <span class="fu">inv_logit</span>(alpha_k[k] <span class="sc">+</span> u_i[i] <span class="sc">+</span> v_j[j] <span class="sc">+</span> beta_k[k] <span class="sc">*</span> M[i,k])</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>      <span class="co"># detection probability </span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>      ratio_ijk <span class="ot">=</span> (M[i,k] <span class="sc">-</span> M[j,k])</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>      p_ijk <span class="ot">=</span> <span class="fu">inv_logit</span>(mu_p <span class="sc">+</span> gamma_k[k] <span class="sc">*</span> ratio_ijk)</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>      <span class="co"># true and observed links </span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>      A_Mtrue[i,j,k] <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, pi_ijk)</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>      A_Mobs[i,j,k] <span class="ot">=</span> <span class="fu">rbinom</span>(<span class="dv">1</span>, <span class="dv">1</span>, p_ijk <span class="sc">*</span> pi_ijk)</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">true =</span> A_Mtrue, </span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">obs  =</span> A_Mobs, </span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">params =</span> <span class="fu">data.frame</span>(alpha_k, beta_k, gamma_k), </span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> M</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="co"># run sims </span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>mu_beta_seq <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">3</span>)</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>mu_gamma_seq <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">3</span>)</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>params <span class="ot">=</span> <span class="fu">expand.grid</span>(mu_beta_seq, mu_gamma_seq)</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(params) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'beta_k'</span>,<span class="st">'gamma_k'</span>)</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>output <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>( s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(params)) {</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">=</span> params[s,<span class="dv">1</span>]</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  gamma <span class="ot">=</span> params[s,<span class="dv">2</span>]</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  output[[s]] <span class="ot">=</span> <span class="fu">fw_detection_sim</span>(<span class="at">mu_beta =</span> beta, <span class="at">mu_gamma =</span> gamma)</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>All the relevant information to construct the stan data is returned by the function and stored in <code>output</code>. However, it must be constructed before fitting the models.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>make_stan_data <span class="ot">&lt;-</span> <span class="cf">function</span>(sim) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> sim<span class="sc">$</span>obs   <span class="co"># array [S × S × K]</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">&lt;-</span> sim<span class="sc">$</span>data  <span class="co"># matrix [S × K]</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">A      =</span> A,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_cons =</span> <span class="fu">dim</span>(A)[<span class="dv">1</span>],</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_res  =</span> <span class="fu">dim</span>(A)[<span class="dv">2</span>],</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">K      =</span> <span class="fu">dim</span>(A)[<span class="dv">3</span>],</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">M      =</span> M</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>stan_datasets <span class="ot">&lt;-</span> <span class="fu">lapply</span>(output, make_stan_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>det_model <span class="ot">=</span> <span class="fu">cmdstan_model</span>(<span class="st">"detection_model_biomass_det.stan"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'cmdstanr' was built under R version 4.5.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>This is cmdstanr version 0.9.0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- CmdStanR documentation and vignettes: mc-stan.org/cmdstanr</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- CmdStan path: C:/Users/scaggs.32/.cmdstan/cmdstan-2.38.0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>- CmdStan version: 2.38.0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+A newer version of CmdStan is available. See ?install_cmdstan() to install it.
+To disable this check set option or environment variable cmdstanr_no_ver_check=TRUE.</code></pre>
+</div>
+</div>
+<p>Now we can run each model and save the fit.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit0_0 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">1</span>]], </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.95</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>fit0_0<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>fit1_0 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">2</span>]], </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.95</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>fit1_0<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>fit3_0 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">3</span>]], </span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.95</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>fit3_0<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>fit0_1 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">4</span>]], </span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.95</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>fit0_1<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>fit1_1 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">5</span>]], </span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.98</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>fit1_1<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>fit3_1 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">6</span>]], </span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.98</span></span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>fit3_1<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>fit0_3 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">7</span>]], </span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.98</span></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>fit0_3<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>fit1_3 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">8</span>]], </span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.98</span></span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a>fit1_3<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>fit3_3 <span class="ot">=</span> det_model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_datasets[[<span class="dv">9</span>]], </span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>, </span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">adapt_delta =</span> <span class="fl">0.98</span></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>fit3_3<span class="sc">$</span><span class="fu">save_output_files</span>(<span class="st">'/Fits'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Having sampled all the models, we can now look at how well these models recover the original input parameters. These inputs are stored in the output under <code>params</code>. We will construct a data frame containing these, along with bespoke labels for later plots.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>param_df   <span class="ot">=</span> <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(output, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="st">'params'</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>param_df<span class="sc">$</span>k <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>param_df<span class="sc">$</span>scenario <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">each =</span> <span class="dv">5</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>param_df<span class="sc">$</span>mu_beta  <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">paste</span>(params[,<span class="dv">1</span>]), <span class="at">each=</span><span class="dv">5</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>param_df<span class="sc">$</span>mu_gamma <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">paste</span>(params[,<span class="dv">2</span>]), <span class="at">each=</span><span class="dv">5</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>param_df<span class="sc">$</span>label    <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"$</span><span class="sc">\\</span><span class="st">beta_k = "</span>,params[,<span class="dv">1</span>], <span class="st">"$"</span>, <span class="st">", "</span>, <span class="st">"$</span><span class="sc">\\</span><span class="st">gamma_k = "</span>, params[,<span class="dv">2</span>], <span class="st">"$"</span>), <span class="at">each =</span> <span class="dv">5</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(param_df)[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)] <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'.alpha_k'</span>,<span class="st">'.beta_k'</span>,<span class="st">'.gamma_k'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We’ll use <code>tidybayes</code> to extract the estimated parameter values from the posterior from the list of <code>all_fits</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>summarise_fits <span class="ot">=</span> <span class="cf">function</span>(fit, scenario_id) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  fit <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">spread_draws</span>(beta_k[k], gamma_k[k]) <span class="sc">|&gt;</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mean_qi</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">scenario =</span> scenario_id)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>post <span class="ot">=</span> <span class="fu">map_df</span>(</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">.x =</span> <span class="fu">seq_along</span>(all_fits), </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">.f =</span> <span class="sc">~</span> <span class="fu">summarise_fits</span>(all_fits[[.x]], <span class="at">scenario_id =</span> .x)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then we can merge this posterior summary with the data frame containing the input values.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>post_df <span class="ot">=</span> <span class="fu">merge</span>(param_df, post, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">'scenario'</span>,<span class="st">'k'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p>First, we can examine the <span class="math inline">\(\beta_k\)</span> input against the estimated <span class="math inline">\(\hat{\beta}_k\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="432"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A qualitative inspection suggests that as the difference between <span class="math inline">\(\beta_k\)</span> and <span class="math inline">\(\gamma_k\)</span> increases, our ability to recover <span class="math inline">\(\beta_k\)</span> diminishes. In other words, if there are strong body size effects on the trophic structure, and detection is low, <span class="math inline">\(\beta_k\)</span> inflates.</p>
+<p>Here we show the same graph but looking at <span class="math inline">\(\gamma_k\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="432"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here we see that at greater values of <span class="math inline">\(\gamma_k\)</span>, our estimates shrink toward 0, and when <span class="math inline">\(\beta_k\)</span> is large, we overestimate the detection rate. Overall, we’re seeing that when either <span class="math inline">\(\beta_k\)</span> or <span class="math inline">\(\gamma_k\)</span> are large, or more precisely when the difference between <span class="math inline">\(\beta_k\)</span> and <span class="math inline">\(\gamma_k\)</span> is greater, there can be identifiability issues where the effects of one is confused with the other.</p>
+<p>Another way examine this is by calculating the Root Mean Squared Error (RMSE) on the differences between the estimated and input values.</p>
+<p>Given the true values <span class="math inline">\(\theta_k\)</span> and <span class="math inline">\(\hat{\theta}_k\)</span> for <span class="math inline">\(k = 1,...,K\)</span></p>
+<p><span class="math display">\[
+\begin{align}
+\text{RMSE}(\hat{\theta}) = \sqrt{\frac{1}{K} \sum^K_{k=1} (\hat{\theta}_k - \theta_k)^2}.
+\end{align}
+\]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>RMSE <span class="ot">=</span> post_df <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mu_beta, mu_gamma) <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">RMSE_beta  =</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((beta_k <span class="sc">-</span> .beta_k)<span class="sc">^</span><span class="dv">2</span>)), </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">RMSE_gamma =</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((gamma_k <span class="sc">-</span> .gamma_k)<span class="sc">^</span><span class="dv">2</span>))) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'mu_beta'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can also look at the joint RMSE for the two parameters.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>post_df <span class="sc">|&gt;</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mu_beta, mu_gamma) <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">RMSE_joint  =</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((beta_k <span class="sc">-</span> .beta_k)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (gamma_k <span class="sc">-</span> .gamma_k)<span class="sc">^</span><span class="dv">2</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">factor</span>(mu_beta), <span class="fu">factor</span>(mu_gamma), </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill =</span> RMSE_joint)) <span class="sc">+</span> </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span> </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span> </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="fu">TeX</span>(<span class="st">'$</span><span class="sc">\\</span><span class="st">mu_{</span><span class="sc">\\</span><span class="st">beta}$'</span>), </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="fu">TeX</span>(<span class="st">'$</span><span class="sc">\\</span><span class="st">mu_{</span><span class="sc">\\</span><span class="st">gamma}$'</span>), </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill=</span><span class="fu">TeX</span>(<span class="fu">paste0</span>(<span class="st">'RMSE '</span>, <span class="st">'$(</span><span class="sc">\\</span><span class="st">beta_k, \ </span><span class="sc">\\</span><span class="st">gamma_k)$'</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 
+</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
