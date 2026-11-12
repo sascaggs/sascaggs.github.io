@@ -452,7 +452,7 @@ library(cmdstanr)
 det_model = cmdstan_model("detection_model_biomass_det.stan")
 ```
 
-```{r, echo=F}
+```{r, echo=F, message=F, warning=F}
 library(cmdstanr)
 ```
 
