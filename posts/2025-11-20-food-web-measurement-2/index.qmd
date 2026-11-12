@@ -89,13 +89,13 @@ $$
 | $\sigma_{\alpha}$ | between-web variation in interaction rate    |
 | $*^{(z)}$         | standardized, non-centered latent deviations |
 
-Though this is an important advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect that accounts for *false negatives*. However, it might be reasonable to assume that detection is non-random: species with particular traits may be more readily observed. For example, if larger species are easier to sample, then we would detect their diets more often. To incorporate this, we make an adjustment to Equation 3. We have a few options here. First, let $M_{i,k}$ and $M_{j,k}$ be the log body masses of consumer $i$ and resource $j$.
+Though this is an useful advance, our detection probability is just another probability that we estimate. It is treated as a latent, random effect that accounts for *false negatives*. However, it might be reasonable to assume that detection is non-random: species with particular traits may be more readily observed. For example, if larger species are easier to sample, then we would detect their diets more often. To incorporate this, we make an adjustment to Equation 3. We have a few options here. First, let $M_{i,k}$ and $M_{j,k}$ be the log body masses of consumer $i$ and resource $j$.
 
 We generate the raw body masses as $\text{exp}(\mathcal{N}(\mu_M, \ \sigma_M))$ only to transform it back using $\text{log}_{10}(M_{i,k})$.
 
 ### Consumer Size Model
 
-We define a parameter $\nu_k$ which controls the effect of consumer body mass on detection.
+We define a parameter $\gamma_k$ which controls the effect of consumer body mass on detection.
 
 $$
 \begin{align}
@@ -103,7 +103,7 @@ $$
 \end{align}
 $$
 
-When $\nu_k > 0$, the feeding links of larger species are detected more often. This model creates a serious confound: body mass effect on links and detection are competing, potentially making the probability $q_{ij,k}$ unidentifiable.
+When $\gamma_k > 0$, the feeding links of larger species are detected more often. This model creates a serious confound: body mass effect on links and detection are competing, potentially making the probability $q_{ij,k}$ unidentifiable.
 
 ### Size Ratio Model
 

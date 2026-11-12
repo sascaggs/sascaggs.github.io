@@ -44,7 +44,7 @@ website:
 format:
   html:
     css:
-    - posts/custom-poss.css
+    - posts/custom-posts.css
     - styles.css
     toc: false
     
